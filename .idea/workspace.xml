@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8b351e26-a895-48a1-b290-b7f1f3948797" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/MainApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/OS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/enums/INTERRUPT.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/model/Clock.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/model/Handler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/Module.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/model/Register.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/device/DeviceController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/device/DeviceService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/FileController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/FileService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/ProcessController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/ProcessService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/terminal/TerminalController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/terminal/TerminalService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/scau/os/soos/hello-view.fxml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+        <option value="Enum" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="使用 Maven 包装器" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="2mSOZPCvfwO3zhH3jWkfmWcmLIT" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/BolshevikNanven/Desktop/so-os/src/main/java/scau/os/soos/module/terminal",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true",
+    "应用程序.MainApplication.executor": "Run"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\BolshevikNanven\Desktop\so-os\src\main\java\scau\os\soos\module\terminal" />
+      <recent name="C:\Users\BolshevikNanven\Desktop\so-os\src\main\java\scau\os\soos\module\process" />
+      <recent name="C:\Users\BolshevikNanven\Desktop\so-os\src\main\java\scau\os\soos\module\memory" />
+      <recent name="C:\Users\BolshevikNanven\Desktop\so-os\src\main\java\scau\os\soos\module\file" />
+      <recent name="C:\Users\BolshevikNanven\Desktop\so-os\src\main\java\scau\os\soos\module\device" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="MainApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="scau.os.soos.MainApplication" />
+      <module name="so-os" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="scau.os.soos.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="应用程序.MainApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-17.0.10-corretto-17.0.10-4caba194b151-5cd809f4" />
+        <option value="jdk-21.0.2-corretto-21.0.2-4caba194b151-51586f01" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="8b351e26-a895-48a1-b290-b7f1f3948797" name="更改" comment="" />
+      <created>1727066571528</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727066571528</updated>
+      <workItem from="1727066573006" duration="878000" />
+      <workItem from="1727067483001" duration="8980000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
