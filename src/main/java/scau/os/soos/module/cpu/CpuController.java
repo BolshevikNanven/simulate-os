@@ -1,6 +1,7 @@
 package scau.os.soos.module.cpu;
 
 import scau.os.soos.common.OS;
+import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.Module;
 
 public class CpuController implements Module {
@@ -18,22 +19,17 @@ public class CpuController implements Module {
         cpuService = new CpuService();
     }
 
+    public void setInterrupt(INTERRUPT interruptType) {
+        cpuService.setInterrupt(interruptType);
+    }
+
     @Override
     public void run() {
-        while (true) {
+        OS.clock.bind(() -> {
             //中断检测
             cpuService.executeInterrupt();
             //执行指令
             cpuService.executeInstruction();
-            //时钟加一
-            OS.clock.inc();
-
-            //测试用
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        });
     }
 }

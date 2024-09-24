@@ -14,18 +14,18 @@ public class CpuService {
 
     public void executeInstruction() {
         //...
-        System.out.println("执行指令");
+        System.out.println("执行指令 clock:"+ OS.clock.get());
     }
 
     public void executeInterrupt() {
         //中断检测
-        if ((OS.PSW & 0b001) > 0) {
+        if ((reg.getPSW() & 0b001) > 0) {
             handleProgramEndInterrupt();
         }
-        if ((OS.PSW & 0b010) > 0) {
+        if ((reg.getPSW() & 0b010) > 0) {
             handleTimeSliceEndInterrupt();
         }
-        if ((OS.PSW & 0b100) > 0) {
+        if ((reg.getPSW() & 0b100) > 0) {
             handleIOInterrupt();
         }
 
@@ -38,10 +38,22 @@ public class CpuService {
     private void handleTimeSliceEndInterrupt() {
         System.out.println("时间片结束");
         ProcessController.getInstance().schedule();
-        OS.clearInterrupt(INTERRUPT.TimeSliceEnd);
+        clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
 
     private void handleIOInterrupt() {
+        System.out.println("IO中断");
+        ProcessController.getInstance().schedule();
+        clearInterrupt(INTERRUPT.IO);
+    }
 
+    // 设置PSW中的中断标志
+    public void setInterrupt(INTERRUPT interruptType) {
+        reg.setPSW(reg.getPSW() | (1 << interruptType.ordinal()));
+    }
+
+    // 清除PSW中的中断标志
+    public void clearInterrupt(INTERRUPT interruptType) {
+        reg.setPSW(reg.getPSW() & ~(1 << interruptType.ordinal()));
     }
 }

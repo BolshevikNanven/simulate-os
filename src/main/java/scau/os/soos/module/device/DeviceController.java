@@ -20,6 +20,6 @@ public class DeviceController implements Module {
 
     @Override
     public void run() {
-
+        OS.clock.bind(deviceService::checkDevice);
     }
 }

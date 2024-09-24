@@ -4,6 +4,19 @@ public class Register {
     private int AX;
     private int PC;
     private int IR;
+    private int PSW;
+
+    public Register() {
+        this.PSW = 0b000;
+    }
+
+    public int getPSW() {
+        return PSW;
+    }
+
+    public void setPSW(int PSW) {
+        this.PSW = PSW;
+    }
 
     public int getAX() {
         return AX;

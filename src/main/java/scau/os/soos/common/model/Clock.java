@@ -17,6 +17,7 @@ public class Clock {
 
     /**
      * 监听时钟更新
+     *
      * @param handler
      */
     public void bind(Handler handler) {
@@ -24,10 +25,14 @@ public class Clock {
     }
 
     public void inc() {
-        clock.incrementAndGet();
-
         for (Handler listener : listeners) {
             listener.handle();
         }
+
+        clock.incrementAndGet();
+    }
+
+    public int get() {
+        return clock.get();
     }
 }
