@@ -1,6 +1,7 @@
 package scau.os.soos.module.memory;
 
 import scau.os.soos.module.Module;
+import scau.os.soos.module.process.model.PCB;
 
 public class MemoryController implements Module {
     private static MemoryController instance;
@@ -15,6 +16,22 @@ public class MemoryController implements Module {
 
     private MemoryController() {
         memoryService = new MemoryService();
+    }
+
+    public boolean allocate(PCB pcb) {
+
+    }
+
+    public boolean free(PCB pcb) {
+
+    }
+
+    public int read(int address) {
+
+    }
+
+    public boolean write(int address, int content) {
+
     }
 
     @Override
