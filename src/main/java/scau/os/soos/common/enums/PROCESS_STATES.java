@@ -1,6 +1,6 @@
 package scau.os.soos.common.enums;
 
-public enum STATES {
+public enum PROCESS_STATES {
     NEW,//新建
     READY,//就绪
     RUNNING,//运行

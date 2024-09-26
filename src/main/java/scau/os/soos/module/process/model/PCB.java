@@ -1,6 +1,6 @@
 package scau.os.soos.module.process.model;
 
-import scau.os.soos.common.enums.STATES;
+import scau.os.soos.common.enums.PROCESS_STATES;
 
 public class PCB {
     // PCB实例数量跟踪，用于生成pid
@@ -8,7 +8,7 @@ public class PCB {
     // 进程ID
     private final int pid;
     // 进程状态
-    private STATES status;
+    private PROCESS_STATES status;
     // 程序计数器
     private int PC;
     // 程序状态字
@@ -20,18 +20,18 @@ public class PCB {
 
     public PCB() {
         pid = pidCount++;
-        status = STATES.NEW;
+        status = PROCESS_STATES.NEW;
     }
 
     public int getPid() {
         return pid;
     }
 
-    public STATES getStatus() {
+    public PROCESS_STATES getStatus() {
         return status;
     }
 
-    public void setStatus(STATES status) {
+    public void setStatus(PROCESS_STATES status) {
         this.status = status;
     }
 
