@@ -43,7 +43,6 @@ public class MainApplication extends Application {
         ThreadsPool.run(() -> {
             while (true) {
                 OS.clock.inc();
-
                 //测试用延时
                 try {
                     Thread.sleep(800);
