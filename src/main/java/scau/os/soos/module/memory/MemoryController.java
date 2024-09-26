@@ -1,6 +1,7 @@
 package scau.os.soos.module.memory;
 
 import scau.os.soos.module.Module;
+import scau.os.soos.module.process.model.PCB;
 
 public class MemoryController implements Module {
     private static MemoryController instance;
@@ -17,39 +18,21 @@ public class MemoryController implements Module {
         memoryService = new MemoryService();
     }
 
-    /**
-     * 内存分配
-     * @param size 申请内存大小
-     * @param content 申请内存内容
-     * @return 内存地址 失败时返回-1
-     */
-    public int allocate(int size, Object content) {
-        return 0;
-    }
-
-    /**
-     * 内存回收
-     * @param address 内存地址
-     * @param size 内存大小
-     *             失败时返回false,成功返回true
-     */
-    public boolean free(int address, int size) {
+    public boolean allocate(PCB pcb) {
 
     }
 
+    public boolean free(PCB pcb) {
 
-    /**
-     * 读取内存内容
-     * @param address 内存地址
-     * @return 内存内容
-     */
-    public Object readMemoryContent(int address) {
-        return null;
     }
 
+    public int read(int address) {
 
+    }
 
+    public boolean write(int address, int content) {
 
+    }
 
     @Override
     public void run() {
