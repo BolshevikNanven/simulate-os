@@ -1,12 +1,15 @@
 package scau.os.soos.module.cpu;
 
 import scau.os.soos.common.OS;
+import scau.os.soos.common.enums.CPU_STATES;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.cpu.model.Register;
 import scau.os.soos.module.process.ProcessController;
 
 public class CpuService {
     private final Register reg;
+
+    private CPU_STATES cpuState = CPU_STATES.IDLE;
 
     public CpuService() {
         reg = new Register();
@@ -55,5 +58,13 @@ public class CpuService {
     // 清除PSW中的中断标志
     public void clearInterrupt(INTERRUPT interruptType) {
         reg.setPSW(reg.getPSW() & ~(1 << interruptType.ordinal()));
+    }
+
+    public void setCpuState(CPU_STATES cpuState) {
+        this.cpuState = cpuState;
+    }
+
+    public CPU_STATES getCpuState() {
+        return cpuState;
     }
 }

@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="941b3c0d-77c9-44cd-926f-5c868c855f04" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/enums/CPU_STATES.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/model/Process.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/enums/STATES.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/enums/PROCESS_STATES.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/ProcessService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/ProcessService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/model/PCB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/model/PCB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
