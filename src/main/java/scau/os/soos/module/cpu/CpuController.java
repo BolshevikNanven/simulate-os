@@ -23,6 +23,23 @@ public class CpuController implements Module {
         cpuService.setInterrupt(interruptType);
     }
 
+    /**
+     * 处理进程
+     */
+    public void handleProcess(Process process){
+
+    }
+
+    /**
+     * 设置CPU上下文
+     * @param ax
+     * @param pc
+     * @param psw
+     */
+    public void setContext(int ax,int pc,int psw) {
+
+    }
+
     @Override
     public void run() {
         OS.clock.bind(() -> {

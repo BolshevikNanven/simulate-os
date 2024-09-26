@@ -4,10 +4,10 @@ public class Disk {
     private static final int BLOCKS_PER_DISK = 256;
     private static final int BYTES_PER_BLOCK = 64;
 
-    private final Byte[][] disk;
+    private final Object[][] disk;
 
     public Disk() {
-        this.disk = new Byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
+        this.disk = new Object[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
     }
 
     /**
@@ -16,7 +16,7 @@ public class Disk {
      * @param blockNumber 磁盘块的编号，从0到BLOCKS_PER_DISK-1。
      * @return 指定编号的磁盘块的内容，如果编号无效则返回null。
      */
-    public Byte[] getDiskBlock(int blockNumber) {
+    public Object getDiskBlock(int blockNumber) {
         // 检查blockNumber是否在有效范围内
         if (blockNumber < 0 || blockNumber >= BLOCKS_PER_DISK) {
             return null;
