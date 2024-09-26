@@ -18,6 +18,44 @@ public class FileController implements Module {
     private FileController() {
         fileService = new FileService();
     }
+
+    /**
+     * 创建文件
+     */
+    public void createFile() {}
+
+    /**
+     * 删除文件
+     */
+    public void deleteFile() {}
+
+    /**
+     * 写文件
+     */
+    public void writeFile() {}
+
+    /**
+     * 读文件
+     */
+    public void readFile() {}
+
+    /**
+     * 拷贝文件
+     */
+    public void copyFile() {}
+
+    /**
+     * 建立目录
+     */
+    public void createDirectory() {}
+
+    /**
+     * 删除空目录
+     */
+    public void deleteDirectory() {}
+
+
+
     @Override
     public void run() {
 

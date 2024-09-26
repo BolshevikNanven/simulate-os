@@ -5,8 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="941b3c0d-77c9-44cd-926f-5c868c855f04" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/common/enums/DEVICE_TYPE.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/model/MyFile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/device/DeviceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/device/DeviceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/FileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/FileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/model/Disk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/file/model/Disk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/ProcessController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/ProcessController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +24,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>

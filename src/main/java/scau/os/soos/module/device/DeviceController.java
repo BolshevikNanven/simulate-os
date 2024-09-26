@@ -1,6 +1,7 @@
 package scau.os.soos.module.device;
 
 import scau.os.soos.common.OS;
+import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.module.Module;
 
 public class DeviceController implements Module {
@@ -16,6 +17,14 @@ public class DeviceController implements Module {
 
     private DeviceController() {
         deviceService = new DeviceService();
+    }
+
+    /**
+     * 设备分配
+     * @param deviceType 设备类型
+     */
+    public void assign(DEVICE_TYPE deviceType) {
+
     }
 
     @Override
