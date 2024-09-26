@@ -1,6 +1,7 @@
 package scau.os.soos.module.process;
 
 import scau.os.soos.common.OS;
+import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.MyFile;
 
@@ -35,6 +36,11 @@ public class ProcessController implements Module {
      * @param process
      */
     public void destroy(Process process){}
+
+    /**进程唤醒
+     * @param deviceType
+     */
+    public void wake(DEVICE_TYPE deviceType){}
 
     /**进程唤醒
      * @param process
