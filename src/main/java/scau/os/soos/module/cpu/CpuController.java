@@ -20,6 +20,13 @@ public class CpuController implements Module {
         cpuService = new CpuService();
     }
 
+    /**
+     * 请求中断服务
+     * @param interruptType
+     * @param process
+     * @return true:成功 false:失败
+     */
+
     public boolean requestInterrupt(INTERRUPT interruptType, Process process){
         return cpuService.interrupt(interruptType,process);
     }
