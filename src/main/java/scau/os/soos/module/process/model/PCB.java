@@ -61,13 +61,6 @@ public class PCB {
         this.blockCause = blockCause;
     }
 
-    public int getMemoryAddress() {
-        return memoryAddress;
-
-    }
-    public void setMemoryAddress(int memoryAddress) {
-        this.memoryAddress = memoryAddress;
-    }
 
     public int getAX() {
         return AX;
