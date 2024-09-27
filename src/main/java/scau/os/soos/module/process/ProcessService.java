@@ -96,13 +96,12 @@ public class ProcessService {
     public void processSchedule() {
         System.out.println("调度新进程");
 
-        if(readyQueue.isEmpty()) {
-            System.out.println("-------Process-------就绪队列为空，无法调度");
-            return;
-        }
-
         // 1.从就绪队列中选择一个进程
         Process process = readyQueue.pollPCB().getProcess();
+        if(process == null) {
+            System.out.println("-------Process-------进程为空");
+            return;
+        }
 
         // 2.恢复现场
         CpuController.getInstance().setAX(process.getPCB().getAX());
@@ -140,6 +139,11 @@ public class ProcessService {
     public void wake(Process process) {
         if (process == null) {
             System.out.println("-------Process-------进程为空");
+            return;
+        }
+
+        if (blockingQueue.isEmpty()) {
+            System.out.println("-------Process-------阻塞队列为空");
             return;
         }
 

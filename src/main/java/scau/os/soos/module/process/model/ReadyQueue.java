@@ -14,10 +14,6 @@ public class ReadyQueue {
         return this.readyQueue.offer(process.getPCB());
     }
 
-    public boolean isEmpty() {
-        return this.readyQueue.isEmpty();
-    }
-
     public PCB pollPCB() {
         return this.readyQueue.poll();
     }

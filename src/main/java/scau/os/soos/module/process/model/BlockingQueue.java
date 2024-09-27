@@ -18,10 +18,6 @@ public class BlockingQueue {
         return this.blockingQueue.isEmpty();
     }
 
-    public PCB pollPCB() {
-        return this.blockingQueue.poll();
-    }
-
     public boolean removePCB(PCB pcb){
         return this.blockingQueue.remove(pcb);
     }
