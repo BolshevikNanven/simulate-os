@@ -14,11 +14,11 @@ public class DeviceService {
     }
 
     public void checkDevice() {
-        test -= 1;
-        if (test == 0) {
-            CpuController.getInstance().setInterrupt(INTERRUPT.IO);
-            Random random = new Random();
-            test = random.nextInt(1, 10);
-        }
+//        test -= 1;
+//        if (test == 0) {
+//            CpuController.getInstance().setInterrupt(INTERRUPT.IO);
+//            Random random = new Random();
+//            test = random.nextInt(1, 10);
+//        }
     }
 }

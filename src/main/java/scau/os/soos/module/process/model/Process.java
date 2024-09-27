@@ -16,7 +16,7 @@ public class Process {
     public void decTimeSlice(int timeSlice) {
         this.timeSlice --;
         if (timeSlice == 0) {
-            CpuController.getInstance().setInterrupt(INTERRUPT.TimeSliceEnd);
+            CpuController.getInstance().interrupt(INTERRUPT.TimeSliceEnd,this);
         }
     }
 

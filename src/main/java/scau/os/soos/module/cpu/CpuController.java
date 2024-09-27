@@ -3,6 +3,7 @@ package scau.os.soos.module.cpu;
 import scau.os.soos.common.OS;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.Module;
+import scau.os.soos.module.process.model.Process;
 
 public class CpuController implements Module {
     private static CpuController instance;
@@ -19,7 +20,7 @@ public class CpuController implements Module {
         cpuService = new CpuService();
     }
 
-    public void setInterrupt(INTERRUPT interruptType) {
+    public void interrupt(INTERRUPT interruptType, Process process){
         cpuService.setInterrupt(interruptType);
     }
 
