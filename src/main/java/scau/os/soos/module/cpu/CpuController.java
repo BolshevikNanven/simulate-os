@@ -20,7 +20,7 @@ public class CpuController implements Module {
         cpuService = new CpuService();
     }
 
-    public boolean interrupt(INTERRUPT interruptType, Process process){
+    public boolean requestInterrupt(INTERRUPT interruptType, Process process){
         return cpuService.interrupt(interruptType,process);
     }
 

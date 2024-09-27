@@ -8,16 +8,27 @@ import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.process.model.Process;
 
 public class CpuService {
-    private final Register reg;
+    private final Register reg;                                             // 寄存器
 
-    private CPU_STATES cpuState = CPU_STATES.IDLE;
+    private CPU_STATES cpuState;                                            // CPU状态
+
+    private Process[] interruptSource;                                      // 中断源
+
+
 
     public CpuService() {
         reg = new Register();
+        cpuState = CPU_STATES.IDLE;
+        interruptSource = new Process[3];
     }
 
     public boolean interrupt(INTERRUPT interruptType, Process process){
+        if((reg.getPSW() & (1 << interruptType.ordinal())) > 0){
+            return false;
+        }
         setInterrupt(interruptType);
+        interruptSource[interruptType.ordinal()] = process;
+        return true;
     }
 
     public void executeInstruction() {
