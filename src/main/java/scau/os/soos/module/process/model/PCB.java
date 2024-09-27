@@ -4,10 +4,8 @@ import scau.os.soos.common.enums.BLOCK_CAUSE;
 import scau.os.soos.common.enums.PROCESS_STATES;
 
 public class PCB {
-    // PCB实例数量跟踪，用于生成pid
-    private static int pidCount = 0;
     // 进程标识符
-    private final int pid;
+    private int pid;
     // 进程状态
     private PROCESS_STATES status;
     // 程序计数器
@@ -16,14 +14,23 @@ public class PCB {
     private int PSW;
     // 进程阻塞原因
     private BLOCK_CAUSE blockCause;
-    // 进程当前内存地址
-    private int memoryAddress;
 
     private int AX;
 
     public PCB() {
-        this.pid = pidCount++;
-        this.status = PROCESS_STATES.NEW;
+        this.pid = -1;
+        this.status = PROCESS_STATES.TERMINATED;
+        this.PC = -1;
+        this.PSW = -1;
+        this.blockCause = BLOCK_CAUSE.CPU_BUSY;
+    }
+
+    protected void initPid(int pid){
+        setPid(pid);
+    }
+
+    private void setPid(int pid) {
+        this.pid = pid;
     }
 
     public int getPid() {
@@ -46,14 +53,6 @@ public class PCB {
         this.PC = PC;
     }
 
-    public int getPSW() {
-        return PSW;
-    }
-
-    public void setPSW(int PSW) {
-        this.PSW = PSW;
-    }
-
     public BLOCK_CAUSE getBlockCause() {
         return blockCause;
     }
@@ -64,8 +63,8 @@ public class PCB {
 
     public int getMemoryAddress() {
         return memoryAddress;
-    }
 
+    }
     public void setMemoryAddress(int memoryAddress) {
         this.memoryAddress = memoryAddress;
     }

@@ -10,19 +10,15 @@ public class BlockingQueue {
         this.blockingQueue = new LinkedList<>();
     }
 
-    public boolean offerProcess(PCB process){
-        return this.blockingQueue.offer(process);
+    public boolean offerPCB(Process process){
+        return this.blockingQueue.offer(process.getPCB());
     }
 
     public boolean isEmpty() {
         return this.blockingQueue.isEmpty();
     }
 
-    public PCB pollProcess() {
+    public PCB pollPCB() {
         return this.blockingQueue.poll();
-    }
-
-    public Queue<PCB> getBlockingQueue() {
-        return this.blockingQueue;
     }
 }
