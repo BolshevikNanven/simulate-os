@@ -91,6 +91,7 @@ public class CpuService {
     private void handleIOInterrupt() {
         System.out.println("中断-IO中断");
         ProcessController.getInstance().wake(interruptSource[2]);
+        //ProcessController.getInstance().wake(interruptSource[2].getDeviceType());
         // TODO 要不要发出进程调度
         clearInterrupt(INTERRUPT.IO);
     }
