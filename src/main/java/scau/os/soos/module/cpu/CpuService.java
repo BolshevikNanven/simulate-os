@@ -2,8 +2,10 @@ package scau.os.soos.module.cpu;
 
 import scau.os.soos.common.OS;
 import scau.os.soos.common.enums.CPU_STATES;
+import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.cpu.model.Register;
+import scau.os.soos.module.device.DeviceController;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.process.model.Process;
 
@@ -14,12 +16,15 @@ public class CpuService {
 
     private final Process[] interruptSource;                                // 中断源
 
+    private final Process runningProcess;                                         // 运行进程
+
 
 
     public CpuService() {
         reg = new Register();
         cpuState = CPU_STATES.IDLE;
         interruptSource = new Process[3];
+        runningProcess = null;
     }
 
     /**
@@ -131,11 +136,14 @@ public class CpuService {
             case 0b0100 -> {
                 int time = tmp >> 2;
                 int device = tmp & 0b0011;
-                
+                DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
+                DeviceController.getInstance().assign(deviceType,time, runningProcess);
+                ProcessController.getInstance().block(runningProcess);
+                // TODO 进程调度 ：cpu 还是 进程管理 ？
             }
             case 0b0101 -> {
                 System.out.println("程序结束");
-                setCpuState(CPU_STATES.END);
+                setCpuState(CPU_STATES.IDLE);
             }
         }
     }
