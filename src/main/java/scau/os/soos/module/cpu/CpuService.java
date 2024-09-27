@@ -16,7 +16,7 @@ public class CpuService {
 
     private final Process[] interruptSource;                                // 中断源
 
-    private final Process runningProcess;                                         // 运行进程
+    private final Process runningProcess;                                   // 运行进程
 
 
 
@@ -45,6 +45,7 @@ public class CpuService {
     public void executeInstruction() {
         //...
         System.out.println("执行指令 clock:"+ OS.clock.get());
+        reg.incPC(); // PC ++
     }
 
     /**

@@ -45,6 +45,8 @@ public class Register {
         this.PC = PC;
     }
 
+    public void incPC() { this.PC++; }
+
     public int getIR() {
         return IR;
     }
