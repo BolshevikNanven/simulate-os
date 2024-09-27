@@ -43,7 +43,9 @@ public class ProcessController implements Module {
     /**进程销毁
      * @param process
      */
-    public void destroy(Process process){}
+    public void destroy(Process process){
+        processService.destroy(process);
+    }
 
     /**进程唤醒
      * 遍历对应等待设备的进程队列，唤醒其中一个进程
@@ -51,37 +53,31 @@ public class ProcessController implements Module {
      */
     public void wake(DEVICE_TYPE deviceType){
         // 要判断下设备数量 防止多个模块重复唤醒
+        processService.wake(deviceType);
     }
 
     /**进程唤醒
      * 唤醒指定进程
      * @param process
      */
-    public void wake(Process process){}
+    public void wake(Process process){
+        processService.wake(process);
+    }
 
     /**进程阻塞
      * @param process
      */
-    public void block(Process process){}
+    public void block(Process process){
+        processService.block(process);
+    }
 
     /**进程切换
      * @param process
      */
-    public void handoff(Process process){}
-
-    /**查询进程用户区地址
-     * @param process
-     */
-    public int getProcessUserAreaAddress(Process process){
-        return 0;
+    public void handoff(Process process){
+        processService.handoff(process);
     }
 
-    /**查询进程系统区地址
-     * @param process
-     */
-    public int getProcessSystemAreaAddress(Process process){
-        return 0;
-    }
     @Override
     public void run() {
         OS.clock.bind(processService::clockSchedule);

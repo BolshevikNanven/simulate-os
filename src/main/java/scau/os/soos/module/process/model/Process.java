@@ -1,7 +1,9 @@
 package scau.os.soos.module.process.model;
 
 import scau.os.soos.common.enums.DEVICE_TYPE;
+import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
+import scau.os.soos.module.cpu.CpuController;
 
 public class Process {
     // 进程控制块
@@ -13,9 +15,9 @@ public class Process {
     // 正在使用设备类型
     private DEVICE_TYPE deviceType;
 
-    public Process(PCB pcb,int pid) {
+    public Process(PCB pcb, int pid) {
         this.pcb = pcb;
-        this.pcb.initPid(pid);
+        this.pcb.initPCB(pid,this);
         this.timeSlice = MAX_CLOCK;
         this.deviceType = null;
     }
@@ -24,15 +26,19 @@ public class Process {
         return pcb;
     }
 
-    public void decTimeSlice(int timeSlice) {
-//        this.timeSlice --;
-//        if (timeSlice == 0) {
-//            CpuController.getInstance().interrupt(INTERRUPT.TimeSliceEnd,this);
-//        }
+    public void decTimeSlice() {
+        // 如果进程为运行状态，则时间片减一
+        if(this.getPCB().getStatus()== PROCESS_STATES.RUNNING){
+            timeSlice --;
+            if (timeSlice == 0) {
+                // 时间片用完，请求中断处理
+                CpuController.getInstance().requestInterrupt(INTERRUPT.TimeSliceEnd,this);
+            }
+        }
     }
 
-    private void resetTimeSlice(){
-         this.timeSlice = MAX_CLOCK;
+    private void resetTimeSlice() {
+        this.timeSlice = MAX_CLOCK;
     }
 
     public DEVICE_TYPE getDeviceType() {

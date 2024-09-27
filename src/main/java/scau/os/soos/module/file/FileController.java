@@ -3,6 +3,8 @@ package scau.os.soos.module.file;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.device.DeviceController;
 import scau.os.soos.module.device.DeviceService;
+import scau.os.soos.module.file.model.MyFile;
+
 
 public class FileController implements Module {
     private static FileController instance;
@@ -37,7 +39,9 @@ public class FileController implements Module {
     /**
      * 读文件
      */
-    public void readFile() {}
+    public Object readFile(MyFile myFile) {
+        return fileService.readFile(myFile);
+    }
 
     /**
      * 拷贝文件
@@ -54,7 +58,12 @@ public class FileController implements Module {
      */
     public void deleteDirectory() {}
 
-
+    /**
+     * 获取文件大小
+     */
+    public int getFileSize(MyFile myFile){
+        return fileService.getFileSize(myFile);
+    }
 
     @Override
     public void run() {

@@ -21,4 +21,8 @@ public class BlockingQueue {
     public PCB pollPCB() {
         return this.blockingQueue.poll();
     }
+
+    public boolean removePCB(PCB pcb){
+        return this.blockingQueue.remove(pcb);
+    }
 }

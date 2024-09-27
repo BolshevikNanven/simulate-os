@@ -24,15 +24,10 @@ public class EmptyPCBQueue {
     }
 
     // 归还一个空白PCB
-    public boolean returnEmptyPCB(){
+    public boolean recycleEmptyPCB(){
         if(emptyPCBQueue.size() < maxPCBCount){
             return emptyPCBQueue.offer(new PCB());
         }
         return false;
-    }
-
-    // 判断空闲PCB队列是否为空
-    public boolean isEmpty(){
-        return emptyPCBQueue.isEmpty();
     }
 }
