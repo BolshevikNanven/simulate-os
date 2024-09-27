@@ -90,7 +90,8 @@ public class CpuService {
      */
     private void handleIOInterrupt() {
         System.out.println("中断-IO中断");
-        ProcessController.getInstance().schedule();
+
+        // TODO 要不要发出进程调度
         clearInterrupt(INTERRUPT.IO);
     }
 

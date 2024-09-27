@@ -51,11 +51,13 @@ public class ProcessController implements Module {
     public void destroy(Process process){}
 
     /**进程唤醒
+     * 遍历对应等待设备的进程队列，唤醒其中一个进程
      * @param deviceType
      */
     public void wake(DEVICE_TYPE deviceType){}
 
     /**进程唤醒
+     * 唤醒指定进程
      * @param process
      */
     public void wake(Process process){}
