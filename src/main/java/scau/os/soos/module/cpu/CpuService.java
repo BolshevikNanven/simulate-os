@@ -5,6 +5,7 @@ import scau.os.soos.common.enums.CPU_STATES;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.cpu.model.Register;
 import scau.os.soos.module.process.ProcessController;
+import scau.os.soos.module.process.model.Process;
 
 public class CpuService {
     private final Register reg;
@@ -13,6 +14,10 @@ public class CpuService {
 
     public CpuService() {
         reg = new Register();
+    }
+
+    public boolean interrupt(INTERRUPT interruptType, Process process){
+        setInterrupt(interruptType);
     }
 
     public void executeInstruction() {

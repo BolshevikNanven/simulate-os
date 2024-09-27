@@ -20,8 +20,8 @@ public class CpuController implements Module {
         cpuService = new CpuService();
     }
 
-    public void interrupt(INTERRUPT interruptType, Process process){
-        cpuService.setInterrupt(interruptType);
+    public boolean interrupt(INTERRUPT interruptType, Process process){
+        return cpuService.interrupt(interruptType,process);
     }
 
     /**
@@ -44,10 +44,10 @@ public class CpuController implements Module {
     @Override
     public void run() {
         OS.clock.bind(() -> {
-            //中断检测
-            cpuService.executeInterrupt();
-            //执行指令
-            cpuService.executeInstruction();
+//            //中断检测
+//            cpuService.executeInterrupt();
+//            //执行指令
+//            cpuService.executeInstruction();
         });
     }
 }

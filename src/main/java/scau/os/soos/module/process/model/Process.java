@@ -14,10 +14,10 @@ public class Process {
     }
 
     public void decTimeSlice(int timeSlice) {
-        this.timeSlice --;
-        if (timeSlice == 0) {
-            CpuController.getInstance().interrupt(INTERRUPT.TimeSliceEnd,this);
-        }
+//        this.timeSlice --;
+//        if (timeSlice == 0) {
+//            CpuController.getInstance().interrupt(INTERRUPT.TimeSliceEnd,this);
+//        }
     }
 
     private void resetTimeSlice(){
