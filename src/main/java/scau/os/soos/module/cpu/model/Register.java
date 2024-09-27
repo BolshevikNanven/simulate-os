@@ -8,6 +8,9 @@ public class Register {
 
     public Register() {
         this.PSW = 0b000;
+        this.AX = 0;
+        this.PC = 0;
+        this.IR = 0b00000000;
     }
 
     public int getPSW() {
@@ -24,6 +27,14 @@ public class Register {
 
     public void setAX(int AX) {
         this.AX = AX;
+    }
+
+    public void decAX() {
+        this.AX--;
+    }
+
+    public void incAX() {
+        this.AX++;
     }
 
     public int getPC() {
