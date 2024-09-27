@@ -22,8 +22,8 @@ public class CpuController implements Module {
 
     /**
      * 请求中断服务
-     * @param interruptType
-     * @param process
+     * @param interruptType 中断类型
+     * @param process 中断源
      * @return true:成功 false:失败
      */
 
