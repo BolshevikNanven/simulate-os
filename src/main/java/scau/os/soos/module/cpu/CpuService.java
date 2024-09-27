@@ -83,9 +83,8 @@ public class CpuService {
         System.out.println("中断-时间片结束");
         runningProcess.getPcb().setPC(reg.getPC());
         runningProcess.getPcb().setAX(reg.getAX());
-        Process process = runningProcess;
         unload();
-        ProcessController.getInstance().handoff(process);
+        ProcessController.getInstance().handoff(interruptSource[1]);
         ProcessController.getInstance().schedule();
         clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
@@ -147,10 +146,9 @@ public class CpuService {
                 int time = tmp >> 2;
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
-                Process process = runningProcess;
                 unload();
-                ProcessController.getInstance().block(process);
-                DeviceController.getInstance().assign(deviceType, time, process);
+                ProcessController.getInstance().block(interruptSource[2]);
+                DeviceController.getInstance().assign(deviceType, time, interruptSource[2]);
                 ProcessController.getInstance().schedule();
             }
             case 0b0101 -> {
