@@ -50,7 +50,10 @@ public class CpuService {
     }
 
     private void handleProgramEndInterrupt() {
-
+        System.out.println("程序结束");
+        ProcessController.getInstance().destroy(interruptSource[0]);
+        clearInterrupt(INTERRUPT.ProgramEnd);
+        clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
 
     private void handleTimeSliceEndInterrupt() {
