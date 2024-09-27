@@ -22,6 +22,9 @@ public class ProcessController implements Module {
         processService = new ProcessService();
     }
 
+    /**进程调度(新进程)
+     *
+     */
     public void schedule(){
         processService.processSchedule();
     }

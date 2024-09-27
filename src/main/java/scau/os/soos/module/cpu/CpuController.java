@@ -26,9 +26,8 @@ public class CpuController implements Module {
      * @param process 中断源
      * @return true:成功 false:失败
      */
-
     public boolean requestInterrupt(INTERRUPT interruptType, Process process){
-        return cpuService.interrupt(interruptType,process);
+        return cpuService.requestInterrupt(interruptType,process);
     }
 
     /**

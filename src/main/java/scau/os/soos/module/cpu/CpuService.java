@@ -12,7 +12,7 @@ public class CpuService {
 
     private CPU_STATES cpuState;                                            // CPU状态
 
-    private Process[] interruptSource;                                      // 中断源
+    private final Process[] interruptSource;                                // 中断源
 
 
 
@@ -22,7 +22,7 @@ public class CpuService {
         interruptSource = new Process[3];
     }
 
-    public boolean interrupt(INTERRUPT interruptType, Process process){
+    public boolean requestInterrupt(INTERRUPT interruptType, Process process){
         if((reg.getPSW() & (1 << interruptType.ordinal())) > 0){
             return false;
         }
@@ -36,7 +36,7 @@ public class CpuService {
         System.out.println("执行指令 clock:"+ OS.clock.get());
     }
 
-    public void executeInterrupt() {
+    public void detectInterrupt() {
         //中断检测
         if ((reg.getPSW() & 0b001) > 0) {
             handleProgramEndInterrupt();
@@ -47,7 +47,6 @@ public class CpuService {
         if ((reg.getPSW() & 0b100) > 0) {
             handleIOInterrupt();
         }
-
     }
 
     private void handleProgramEndInterrupt() {
