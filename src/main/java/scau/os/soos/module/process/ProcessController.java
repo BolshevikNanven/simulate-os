@@ -25,7 +25,7 @@ public class ProcessController implements Module {
      *
      */
     public void schedule(){
-        // 判断就绪队列是否为空 - 绑时钟
+        // 判断就绪队列是否为空
 
         // 判断CPU是否空闲
 

@@ -71,6 +71,7 @@ public class CpuService {
         System.out.println("中断-程序结束");
         unload();
         ProcessController.getInstance().destroy(interruptSource[0]);
+        ProcessController.getInstance().schedule();
         clearInterrupt(INTERRUPT.ProgramEnd);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
@@ -83,7 +84,8 @@ public class CpuService {
         runningProcess.getPcb().setPC(reg.getPC());
         runningProcess.getPcb().setAX(reg.getAX());
         unload();
-        ProcessController.getInstance().block(runningProcess);
+        //ProcessController.getInstance().block(runningProcess);
+        ProcessController.getInstance().schedule();
         clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
 
@@ -95,6 +97,7 @@ public class CpuService {
         ProcessController.getInstance().wake(interruptSource[2]);
         ProcessController.getInstance().wake(interruptSource[2].getDeviceType());
         // TODO 要不要发出进程调度
+        ProcessController.getInstance().schedule();
         clearInterrupt(INTERRUPT.IO);
     }
 
