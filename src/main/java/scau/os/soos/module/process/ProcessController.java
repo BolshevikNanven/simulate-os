@@ -6,8 +6,6 @@ import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.MyFile;
 import scau.os.soos.module.process.model.Process;
 
-import java.io.File;
-
 public class ProcessController implements Module {
     private static ProcessController instance;
     private final ProcessService processService;
@@ -39,10 +37,7 @@ public class ProcessController implements Module {
      * @return Process
      */
     public Process create(MyFile file){
-        // 1.申请进程控制块
-        // 2.申请内存空间
-        // 3.初始化进程
-        return null;
+        return processService.create(file);
     }
 
     /**进程销毁
@@ -68,6 +63,11 @@ public class ProcessController implements Module {
      * @param process
      */
     public void block(Process process){}
+
+    /**进程切换
+     * @param process
+     */
+    public void handoff(Process process){}
 
     /**查询进程用户区地址
      * @param process

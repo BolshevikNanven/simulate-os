@@ -1,18 +1,38 @@
 package scau.os.soos.module.process.model;
 
-import scau.os.soos.module.cpu.CpuController;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class EmptyPCBQueue {
-    private static final int PCB_COUNT = 10;
+    // 最大PCB数量
+    private final int maxPCBCount;
+    // 空白PCB队列
     private final Queue<PCB> emptyPCBQueue;
 
-    public EmptyPCBQueue() {
+    public EmptyPCBQueue(int maxPCBCount) {
+        this.maxPCBCount = maxPCBCount;
         this.emptyPCBQueue = new LinkedList<>();
-        for (int i = 0; i < PCB_COUNT; i++) {
-
+        // 初始化空闲PCB队列
+        for (int i = 0; i < maxPCBCount; i++) {
+            emptyPCBQueue.add(new PCB());
         }
+    }
+
+    // 申请一个空白PCB
+    public PCB applyEmptyPCB(){
+        return emptyPCBQueue.poll();
+    }
+
+    // 归还一个空白PCB
+    public boolean returnEmptyPCB(){
+        if(emptyPCBQueue.size() < maxPCBCount){
+            return emptyPCBQueue.offer(new PCB());
+        }
+        return false;
+    }
+
+    // 判断空闲PCB队列是否为空
+    public boolean isEmpty(){
+        return emptyPCBQueue.isEmpty();
     }
 }
