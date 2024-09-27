@@ -54,7 +54,9 @@ public class ProcessController implements Module {
      * 遍历对应等待设备的进程队列，唤醒其中一个进程
      * @param deviceType
      */
-    public void wake(DEVICE_TYPE deviceType){}
+    public void wake(DEVICE_TYPE deviceType){
+        // 要判断下设备数量 防止多个模块重复唤醒
+    }
 
     /**进程唤醒
      * 唤醒指定进程

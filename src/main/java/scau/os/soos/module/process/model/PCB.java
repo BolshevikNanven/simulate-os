@@ -19,6 +19,8 @@ public class PCB {
     // 进程当前内存地址
     private int memoryAddress;
 
+    private int AX;
+
     public PCB() {
         this.pid = pidCount++;
         this.status = PROCESS_STATES.NEW;
@@ -66,5 +68,13 @@ public class PCB {
 
     public void setMemoryAddress(int memoryAddress) {
         this.memoryAddress = memoryAddress;
+    }
+
+    public int getAX() {
+        return AX;
+    }
+
+    public void setAX(int AX) {
+        this.AX = AX;
     }
 }
