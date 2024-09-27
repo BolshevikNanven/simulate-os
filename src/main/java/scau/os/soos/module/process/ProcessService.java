@@ -1,8 +1,5 @@
 package scau.os.soos.module.process;
 
-import scau.os.soos.common.enums.INTERRUPT;
-import scau.os.soos.module.cpu.CpuController;
-
 import java.util.ArrayList;
 
 public class ProcessService {
