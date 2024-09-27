@@ -10,19 +10,11 @@ public class ReadyQueue {
         this.readyQueue = new LinkedList<>();
     }
 
-    public boolean offerProcess(PCB process){
-        return this.readyQueue.offer(process);
+    public boolean offerPCB(Process process){
+        return this.readyQueue.offer(process.getPCB());
     }
 
-    public boolean isEmpty() {
-        return this.readyQueue.isEmpty();
-    }
-
-    public PCB pollProcess() {
+    public PCB pollPCB() {
         return this.readyQueue.poll();
-    }
-
-    public Queue<PCB> getReadyQueue() {
-        return this.readyQueue;
     }
 }
