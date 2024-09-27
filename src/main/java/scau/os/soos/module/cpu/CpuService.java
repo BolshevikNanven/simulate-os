@@ -139,10 +139,12 @@ public class CpuService {
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
                 DeviceController.getInstance().assign(deviceType,time, runningProcess);
                 ProcessController.getInstance().block(runningProcess);
+                setCpuState(CPU_STATES.IDLE);
                 // TODO 进程调度 ：cpu 还是 进程管理 ？
             }
             case 0b0101 -> {
                 System.out.println("程序结束");
+                requestInterrupt(INTERRUPT.ProgramEnd, runningProcess);
                 setCpuState(CPU_STATES.IDLE);
             }
         }
