@@ -19,19 +19,19 @@ public class MemoryController implements Module {
     }
 
     public boolean allocate(PCB pcb,int size) {
-
+        return false;
     }
 
     public boolean free(PCB pcb) {
-
+        return false;
     }
 
     public int read(int address) {
-
+        return 0;
     }
 
-    public boolean write(int address, int content) {
-
+    public boolean write(int address, Object content) {
+        return false;
     }
 
     @Override

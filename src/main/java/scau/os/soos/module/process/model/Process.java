@@ -52,4 +52,5 @@ public class Process {
     public PCB getPcb() {
         return pcb;
     }
+
 }

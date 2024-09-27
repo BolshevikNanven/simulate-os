@@ -19,15 +19,16 @@ public class EmptyPCBQueue {
     }
 
     // 申请一个空白PCB
-    public PCB applyEmptyPCB(){
+    public PCB applyEmptyPCB() {
         return emptyPCBQueue.poll();
     }
 
     // 归还一个空白PCB
-    public boolean recycleEmptyPCB(){
-        if(emptyPCBQueue.size() < maxPCBCount){
+    public boolean recycleEmptyPCB() {
+        if (emptyPCBQueue.size() < maxPCBCount) {
             return emptyPCBQueue.offer(new PCB());
         }
         return false;
     }
+
 }
