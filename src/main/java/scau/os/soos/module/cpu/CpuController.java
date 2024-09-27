@@ -1,6 +1,7 @@
 package scau.os.soos.module.cpu;
 
 import scau.os.soos.common.OS;
+import scau.os.soos.common.enums.CPU_STATES;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.process.model.Process;
@@ -47,13 +48,17 @@ public class CpuController implements Module {
 
     }
 
+    public CPU_STATES getCpuState(){
+        return cpuService.getCpuState();
+    }
+
     @Override
     public void run() {
         OS.clock.bind(() -> {
-//            //中断检测
-//            cpuService.executeInterrupt();
-//            //执行指令
-//            cpuService.executeInstruction();
+            //中断检测
+            cpuService.detectInterrupt();
+            //执行指令
+            cpuService.executeInstruction();
         });
     }
 }

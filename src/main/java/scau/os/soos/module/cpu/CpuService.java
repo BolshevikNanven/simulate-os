@@ -16,7 +16,7 @@ public class CpuService {
 
     private final Process[] interruptSource;                                // 中断源
 
-    private final Process runningProcess;                                   // 运行进程
+    private Process runningProcess;                                   // 运行进程
 
 
 
@@ -69,6 +69,7 @@ public class CpuService {
      */
     private void handleProgramEndInterrupt() {
         System.out.println("中断-程序结束");
+        unload();
         ProcessController.getInstance().destroy(interruptSource[0]);
         clearInterrupt(INTERRUPT.ProgramEnd);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
@@ -79,6 +80,7 @@ public class CpuService {
      */
     private void handleTimeSliceEndInterrupt() {
         System.out.println("中断-时间片结束");
+        unload();
         ProcessController.getInstance().schedule();
         clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
@@ -140,14 +142,21 @@ public class CpuService {
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
                 DeviceController.getInstance().assign(deviceType,time, runningProcess);
                 ProcessController.getInstance().block(runningProcess);
-                setCpuState(CPU_STATES.IDLE);
+                unload();
                 // TODO 进程调度 ：cpu 还是 进程管理 ？
             }
             case 0b0101 -> {
                 System.out.println("程序结束");
                 requestInterrupt(INTERRUPT.ProgramEnd, runningProcess);
-                setCpuState(CPU_STATES.IDLE);
             }
         }
+    }
+
+    /**
+     * 进程下处理机
+     */
+    public void unload(){
+        runningProcess = null;
+        cpuState = CPU_STATES.IDLE;
     }
 }
