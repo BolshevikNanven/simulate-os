@@ -18,7 +18,7 @@ public class MemoryController implements Module {
         memoryService = new MemoryService();
     }
 
-    public boolean allocate(PCB pcb) {
+    public boolean allocate(PCB pcb,int size) {
 
     }
 

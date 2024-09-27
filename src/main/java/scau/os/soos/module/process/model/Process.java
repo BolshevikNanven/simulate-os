@@ -31,4 +31,8 @@ public class Process {
     public void setDeviceType(DEVICE_TYPE deviceType) {
         this.deviceType = deviceType;
     }
+
+    public PCB getPcb() {
+        return pcb;
+    }
 }
