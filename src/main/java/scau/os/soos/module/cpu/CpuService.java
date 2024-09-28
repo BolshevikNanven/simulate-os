@@ -195,4 +195,8 @@ public class CpuService {
         runningProcess = null;
         cpuState = CPU_STATES.IDLE;
     }
+
+    public Process getCurrentProcess() {
+        return this.runningProcess;
+    }
 }
