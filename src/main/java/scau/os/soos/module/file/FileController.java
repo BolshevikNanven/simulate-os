@@ -46,7 +46,9 @@ public class FileController implements Module {
     /**
      * 读文件
      */
-    public void readFile() {}
+    public Object readFile(MyFile file) {
+        return null;
+    }
 
     /**
      * 拷贝文件
@@ -68,5 +70,9 @@ public class FileController implements Module {
     @Override
     public void run() {
 
+    }
+
+    public int getFileSize(MyFile file) {
+        return 0;
     }
 }

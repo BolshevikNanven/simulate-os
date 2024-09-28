@@ -1,5 +1,7 @@
 package scau.os.soos.module.process.model;
 
+import scau.os.soos.common.enums.DEVICE_TYPE;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -20,6 +22,15 @@ public class BlockingQueue {
 
     public boolean removePCB(PCB pcb) {
         return this.blockingQueue.remove(pcb);
+    }
+
+    public Process removePCB(DEVICE_TYPE deviceType) {
+        for (PCB pcb : this.blockingQueue) {
+            if (pcb.getProcess().getDeviceType() == deviceType) {
+                return pcb.getProcess();
+            }
+        }
+        return null;
     }
 
 }

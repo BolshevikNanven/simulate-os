@@ -1,5 +1,3 @@
-
-
 package scau.os.soos.module.process.model;
 
 import java.util.LinkedList;
