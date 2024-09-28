@@ -17,7 +17,7 @@ public class CpuService {
 
     private final Process[] interruptSource;                                // 中断源
 
-    private Process runningProcess;                                   // 运行进程
+    private Process runningProcess;                                         // 运行进程
 
 
 
