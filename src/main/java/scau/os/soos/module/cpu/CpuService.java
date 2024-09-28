@@ -96,8 +96,10 @@ public class CpuService {
      */
     private void handleTimeSliceEndInterrupt() {
         System.out.println("中断-时间片结束");
+        // 保护CPU现场
         runningProcess.getPcb().setPC(reg.getPC());
         runningProcess.getPcb().setAX(reg.getAX());
+
         unload();
         ProcessController.getInstance().block(runningProcess);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
