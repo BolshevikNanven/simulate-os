@@ -17,7 +17,7 @@ public class CpuService {
 
     private final Process[] interruptSource;                                // 中断源
 
-    private Process runningProcess;                                   // 运行进程
+    private Process runningProcess;                                         // 运行进程
 
 
 
@@ -65,16 +65,16 @@ public class CpuService {
      * 处理进程
      * @param process
      */
-    public void handleProcess(Process process) {
+    public boolean handleProcess(Process process) {
         if(runningProcess != null){
-            return;
+            return false;
         }
         runningProcess = process;
         cpuState = CPU_STATES.BUSY;
         // 恢复CPU现场
-        reg.setPC(process.getPcb().getPC()); // 创建进程pc要为0
+        reg.setPC(process.getPcb().getPC()); // 创建进程pc要指向首地址
         reg.setAX(process.getPcb().getAX());
-
+        return true;
     }
 
     /**

@@ -34,19 +34,11 @@ public class CpuController implements Module {
     /**
      * 处理进程
      */
-    public void handleProcess(Process process){
-        cpuService.handleProcess(process);
+    public boolean handleProcess(Process process){
+        return cpuService.handleProcess(process);
     }
 
-    /**
-     * 设置CPU上下文
-     * @param ax
-     * @param pc
-     * @param psw
-     */
-    public void setContext(int ax,int pc,int psw) {
 
-    }
 
     public CPU_STATES getCpuState(){
         return cpuService.getCpuState();
