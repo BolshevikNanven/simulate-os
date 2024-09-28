@@ -72,8 +72,8 @@ public class CpuService {
         runningProcess = process;
         cpuState = CPU_STATES.BUSY;
         // 恢复CPU现场
-        reg.setPC(process.getPcb().getPC()); // 创建进程pc要指向首地址
-        reg.setAX(process.getPcb().getAX());
+        reg.setPC(process.getPCB().getPC()); // 创建进程pc要指向首地址
+        reg.setAX(process.getPCB().getAX());
         return true;
     }
 
@@ -98,10 +98,12 @@ public class CpuService {
     private void handleProgramEndInterrupt() {
         System.out.println("中断-程序结束");
         unload();
+
         ProcessController.getInstance().destroy(interruptSource[0]);
+        ProcessController.getInstance().schedule();
+
         clearInterrupt(INTERRUPT.ProgramEnd);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
-        ProcessController.getInstance().schedule();
     }
 
     /**
@@ -110,13 +112,15 @@ public class CpuService {
     private void handleTimeSliceEndInterrupt() {
         System.out.println("中断-时间片结束");
         // 保护CPU现场
-        runningProcess.getPcb().setPC(reg.getPC());
-        runningProcess.getPcb().setAX(reg.getAX());
+        runningProcess.getPCB().setPC(reg.getPC());
+        runningProcess.getPCB().setAX(reg.getAX());
 
         unload();
+
         ProcessController.getInstance().handoff(runningProcess);
-        clearInterrupt(INTERRUPT.TimeSliceEnd);
         ProcessController.getInstance().schedule();
+
+        clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
 
     /**
@@ -126,8 +130,9 @@ public class CpuService {
         System.out.println("中断-IO中断");
         ProcessController.getInstance().wake(interruptSource[2]);
         //ProcessController.getInstance().wake(interruptSource[2].getDeviceType()); ??? 设备分配时钟检测？
-        clearInterrupt(INTERRUPT.IO);
         ProcessController.getInstance().schedule();
+
+        clearInterrupt(INTERRUPT.IO);
     }
 
 
@@ -174,7 +179,9 @@ public class CpuService {
                 int time = tmp >> 2;
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
+
                 unload();
+
                 ProcessController.getInstance().block(runningProcess);
                 DeviceController.getInstance().assign(deviceType,time, runningProcess);
                 ProcessController.getInstance().schedule();
