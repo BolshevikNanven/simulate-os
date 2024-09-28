@@ -88,6 +88,7 @@ public class CpuService {
         ProcessController.getInstance().destroy(interruptSource[0]);
         clearInterrupt(INTERRUPT.ProgramEnd);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
+        ProcessController.getInstance().schedule();
     }
 
     /**
@@ -100,6 +101,7 @@ public class CpuService {
         unload();
         ProcessController.getInstance().block(runningProcess);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
+        ProcessController.getInstance().schedule();
     }
 
     /**
@@ -109,8 +111,8 @@ public class CpuService {
         System.out.println("中断-IO中断");
         ProcessController.getInstance().wake(interruptSource[2]);
         ProcessController.getInstance().wake(interruptSource[2].getDeviceType());
-        // TODO 要不要发出进程调度
         clearInterrupt(INTERRUPT.IO);
+        ProcessController.getInstance().schedule();
     }
 
 
@@ -158,9 +160,9 @@ public class CpuService {
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
                 unload();
-                DeviceController.getInstance().assign(deviceType,time, runningProcess);
                 ProcessController.getInstance().block(runningProcess);
-                // TODO 进程调度 ：cpu 还是 进程管理 ？
+                DeviceController.getInstance().assign(deviceType,time, runningProcess);
+                ProcessController.getInstance().schedule();
             }
             case 0b0101 -> {
                 System.out.println("程序结束");
