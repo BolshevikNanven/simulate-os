@@ -6,11 +6,11 @@ import java.util.Queue;
 public class BlockingQueue {
     private final Queue<PCB> blockingQueue;
 
-    public BlockingQueue(){
+    public BlockingQueue() {
         this.blockingQueue = new LinkedList<>();
     }
 
-    public boolean offerPCB(Process process){
+    public boolean offerPCB(Process process) {
         return this.blockingQueue.offer(process.getPCB());
     }
 
@@ -18,7 +18,8 @@ public class BlockingQueue {
         return this.blockingQueue.isEmpty();
     }
 
-    public boolean removePCB(PCB pcb){
+    public boolean removePCB(PCB pcb) {
         return this.blockingQueue.remove(pcb);
     }
+
 }

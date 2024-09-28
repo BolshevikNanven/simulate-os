@@ -6,8 +6,6 @@ import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.MyFile;
 import scau.os.soos.module.process.model.Process;
 
-import java.io.File;
-
 public class ProcessController implements Module {
     private static ProcessController instance;
     private final ProcessService processService;
@@ -27,7 +25,7 @@ public class ProcessController implements Module {
      *
      */
     public void schedule(){
-        // 判断就绪队列是否为空 - 绑时钟
+        // 判断就绪队列是否为空
 
         // 判断CPU是否空闲
 
@@ -39,16 +37,15 @@ public class ProcessController implements Module {
      * @return Process
      */
     public Process create(MyFile file){
-        // 1.申请进程控制块
-        // 2.申请内存空间
-        // 3.初始化进程
-        return null;
+        return processService.create(file);
     }
 
     /**进程销毁
      * @param process
      */
-    public void destroy(Process process){}
+    public void destroy(Process process){
+        processService.destroy(process);
+    }
 
     /**进程唤醒
      * 遍历对应等待设备的进程队列，唤醒其中一个进程
@@ -56,34 +53,35 @@ public class ProcessController implements Module {
      */
     public void wake(DEVICE_TYPE deviceType){
         // 要判断下设备数量 防止多个模块重复唤醒
+        processService.wake(deviceType);
     }
 
     /**进程唤醒
      * 唤醒指定进程
      * @param process
      */
-    public void wake(Process process){}
+    public void wake(Process process){
+        processService.wake(process);
+    }
 
     /**进程阻塞
      * @param process
      */
-    public void block(Process process){}
-
-    /**查询进程用户区地址
-     * @param process
-     */
-    public int getProcessUserAreaAddress(Process process){
-        return 0;
+    public void block(Process process){
+        processService.block(process);
     }
 
-    /**查询进程系统区地址
+    /**进程切换
      * @param process
      */
-    public int getProcessSystemAreaAddress(Process process){
-        return 0;
+    public void handoff(Process process){
+        processService.handoff(process);
     }
+
     @Override
     public void run() {
         OS.clock.bind(processService::clockSchedule);
     }
+
 }
+
