@@ -1,13 +1,8 @@
 package scau.os.soos.module.file;
 
-import scau.os.soos.module.file.model.MyFile;
-
 public class FileService {
-    public int getFileSize(MyFile myFile) {
+    // 查找空闲磁盘块的编号
+    public int findFreeDiskBlock() {
         return 0;
-    }
-
-    public Object readFile(MyFile myFile) {
-        return null;
     }
 }

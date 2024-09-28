@@ -5,7 +5,6 @@ import scau.os.soos.module.device.DeviceController;
 import scau.os.soos.module.device.DeviceService;
 import scau.os.soos.module.file.model.MyFile;
 
-
 public class FileController implements Module {
     private static FileController instance;
     private final FileService fileService;
@@ -24,7 +23,15 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public void createFile() {}
+    public void createFile(String fileName){
+        if(fileName.contains(".e")){
+            int disknum = fileService.findFreeDiskBlock();
+            MyFile myFile = new MyFile(fileName,0,"e","exe",disknum,1);
+        }else{
+            int disknum = fileService.findFreeDiskBlock();
+            MyFile myFile = new MyFile(fileName,0,"d","txt",disknum,1);
+        }
+    }
 
     /**
      * 删除文件
@@ -39,9 +46,7 @@ public class FileController implements Module {
     /**
      * 读文件
      */
-    public Object readFile(MyFile myFile) {
-        return fileService.readFile(myFile);
-    }
+    public void readFile() {}
 
     /**
      * 拷贝文件
@@ -58,12 +63,7 @@ public class FileController implements Module {
      */
     public void deleteDirectory() {}
 
-    /**
-     * 获取文件大小
-     */
-    public int getFileSize(MyFile myFile){
-        return fileService.getFileSize(myFile);
-    }
+
 
     @Override
     public void run() {

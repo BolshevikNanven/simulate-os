@@ -35,7 +35,7 @@ public class CpuController implements Module {
      * 处理进程
      */
     public void handleProcess(Process process){
-
+        cpuService.handleProcess(process);
     }
 
     /**
@@ -57,7 +57,7 @@ public class CpuController implements Module {
         OS.clock.bind(() -> {
             //中断检测
             cpuService.detectInterrupt();
-            //执行指令
+            //空闲则发起调度进程
             cpuService.executeInstruction();
         });
     }
