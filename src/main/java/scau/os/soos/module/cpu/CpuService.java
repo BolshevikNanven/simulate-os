@@ -6,6 +6,7 @@ import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.cpu.model.Register;
 import scau.os.soos.module.device.DeviceController;
+import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.process.model.Process;
 
@@ -43,9 +44,23 @@ public class CpuService {
     }
 
     public void executeInstruction() {
-        //...
-        System.out.println("执行指令 clock:"+ OS.clock.get());
-        reg.incPC(); // PC ++
+        int pc = reg.getPC();
+        reg.setIR(MemoryController.getInstance().read(pc)); // 读取指令
+        decodeInstruction();                                // 指令译码
+        reg.incPC();                                        // 更新PC
+    }
+
+    public void schedule() {
+        if (runningProcess !=null ) {
+            return;
+        }
+        ProcessController.getInstance().schedule();
+    }
+
+    public void handleProcess(Process process) {
+        if(runningProcess != null){
+            return;
+        }
     }
 
     /**
@@ -117,9 +132,6 @@ public class CpuService {
         reg.setPSW(reg.getPSW() & ~(1 << interruptType.ordinal()));
     }
 
-    public void setCpuState(CPU_STATES cpuState) {
-        this.cpuState = cpuState;
-    }
 
     public CPU_STATES getCpuState() {
         return cpuState;
@@ -136,6 +148,7 @@ public class CpuService {
      */
     public void decodeInstruction() {
         int instruction = reg.getIR();
+        System.out.println("clock:"+ OS.clock.get() + "执行指令" + Integer.toBinaryString(instruction));
         int op = instruction >> 4;
         int tmp = instruction & 0b00001111;
         switch (op) {
@@ -157,6 +170,8 @@ public class CpuService {
             }
         }
     }
+
+
 
     /**
      * 进程下处理机
