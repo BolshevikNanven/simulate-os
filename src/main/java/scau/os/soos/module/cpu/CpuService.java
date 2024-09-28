@@ -61,6 +61,10 @@ public class CpuService {
     }
 
 
+    /**
+     * 处理进程
+     * @param process
+     */
     public void handleProcess(Process process) {
         if(runningProcess != null){
             return;
@@ -77,14 +81,13 @@ public class CpuService {
      * 检测中断
      */
     public void detectInterrupt() {
-        //中断检测
         if ((reg.getPSW() & 0b001) > 0) {
             handleProgramEndInterrupt();
         }
-        if ((reg.getPSW() & 0b010) > 0) {
+        else if ((reg.getPSW() & 0b010) > 0) {
             handleTimeSliceEndInterrupt();
         }
-        if ((reg.getPSW() & 0b100) > 0) {
+        else if ((reg.getPSW() & 0b100) > 0) {
             handleIOInterrupt();
         }
     }
