@@ -3,6 +3,7 @@ package scau.os.soos.module.file;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.device.DeviceController;
 import scau.os.soos.module.device.DeviceService;
+import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.MyFile;
 
 public class FileController implements Module {
@@ -23,14 +24,8 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public void createFile(String fileName){
-        if(fileName.contains(".e")){
-            int disknum = fileService.findFreeDiskBlock();
-            MyFile myFile = new MyFile(fileName,0,"e","exe",disknum,1);
-        }else{
-            int disknum = fileService.findFreeDiskBlock();
-            MyFile myFile = new MyFile(fileName,0,"d","txt",disknum,1);
-        }
+    public MyFile createFile(String fileName){
+        return fileService.createFile(fileName);
     }
 
     /**
@@ -65,14 +60,14 @@ public class FileController implements Module {
      */
     public void deleteDirectory() {}
 
+    public int getFileSize(MyFile filename) {
+        return fileService.getFileSize(filename);
+    }
+
 
 
     @Override
     public void run() {
 
-    }
-
-    public int getFileSize(MyFile file) {
-        return 0;
     }
 }
