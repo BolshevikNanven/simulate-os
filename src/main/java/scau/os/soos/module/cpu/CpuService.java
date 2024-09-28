@@ -72,7 +72,7 @@ public class CpuService {
         runningProcess = process;
         cpuState = CPU_STATES.BUSY;
         // 恢复CPU现场
-        reg.setPC(process.getPcb().getPC()); // 创建进程pc要为0！！！
+        reg.setPC(process.getPcb().getPC()); // 创建进程pc要为0
         reg.setAX(process.getPcb().getAX());
 
     }
