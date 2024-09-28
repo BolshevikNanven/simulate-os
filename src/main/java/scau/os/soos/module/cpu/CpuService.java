@@ -43,24 +43,34 @@ public class CpuService {
         return true;
     }
 
+    /**
+     * 执行指令
+     * 空转则调度进程
+     */
     public void executeInstruction() {
+        if (runningProcess == null) {
+            // 空转 -> 调度进程
+            ProcessController.getInstance().schedule();
+        }
         int pc = reg.getPC();
         reg.setIR(MemoryController.getInstance().read(pc)); // 读取指令
         decodeInstruction();                                // 指令译码
         reg.incPC();                                        // 更新PC
+
+        //TODO: 设计空闲进程
     }
 
-    public void schedule() {
-        if (runningProcess !=null ) {
-            return;
-        }
-        ProcessController.getInstance().schedule();
-    }
 
     public void handleProcess(Process process) {
         if(runningProcess != null){
             return;
         }
+        runningProcess = process;
+        cpuState = CPU_STATES.BUSY;
+        // 恢复CPU现场
+        reg.setPC(process.getPcb().getPC()); // 创建进程pc要为0！！！
+        reg.setAX(process.getPcb().getAX());
+
     }
 
     /**
