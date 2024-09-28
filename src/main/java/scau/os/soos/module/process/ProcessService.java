@@ -102,10 +102,6 @@ public class ProcessService {
 
         // 2.修改进程状态
         process.getPCB().setStatus(PROCESS_STATES.RUNNING);
-
-        // 3.更新当前进程
-        CpuController.getInstance().setCurrentProcess(process);
-
         System.out.println("-------Process-------进程调度成功");
     }
 
@@ -186,3 +182,5 @@ public class ProcessService {
         System.out.println("-------Process-------进程切换成功");
     }
 }
+
+
