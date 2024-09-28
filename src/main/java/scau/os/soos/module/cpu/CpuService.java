@@ -114,7 +114,7 @@ public class CpuService {
         runningProcess.getPcb().setAX(reg.getAX());
 
         unload();
-        ProcessController.getInstance().block(runningProcess);
+        ProcessController.getInstance().handoff(runningProcess);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
         ProcessController.getInstance().schedule();
     }
