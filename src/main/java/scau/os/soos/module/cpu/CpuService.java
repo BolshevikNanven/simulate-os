@@ -125,7 +125,7 @@ public class CpuService {
     private void handleIOInterrupt() {
         System.out.println("中断-IO中断");
         ProcessController.getInstance().wake(interruptSource[2]);
-        ProcessController.getInstance().wake(interruptSource[2].getDeviceType());
+        //ProcessController.getInstance().wake(interruptSource[2].getDeviceType()); ??? 设备分配时钟检测？
         clearInterrupt(INTERRUPT.IO);
         ProcessController.getInstance().schedule();
     }
