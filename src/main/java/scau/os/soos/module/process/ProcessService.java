@@ -2,12 +2,12 @@ package scau.os.soos.module.process;
 
 import scau.os.soos.common.enums.CPU_STATES;
 import scau.os.soos.common.enums.DEVICE_TYPE;
+import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
 import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.MyFile;
 import scau.os.soos.module.memory.MemoryController;
-import scau.os.soos.module.memory.model.Memory;
 import scau.os.soos.module.process.model.BlockingQueue;
 import scau.os.soos.module.process.model.EmptyPCBQueue;
 import scau.os.soos.module.process.model.PCB;
@@ -32,8 +32,13 @@ public class ProcessService {
         this.blockingQueue = new BlockingQueue();
     }
 
-    // 进程创建
+    // 新建 -> 就绪
     public Process create(MyFile file) {
+        if (file == null) {
+            System.out.println("-------Process-------文件为空");
+            return null;
+        }
+
         // 1.申请空白进程控制块
         PCB newPCB = emptyPCBQueue.applyEmptyPCB();
         if (newPCB == null) {
@@ -45,7 +50,7 @@ public class ProcessService {
         int fileSize = FileController.getInstance().getFileSize(file);
 
         // 3.申请内存空间,装入内存系统区
-        if (MemoryController.getInstance().allocate(newPCB,fileSize)) {
+        if (MemoryController.getInstance().allocate(newPCB, fileSize)) {
             System.out.println("-------Process-------进程内存申请失败");
             return null;
         }
@@ -71,116 +76,169 @@ public class ProcessService {
     }
 
     public void clockSchedule() {
-//        // 判断就绪队列是否为空
-//        if (readyQueue.isEmpty()) {
-//            System.out.println("-------Process-------就绪队列为空，无法调度");
-//            return;
-//        }
-//
-//        // 判断cpu空闲
-//        if (CpuController.getInstance().getCpuState() == CPU_STATES.BUSY) {
-//            System.out.println("-------Process-------CPU繁忙，无法调度");
-//            return;
-//        }
-//
-//        // 调度进程上处理机
-//        Process process = readyQueue.pollPCB().getProcess();
-//        if (process != null) {
-//            processSchedule(process);
-//        }
+        // 判断就绪队列是否为空
+
+        // 判断cpu空闲
+
+        // 调度进程上处理机
     }
 
-    public void processSchedule() {
-        System.out.println("调度新进程");
+    // 就绪 -> 运行
+    public boolean processSchedule() {
+        System.out.println("-------Process-------调度新进程");
 
         // 1.从就绪队列中选择一个进程
         Process process = readyQueue.pollPCB().getProcess();
-        if(process == null) {
-            System.out.println("-------Process-------进程为空");
-            return;
+        if (process == null) {
+            System.out.println("-------Process-------就绪队列为空");
+            return false;
         }
 
-        // 2.修改进程状态
+        // 2.判断CPU是否空闲
+        if (CpuController.getInstance().getCpuState() == CPU_STATES.BUSY) {
+            System.out.println("-------Process-------CPU繁忙");
+            return false;
+        }
+
+        // 3.恢复现场
+        if (!CpuController.getInstance().handleProcess(process)) {
+            System.out.println("-------Process-------恢复现场失败");
+            // 将进程放入就绪队列
+            readyQueue.offerPCB(process);
+            return false;
+        }
+
+        // 4.修改进程状态
         process.getPCB().setStatus(PROCESS_STATES.RUNNING);
         System.out.println("-------Process-------进程调度成功");
+        return true;
     }
 
-    // 进程撤销
-    public void destroy(Process process) {
+    // 运行 -> 退出
+    public boolean destroy(Process process) {
+        // 1.判断当前进程是否为空
         if (process == null) {
-            System.out.println("-------Process-------进程为空");
-            return;
+            System.out.println("-------Process-------当前进程为空");
+            return false;
         }
 
-        // 1.回收进程内存
-        MemoryController.getInstance().free(process.getPCB());
-        // 2.回收进程控制块
+        // 2.回收进程内存
+        if (!MemoryController.getInstance().free(process.getPCB())) {
+            System.out.println("-------Process-------回收进程内存失败");
+            return false;
+        }
+        // 3.回收进程控制块
         // 设置进程为终止态度
         process.getPCB().setStatus(PROCESS_STATES.TERMINATED);
-        emptyPCBQueue.recycleEmptyPCB();
-        System.out.println("-------Process-------进程销毁成功");
-    }
-
-    // 进程唤醒
-    public void wake(DEVICE_TYPE deviceType) {
-
-    }
-
-    // 进程唤醒
-    public void wake(Process process) {
-        if (process == null) {
-            System.out.println("-------Process-------进程为空");
-            return;
+        if (!emptyPCBQueue.recycleEmptyPCB()) {
+            System.out.println("-------Process-------回收进程控制块失败");
+            return false;
         }
+        System.out.println("-------Process-------进程销毁成功");
+        return true;
+    }
 
+    // 阻塞 -> 就绪
+    public boolean wake(DEVICE_TYPE deviceType) {
+        // ??? 要判断下设备数量 防止多个模块重复唤醒 ???
+
+        // 1.判断阻塞队列是否为空
         if (blockingQueue.isEmpty()) {
             System.out.println("-------Process-------阻塞队列为空");
-            return;
+            return false;
         }
 
-        // 1.进程唤醒的主要工作是将进程由阻塞队列中摘下
-        if (!blockingQueue.removePCB(process.getPCB())) {
+        // 2.将特定进程由阻塞队列中摘下
+        Process process = blockingQueue.removePCB(deviceType);
+        if (process == null) {
             System.out.println("-------Process-------阻塞队列中不存在该进程");
-            return;
+            return false;
         }
 
-        // 2.修改进程状态为就绪
+        // 3.修改进程状态为就绪
         process.getPCB().setStatus(PROCESS_STATES.READY);
 
-        // 3.链入就绪队列
+        // 4.链入就绪队列
         readyQueue.offerPCB(process);
         System.out.println("-------Process-------进程唤醒成功");
+        return true;
     }
 
-    // 进程阻塞
-    public void block(Process process) {
+    // 阻塞 -> 就绪
+    public boolean wake(Process process) {
+        // 1.判断当前进程是否为空
         if (process == null) {
-            System.out.println("-------Process-------进程为空");
-            return;
+            System.out.println("-------Process-------当前进程为空");
+            return false;
         }
 
-        // 1.修改进程状态
-        process.getPCB().setStatus(PROCESS_STATES.BLOCKED);
-
-        // 2.将进程链入对应的阻塞队列
-        blockingQueue.offerPCB(process);
-        System.out.println("-------Process-------进程阻塞成功");
-    }
-
-    // 进程切换
-    public void handoff(Process process) {
-        if (process == null) {
-            System.out.println("-------Process-------进程为空");
-            return;
+        // 2.判断阻塞队列是否为空
+        if (blockingQueue.isEmpty()) {
+            System.out.println("-------Process-------阻塞队列为空");
+            return false;
         }
 
-        // 1.修改进程状态
+        // 3.将进程由阻塞队列中摘下
+        if (!blockingQueue.removePCB(process.getPCB())) {
+            System.out.println("-------Process-------阻塞队列中不存在该进程");
+            return false;
+        }
+
+        // 4.修改进程状态为就绪
         process.getPCB().setStatus(PROCESS_STATES.READY);
 
-        // 2.将进程链入对应的就绪队列
+        // 5.链入就绪队列
+        readyQueue.offerPCB(process);
+        System.out.println("-------Process-------进程唤醒成功");
+        return true;
+    }
+
+    // 运行 -> 阻塞
+    public boolean block(Process process) {
+        // 1.判断当前进程是否为空
+        if (process == null) {
+            System.out.println("-------Process-------进程为空");
+            return false;
+        }
+
+        // 2.保存运行进程的CPU现场
+        if (!CpuController.getInstance().requestInterrupt(INTERRUPT.IO, process)) {
+            System.out.println("-------Process-------保存现场失败");
+            return false;
+        }
+
+        // 3.修改进程状态
+        process.getPCB().setStatus(PROCESS_STATES.BLOCKED);
+
+        // 4.将进程链入对应的阻塞队列
+        blockingQueue.offerPCB(process);
+        System.out.println("-------Process-------进程阻塞成功");
+        return true;
+    }
+
+    // 运行 -> 就绪
+    public boolean handoff(Process process) {
+        // 1.判断当前进程是否为空
+        if (process == null) {
+            System.out.println("-------Process-------进程为空");
+            return false;
+        }
+
+        // 2.保存运行进程的CPU现场
+        if (!CpuController.getInstance().requestInterrupt(INTERRUPT.TimeSliceEnd, process)) {
+            System.out.println("-------Process-------保存现场失败");
+            return false;
+        }
+
+        // 3.修改进程状态
+        process.getPCB().setStatus(PROCESS_STATES.READY);
+
+        // 4.将进程链入对应的就绪队列
         readyQueue.offerPCB(process);
         System.out.println("-------Process-------进程切换成功");
+        return true;
     }
+    
 }
 
 

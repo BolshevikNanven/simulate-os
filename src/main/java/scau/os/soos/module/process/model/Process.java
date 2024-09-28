@@ -33,6 +33,7 @@ public class Process {
             if (timeSlice == 0) {
                 // 时间片用完，请求中断处理
                 CpuController.getInstance().requestInterrupt(INTERRUPT.TimeSliceEnd,this);
+                resetTimeSlice();
             }
         }
     }
