@@ -1,7 +1,6 @@
 package scau.os.soos.module.process;
 
 import scau.os.soos.common.enums.CPU_STATES;
-import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
 import scau.os.soos.module.cpu.CpuController;
@@ -17,6 +16,8 @@ import scau.os.soos.module.process.model.Process;
 public class ProcessService {
     // 进程最大数量
     private static final int MAX_PROCESS_COUNT = 10;
+    // 进程最大时间片
+    private final int MAX_CLOCK = 6;
     // 进程实例数量跟踪，用于生成pid
     private int processCount = 1;
     // 空白PCB队列，用于生成进程
@@ -25,6 +26,8 @@ public class ProcessService {
     private final ReadyQueue readyQueue;
     // 阻塞队列
     private final BlockingQueue blockingQueue;
+    // 时间片
+    private int currentProcessTimeSlice;
 
     public ProcessService() {
         this.emptyPCBQueue = new EmptyPCBQueue(MAX_PROCESS_COUNT);
@@ -33,7 +36,7 @@ public class ProcessService {
     }
 
     // 新建 -> 就绪
-    public Process create(MyFile file) {
+    public synchronized Process create(MyFile file) {
         if (file == null) {
             System.out.println("-------Process-------文件为空");
             return null;
@@ -75,32 +78,24 @@ public class ProcessService {
         return process;
     }
 
-    public void clockSchedule() {
-        // 判断就绪队列是否为空
-
-        // 判断cpu空闲
-
-        // 调度进程上处理机
-    }
-
     // 就绪 -> 运行
-    public boolean processSchedule() {
+    public synchronized boolean schedule() {
         System.out.println("-------Process-------调度新进程");
 
-        // 1.从就绪队列中选择一个进程
+        // 1.判断CPU是否空闲
+        if (CpuController.getInstance().getCpuState() == CPU_STATES.BUSY) {
+            System.out.println("-------Process-------CPU繁忙");
+            return false;
+        }
+
+        // 2.从就绪队列中选择一个新进程
         Process process = readyQueue.pollPCB().getProcess();
         if (process == null) {
             System.out.println("-------Process-------就绪队列为空");
             return false;
         }
 
-        // 2.判断CPU是否空闲
-        if (CpuController.getInstance().getCpuState() == CPU_STATES.BUSY) {
-            System.out.println("-------Process-------CPU繁忙");
-            return false;
-        }
-
-        // 3.恢复现场
+        // 3.调度新进程上处理机
         if (!CpuController.getInstance().handleProcess(process)) {
             System.out.println("-------Process-------恢复现场失败");
             // 将进程放入就绪队列
@@ -115,7 +110,7 @@ public class ProcessService {
     }
 
     // 运行 -> 退出
-    public boolean destroy(Process process) {
+    public synchronized boolean destroy(Process process) {
         // 1.判断当前进程是否为空
         if (process == null) {
             System.out.println("-------Process-------当前进程为空");
@@ -139,33 +134,7 @@ public class ProcessService {
     }
 
     // 阻塞 -> 就绪
-    public boolean wake(DEVICE_TYPE deviceType) {
-        // ??? 要判断下设备数量 防止多个模块重复唤醒 ???
-
-        // 1.判断阻塞队列是否为空
-        if (blockingQueue.isEmpty()) {
-            System.out.println("-------Process-------阻塞队列为空");
-            return false;
-        }
-
-        // 2.将特定进程由阻塞队列中摘下
-        Process process = blockingQueue.removePCB(deviceType);
-        if (process == null) {
-            System.out.println("-------Process-------阻塞队列中不存在该进程");
-            return false;
-        }
-
-        // 3.修改进程状态为就绪
-        process.getPCB().setStatus(PROCESS_STATES.READY);
-
-        // 4.链入就绪队列
-        readyQueue.offerPCB(process);
-        System.out.println("-------Process-------进程唤醒成功");
-        return true;
-    }
-
-    // 阻塞 -> 就绪
-    public boolean wake(Process process) {
+    public synchronized boolean wake(Process process) {
         // 1.判断当前进程是否为空
         if (process == null) {
             System.out.println("-------Process-------当前进程为空");
@@ -194,51 +163,60 @@ public class ProcessService {
     }
 
     // 运行 -> 阻塞
-    public boolean block(Process process) {
+    public synchronized boolean block(Process process) {
         // 1.判断当前进程是否为空
         if (process == null) {
             System.out.println("-------Process-------进程为空");
             return false;
         }
 
-        // 2.保存运行进程的CPU现场
-        if (!CpuController.getInstance().requestInterrupt(INTERRUPT.IO, process)) {
-            System.out.println("-------Process-------保存现场失败");
-            return false;
-        }
-
-        // 3.修改进程状态
+        // 2.修改进程状态
         process.getPCB().setStatus(PROCESS_STATES.BLOCKED);
 
-        // 4.将进程链入对应的阻塞队列
+        // 3.将进程链入对应的阻塞队列
         blockingQueue.offerPCB(process);
         System.out.println("-------Process-------进程阻塞成功");
         return true;
     }
 
     // 运行 -> 就绪
-    public boolean handoff(Process process) {
+    public synchronized boolean handoff(Process process) {
         // 1.判断当前进程是否为空
         if (process == null) {
             System.out.println("-------Process-------进程为空");
             return false;
         }
 
-        // 2.保存运行进程的CPU现场
-        if (!CpuController.getInstance().requestInterrupt(INTERRUPT.TimeSliceEnd, process)) {
-            System.out.println("-------Process-------保存现场失败");
-            return false;
-        }
-
-        // 3.修改进程状态
+        // 2.修改进程状态
         process.getPCB().setStatus(PROCESS_STATES.READY);
 
-        // 4.将进程链入对应的就绪队列
+        // 3.将进程链入对应的就绪队列
         readyQueue.offerPCB(process);
         System.out.println("-------Process-------进程切换成功");
         return true;
     }
-    
+
+    public void clockSchedule() {
+        Process runningProcess = CpuController.getInstance().getCurrentProcess();
+
+        if (runningProcess == null) {
+            System.out.println("-------Process-------没有正在运行的进程");
+            return;
+        }
+
+        if (runningProcess.getPCB().getStatus() == PROCESS_STATES.RUNNING) {
+            currentProcessTimeSlice--;
+            if (currentProcessTimeSlice == 0) {
+                // 时间片用完，请求中断处理
+                CpuController.getInstance().requestInterrupt(INTERRUPT.TimeSliceEnd, runningProcess);
+                resetTimeSlice();
+            }
+        }
+    }
+
+    private void resetTimeSlice() {
+        this.currentProcessTimeSlice = MAX_CLOCK;
+    }
 }
 
 

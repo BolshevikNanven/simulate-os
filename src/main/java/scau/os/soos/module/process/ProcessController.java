@@ -1,7 +1,6 @@
 package scau.os.soos.module.process;
 
 import scau.os.soos.common.OS;
-import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.MyFile;
 import scau.os.soos.module.process.model.Process;
@@ -25,7 +24,7 @@ public class ProcessController implements Module {
      *
      */
     public boolean schedule(){
-        return processService.processSchedule();
+        return processService.schedule();
     }
 
     /**进程创建
@@ -41,14 +40,6 @@ public class ProcessController implements Module {
      */
     public boolean destroy(Process process){
         return processService.destroy(process);
-    }
-
-    /**进程唤醒
-     * 遍历对应等待设备的进程队列，唤醒其中一个进程
-     * @param deviceType
-     */
-    public boolean wake(DEVICE_TYPE deviceType){
-        return processService.wake(deviceType);
     }
 
     /**进程唤醒
@@ -77,6 +68,5 @@ public class ProcessController implements Module {
     public void run() {
         OS.clock.bind(processService::clockSchedule);
     }
-
 }
 

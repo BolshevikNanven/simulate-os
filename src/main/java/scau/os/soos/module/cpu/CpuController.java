@@ -44,6 +44,9 @@ public class CpuController implements Module {
         return cpuService.getCpuState();
     }
 
+    public Process getCurrentProcess(){
+        return cpuService.getCurrentProcess();
+    }
     @Override
     public void run() {
         OS.clock.bind(() -> {
