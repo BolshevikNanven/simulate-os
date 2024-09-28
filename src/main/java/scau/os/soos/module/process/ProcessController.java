@@ -24,7 +24,7 @@ public class ProcessController implements Module {
     /**进程调度(新进程)
      *
      */
-    public void schedule(){
+    public boolean schedule(){
         // 判断就绪队列是否为空
 
         // 判断CPU是否空闲
@@ -43,7 +43,7 @@ public class ProcessController implements Module {
     /**进程销毁
      * @param process
      */
-    public void destroy(Process process){
+    public boolean destroy(Process process){
         processService.destroy(process);
     }
 
@@ -51,7 +51,7 @@ public class ProcessController implements Module {
      * 遍历对应等待设备的进程队列，唤醒其中一个进程
      * @param deviceType
      */
-    public void wake(DEVICE_TYPE deviceType){
+    public boolean wake(DEVICE_TYPE deviceType){
         // 要判断下设备数量 防止多个模块重复唤醒
         processService.wake(deviceType);
     }
@@ -60,21 +60,21 @@ public class ProcessController implements Module {
      * 唤醒指定进程
      * @param process
      */
-    public void wake(Process process){
+    public boolean wake(Process process){
         processService.wake(process);
     }
 
     /**进程阻塞
      * @param process
      */
-    public void block(Process process){
+    public boolean block(Process process){
         processService.block(process);
     }
 
     /**进程切换
      * @param process
      */
-    public void handoff(Process process){
+    public boolean handoff(Process process){
         processService.handoff(process);
     }
 
