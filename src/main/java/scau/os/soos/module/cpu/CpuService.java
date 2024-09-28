@@ -17,7 +17,7 @@ public class CpuService {
 
     private final Process[] interruptSource;                                // 中断源
 
-    private Process runningProcess;                                         // 运行进程
+    private Process runningProcess;                                   // 运行进程
 
 
 
@@ -86,7 +86,6 @@ public class CpuService {
         System.out.println("中断-程序结束");
         unload();
         ProcessController.getInstance().destroy(interruptSource[0]);
-        ProcessController.getInstance().schedule();
         clearInterrupt(INTERRUPT.ProgramEnd);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
@@ -99,8 +98,7 @@ public class CpuService {
         runningProcess.getPcb().setPC(reg.getPC());
         runningProcess.getPcb().setAX(reg.getAX());
         unload();
-        ProcessController.getInstance().handoff(interruptSource[1]);
-        ProcessController.getInstance().schedule();
+        ProcessController.getInstance().block(runningProcess);
         clearInterrupt(INTERRUPT.TimeSliceEnd);
     }
 
@@ -111,7 +109,7 @@ public class CpuService {
         System.out.println("中断-IO中断");
         ProcessController.getInstance().wake(interruptSource[2]);
         ProcessController.getInstance().wake(interruptSource[2].getDeviceType());
-        ProcessController.getInstance().schedule();
+        // TODO 要不要发出进程调度
         clearInterrupt(INTERRUPT.IO);
     }
 
@@ -160,9 +158,9 @@ public class CpuService {
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
                 unload();
-                ProcessController.getInstance().block(interruptSource[2]);
-                DeviceController.getInstance().assign(deviceType, time, interruptSource[2]);
-                ProcessController.getInstance().schedule();
+                DeviceController.getInstance().assign(deviceType,time, runningProcess);
+                ProcessController.getInstance().block(runningProcess);
+                // TODO 进程调度 ：cpu 还是 进程管理 ？
             }
             case 0b0101 -> {
                 System.out.println("程序结束");

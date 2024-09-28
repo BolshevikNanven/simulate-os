@@ -8,6 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/cpu/CpuService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/memory/MemoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/model/Process.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/scau/os/soos/module/process/model/Process.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,8 +42,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
