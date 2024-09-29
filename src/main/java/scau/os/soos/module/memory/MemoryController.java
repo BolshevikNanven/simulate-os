@@ -18,24 +18,39 @@ public class MemoryController implements Module {
         memoryService = new MemoryService();
     }
 
-    public boolean allocate(PCB pcb,int size) {
-        return false;
+    public boolean allocate(PCB pcb, int size) {
+        return memoryService.allocateMemory(pcb, size);
     }
 
     public boolean free(PCB pcb) {
-        return false;
+        return memoryService.freeMemory(pcb);
     }
 
     public int read(int address) {
-        return 0;
+        return memoryService.read(address);
     }
 
     public boolean write(int address, Object content) {
-        return false;
+        return memoryService.write(address, (int) content);
     }
 
     @Override
     public void run() {
 
+    }
+
+    public static void main(String[] args) {
+        PCB pcb1 = new PCB();
+        PCB pcb2 = new PCB();
+        PCB pcb3 = new PCB();
+
+        getInstance().allocate(pcb1, 128);
+        getInstance().allocate(pcb2, 44);
+        getInstance().allocate(pcb3, 15);
+
+//        getInstance().free(pcb2);
+//        getInstance().free(pcb1);
+
+        getInstance().memoryService.printMemory();
     }
 }

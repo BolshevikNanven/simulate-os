@@ -1,5 +1,6 @@
 package scau.os.soos.common;
 
+import scau.os.soos.common.enums.OS_STATES;
 import scau.os.soos.common.model.Clock;
 
 /**
@@ -7,4 +8,5 @@ import scau.os.soos.common.model.Clock;
  */
 public class OS {
     public static Clock clock = new Clock();
+    public static OS_STATES state = OS_STATES.STOPPED;
 }

@@ -22,7 +22,7 @@ public class ThreadsPool extends ThreadPoolExecutor {
     }
 
     public static void stop() {
-        pool.shutdownNow();
+        pool.shutdown();
         System.out.println("stopping");
     }
 }

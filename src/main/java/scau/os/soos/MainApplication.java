@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import scau.os.soos.common.OS;
 import scau.os.soos.common.ThreadsPool;
+import scau.os.soos.common.enums.OS_STATES;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.device.DeviceController;
@@ -21,9 +22,13 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
+
+        stage.setOnCloseRequest((e) -> {
+            OS.state = OS_STATES.STOPPED;
+            ThreadsPool.stop();
+        });
 
         Module cpu = CpuController.getInstance();
         Module process = ProcessController.getInstance();
@@ -41,7 +46,8 @@ public class MainApplication extends Application {
 
         //启动时钟
         ThreadsPool.run(() -> {
-            while (true) {
+            OS.state = OS_STATES.RUNNING;
+            while (OS.state != OS_STATES.STOPPED) {
                 showClock();
                 OS.clock.inc();
                 //测试用延时

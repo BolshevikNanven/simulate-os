@@ -1,58 +1,68 @@
 package scau.os.soos.module.memory.model;
 
 public class MemoryBlock {
+    private int pid;
     private int address;
     private int size;
-    private int isFree;
-    private int pid;
+    private boolean isFree;
     private MemoryBlock pre;
     private MemoryBlock next;
 
-    public int getAddress() {
-        return address;
+    private MemoryBlock() {
+
     }
 
-    public void setAddress(int address) {
+    public MemoryBlock(int address, int size, boolean isFree) {
         this.address = address;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
         this.size = size;
-    }
-
-    public int getIsFree() {
-        return isFree;
-    }
-
-    public void setIsFree(int isFree) {
         this.isFree = isFree;
-    }
-
-    public int getPid() {
-        return pid;
     }
 
     public void setPid(int pid) {
         this.pid = pid;
     }
 
-    public MemoryBlock getPre() {
-        return pre;
+    public void setAddress(int address) {
+        this.address = address;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
     }
 
     public void setPre(MemoryBlock pre) {
         this.pre = pre;
     }
 
-    public MemoryBlock getNext() {
-        return next;
-    }
-
     public void setNext(MemoryBlock next) {
         this.next = next;
+    }
+
+    public int getPid() {
+        return pid;
+    }
+
+    public int getAddress() {
+        return address;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public MemoryBlock getPre() {
+        return pre;
+    }
+
+    public MemoryBlock getNext() {
+        return next;
     }
 }
