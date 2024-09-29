@@ -36,10 +36,14 @@ public class CpuService {
      */
     public boolean requestInterrupt(INTERRUPT interruptType, Process process){
         if((reg.getPSW() & (1 << interruptType.ordinal())) > 0){
+            System.out.println("CPU: 拒绝中断请求");
             return false;
         }
+
         setInterrupt(interruptType);
         interruptSource[interruptType.ordinal()] = process;
+
+        System.out.println("CPU: 中断请求成功");
         return true;
     }
 
@@ -49,8 +53,10 @@ public class CpuService {
      */
     public void executeInstruction() {
         if (runningProcess == null) {
+            System.out.println("CPU: running 空闲进程");
             // 空转 -> 调度进程
             ProcessController.getInstance().schedule();
+            return ;
         }
         int pc = reg.getPC();
         reg.setIR(MemoryController.getInstance().read(pc)); // 读取指令
@@ -71,6 +77,8 @@ public class CpuService {
         }
         runningProcess = process;
         cpuState = CPU_STATES.BUSY;
+        System.out.println("CPU: 处理进程 " + process.getPCB().getPid());
+
         // 恢复CPU现场
         reg.setPC(process.getPCB().getPC()); // 创建进程pc要指向首地址
         reg.setAX(process.getPCB().getAX());
@@ -96,7 +104,7 @@ public class CpuService {
      * 程序结束中断处理
      */
     private void handleProgramEndInterrupt() {
-        System.out.println("中断-程序结束");
+        System.out.println("CPU: 中断-程序结束");
         unload();
 
         ProcessController.getInstance().destroy(interruptSource[0]);
@@ -110,7 +118,7 @@ public class CpuService {
      * 时间片结束中断处理
      */
     private void handleTimeSliceEndInterrupt() {
-        System.out.println("中断-时间片结束");
+        System.out.println("CPU: 中断-时间片结束");
         // 保护CPU现场
         runningProcess.getPCB().setPC(reg.getPC());
         runningProcess.getPCB().setAX(reg.getAX());
@@ -127,7 +135,7 @@ public class CpuService {
      * IO中断处理
      */
     private void handleIOInterrupt() {
-        System.out.println("中断-IO中断");
+        System.out.println("CPU: 中断-IO中断");
         ProcessController.getInstance().wake(interruptSource[2]);
 
         clearInterrupt(INTERRUPT.IO);
@@ -166,17 +174,27 @@ public class CpuService {
      */
     public void decodeInstruction() {
         int instruction = reg.getIR();
-        System.out.println("clock:"+ OS.clock.get() + "执行指令" + Integer.toBinaryString(instruction));
+        System.out.println("CPU: 执行指令" + Integer.toBinaryString(instruction));
         int op = instruction >> 4;
         int tmp = instruction & 0b00001111;
         switch (op) {
-            case 0b0001 -> {reg.setAX(reg.getAX() + tmp);}
-            case 0b0010 -> {reg.incAX();}
-            case 0b0011 -> {reg.decAX();}
+            case 0b0001 -> {
+                System.out.println("x = " + tmp);
+                reg.setAX(tmp);
+            }
+            case 0b0010 -> {
+                System.out.println("x ++");
+                reg.incAX();
+            }
+            case 0b0011 -> {
+                System.out.println("x --");
+                reg.decAX();
+            }
             case 0b0100 -> {
                 int time = tmp >> 2;
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
+                System.out.println("!"+time+","+deviceType);
 
                 unload();
 
@@ -185,10 +203,14 @@ public class CpuService {
                 ProcessController.getInstance().schedule();
             }
             case 0b0101 -> {
-                System.out.println("程序结束");
+                System.out.println("end");
                 requestInterrupt(INTERRUPT.ProgramEnd, runningProcess);
             }
+            default -> {
+                System.out.println("指令错误");
+            }
         }
+        System.out.println("x = " + reg.getAX());
     }
 
 

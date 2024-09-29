@@ -42,6 +42,7 @@ public class MainApplication extends Application {
         //启动时钟
         ThreadsPool.run(() -> {
             while (true) {
+                showClock();
                 OS.clock.inc();
                 //测试用延时
                 try {
@@ -51,11 +52,14 @@ public class MainApplication extends Application {
                 }
             }
         });
-
-
     }
 
     public static void main(String[] args) {
         launch();
+    }
+
+    //测试
+    public static void showClock() {
+        System.out.println("clock:" + OS.clock.get());
     }
 }
