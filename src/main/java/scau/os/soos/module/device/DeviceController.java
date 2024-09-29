@@ -26,7 +26,9 @@ public class DeviceController implements Module {
      * @param time 分配时间
      * @param process 分配对象
      */
-    public void assign(DEVICE_TYPE deviceType, int time, Process process) {}
+    public void assign(DEVICE_TYPE deviceType, int time, Process process) {
+
+    }
 
     @Override
     public void run() {
