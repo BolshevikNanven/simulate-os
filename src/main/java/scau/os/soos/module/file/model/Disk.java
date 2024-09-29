@@ -1,8 +1,10 @@
 package scau.os.soos.module.file.model;
 
-public class Disk {
-    private static final int BLOCKS_PER_DISK = 256;
-    private static final int BYTES_PER_BLOCK = 64;
+import java.io.Serializable;
+
+public class Disk implements Serializable {
+    public static final int BLOCKS_PER_DISK = 256;
+    public static final int BYTES_PER_BLOCK = 64;
 
     private final Object[][] disk;
 
@@ -22,5 +24,9 @@ public class Disk {
             return null;
         }
         return disk[blockNumber];
+    }
+
+    public Object[][] getDisk() {
+        return disk;
     }
 }

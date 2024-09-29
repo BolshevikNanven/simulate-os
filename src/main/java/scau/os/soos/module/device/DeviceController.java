@@ -28,10 +28,6 @@ public class DeviceController implements Module {
      */
     public void assign(DEVICE_TYPE deviceType, int time, Process process) {}
 
-    public int getCurrentFreeDeviceCount(DEVICE_TYPE deviceType) {
-        return deviceService.getCurrentFreeDeviceCount(deviceType);
-    }
-
     @Override
     public void run() {
         OS.clock.bind(deviceService::checkDevice);

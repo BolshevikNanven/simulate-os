@@ -89,11 +89,12 @@ public class ProcessService {
         }
 
         // 2.从就绪队列中选择一个新进程
-        Process process = readyQueue.pollPCB().getProcess();
-        if (process == null) {
+        PCB pcb = readyQueue.pollPCB();
+        if(pcb==null){
             System.out.println("-------Process-------就绪队列为空");
             return false;
         }
+        Process process = readyQueue.pollPCB().getProcess();
 
         // 3.调度新进程上处理机
         if (!CpuController.getInstance().handleProcess(process)) {

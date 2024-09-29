@@ -24,13 +24,4 @@ public class BlockingQueue {
         return this.blockingQueue.remove(pcb);
     }
 
-    public Process removePCB(DEVICE_TYPE deviceType) {
-        for (PCB pcb : this.blockingQueue) {
-            if (pcb.getProcess().getDeviceType() == deviceType) {
-                return pcb.getProcess();
-            }
-        }
-        return null;
-    }
-
 }
