@@ -36,10 +36,14 @@ public class CpuService {
      */
     public boolean requestInterrupt(INTERRUPT interruptType, Process process){
         if((reg.getPSW() & (1 << interruptType.ordinal())) > 0){
+            System.out.println("CPU: 拒绝中断请求");
             return false;
         }
+
         setInterrupt(interruptType);
         interruptSource[interruptType.ordinal()] = process;
+
+        System.out.println("CPU: 中断请求成功");
         return true;
     }
 
@@ -73,6 +77,8 @@ public class CpuService {
         }
         runningProcess = process;
         cpuState = CPU_STATES.BUSY;
+        System.out.println("CPU: 处理进程 " + process.getPCB().getPid());
+
         // 恢复CPU现场
         reg.setPC(process.getPCB().getPC()); // 创建进程pc要指向首地址
         reg.setAX(process.getPCB().getAX());
