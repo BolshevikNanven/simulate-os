@@ -56,7 +56,9 @@ public class CpuService {
             System.out.println("CPU: 空闲");
             // 空转 -> 调度进程
             ProcessController.getInstance().schedule();
-            return ;
+            if(runningProcess == null){
+                return;
+            }
         }
         int pc = reg.getPC();
         reg.setIR(MemoryController.getInstance().read(pc)); // 读取指令

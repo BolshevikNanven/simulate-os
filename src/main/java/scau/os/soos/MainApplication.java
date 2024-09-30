@@ -26,7 +26,7 @@ public class MainApplication extends Application {
         stage.show();
 
         stage.setOnCloseRequest((e) -> {
-            OS.state = OS_STATES.STOPPED;
+            OS.state = OS_STATES.STOPPED;//
             ThreadsPool.stop();
         });
 
