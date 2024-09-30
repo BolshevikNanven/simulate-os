@@ -35,7 +35,7 @@ public class CpuService {
      * @return 是否成功请求中断
      */
     public boolean requestInterrupt(INTERRUPT interruptType, Process process){
-        if((reg.getPSW() & (1 << interruptType.ordinal())) > 0){
+        if((reg.getPSW() & (1 << interruptType.ordinal())) > 0 || process == null){
             System.out.println("CPU: 拒绝中断请求");
             return false;
         }
@@ -53,11 +53,14 @@ public class CpuService {
      */
     public void executeInstruction() {
         if (runningProcess == null) {
-            System.out.println("CPU: 空闲");
             // 空转 -> 调度进程
             ProcessController.getInstance().schedule();
-            return ;
+            if(runningProcess == null){
+                System.out.println("CPU: 空闲");
+                return;
+            }
         }
+
         int pc = reg.getPC();
         reg.setIR(MemoryController.getInstance().read(pc)); // 读取指令
         decodeInstruction();                                // 指令译码
@@ -72,7 +75,7 @@ public class CpuService {
      * @param process
      */
     public boolean handleProcess(Process process) {
-        if(runningProcess != null){
+        if(runningProcess != null || process == null){
             return false;
         }
         runningProcess = process;
@@ -105,9 +108,13 @@ public class CpuService {
      */
     private void handleProgramEndInterrupt() {
         System.out.println("CPU: 中断-程序结束");
+
         unload();
 
-        ProcessController.getInstance().destroy(interruptSource[0]);
+        Process process = interruptSource[0];
+        if(process != null){
+            ProcessController.getInstance().destroy(interruptSource[0]);
+        }
         ProcessController.getInstance().schedule();
 
         clearInterrupt(INTERRUPT.ProgramEnd);
@@ -125,7 +132,9 @@ public class CpuService {
 
         unload();
 
-        ProcessController.getInstance().handoff(runningProcess);
+        if(runningProcess != null){
+            ProcessController.getInstance().handoff(runningProcess);
+        }
         ProcessController.getInstance().schedule();
 
         clearInterrupt(INTERRUPT.TimeSliceEnd);
@@ -136,7 +145,11 @@ public class CpuService {
      */
     private void handleIOInterrupt() {
         System.out.println("CPU: 中断-IO中断");
-        ProcessController.getInstance().wake(interruptSource[2]);
+
+        Process process = interruptSource[2];
+        if(process != null){
+            ProcessController.getInstance().wake(interruptSource[2]);
+        }
 
         clearInterrupt(INTERRUPT.IO);
     }

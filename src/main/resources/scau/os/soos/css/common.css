@@ -1,0 +1,38 @@
+.wallpaper {
+    -fx-background-image: url("../images/windows11.jpg");
+    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+}
+
+Button {
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
+.popover {
+    -fx-background-color: rgba(238, 238, 240, 0.96);
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-border-color: #cccccc;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.12), 8, 0.1, 0, 5);
+    -fx-padding: 4px;
+}
+
+.popover > Button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 4px;
+    -fx-pref-height: 32px;
+}
+
+.popover > Button:hover {
+    -fx-background-color: rgb(224, 224, 224);
+}
+.popover > Button:pressed {
+    -fx-background-color: rgb(216, 216, 216);
+}
+.popover > Region {
+    -fx-pref-height: 1px;
+    -fx-background-color: #dadada;
+}

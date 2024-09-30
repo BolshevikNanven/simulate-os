@@ -15,10 +15,6 @@ public class Process {
         this.deviceType = null;
     }
 
-    public void setPcb(PCB pcb){
-        this.pcb = pcb;
-    }
-
     public PCB getPCB() {
         return pcb;
     }
