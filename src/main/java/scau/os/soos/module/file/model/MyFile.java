@@ -1,9 +1,10 @@
 package scau.os.soos.module.file.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyFile {
+public class MyFile implements Serializable, Cloneable {
     private  String fileName;//文件名
     private  int size;//文件大小
     private String extension;//扩展名
@@ -16,8 +17,9 @@ public class MyFile {
     private String content;//文件内容
     private boolean isOpen;//是否打开
 
-    public MyFile(String fileName, int size, String extension, String type, int startDisk, int diskNum) {
+    public MyFile(String fileName, String path,int size, String extension, String type, int startDisk, int diskNum) {
         this.fileName = fileName;
+        this.path = path;
         this.size = size;
         this.extension = extension;
         this.type = type;
@@ -111,5 +113,23 @@ public class MyFile {
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        try {
+            MyFile clonedFile = (MyFile) super.clone();
+            clonedFile.content = new String(this.content);
+
+            // 深拷贝parent Folder对象
+            if (this.parent != null) {
+                clonedFile.parent = (Folder) this.parent.clone();
+            }
+
+            return clonedFile;
+        } catch (CloneNotSupportedException e) {
+            // 这不应该发生，因为我们已经实现了Cloneable接口
+            throw new AssertionError();
+        }
     }
 }
