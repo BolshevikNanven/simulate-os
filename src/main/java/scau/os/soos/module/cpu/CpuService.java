@@ -53,10 +53,10 @@ public class CpuService {
      */
     public void executeInstruction() {
         if (runningProcess == null) {
-            System.out.println("CPU: 空闲");
             // 空转 -> 调度进程
             ProcessController.getInstance().schedule();
             if(runningProcess == null){
+                System.out.println("CPU: 空闲");
                 return;
             }
         }

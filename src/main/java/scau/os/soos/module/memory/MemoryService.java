@@ -103,7 +103,7 @@ public class MemoryService {
         for (int i = 0; i < 10; i++) {
             PCB memoryPcb = memory.getSystemArea(i);
             if(memoryPcb==null)
-                return false;
+                continue;
             if (memoryPcb.getPid() == pcb.getPid()) {
                 memory.setSystemArea(i, null);
                 return true;
