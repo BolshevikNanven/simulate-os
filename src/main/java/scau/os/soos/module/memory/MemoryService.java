@@ -101,7 +101,10 @@ public class MemoryService {
 
     private boolean freePCB(PCB pcb) {
         for (int i = 0; i < 10; i++) {
-            if (memory.getSystemArea(i).getPid() == pcb.getPid()) {
+            PCB memoryPcb = memory.getSystemArea(i);
+            if(memoryPcb==null)
+                continue;
+            if (memoryPcb.getPid() == pcb.getPid()) {
                 memory.setSystemArea(i, null);
                 return true;
             }
