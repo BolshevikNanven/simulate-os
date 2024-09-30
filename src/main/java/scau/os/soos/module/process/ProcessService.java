@@ -27,7 +27,7 @@ public class ProcessService {
     // 阻塞队列
     private final BlockingQueue blockingQueue;
     // 时间片
-    private int currentProcessTimeSlice;
+    private int currentProcessTimeSlice = 0;
 
     public ProcessService() {
         this.emptyPCBQueue = new EmptyPCBQueue(MAX_PROCESS_COUNT);
@@ -106,6 +106,8 @@ public class ProcessService {
 
         // 4.修改进程状态
         process.getPCB().setStatus(PROCESS_STATES.RUNNING);
+        // 为进程分配时间片
+        resetTimeSlice();
         System.out.println("-------Process-------进程调度成功");
         return true;
     }
@@ -123,6 +125,7 @@ public class ProcessService {
             System.out.println("-------Process-------回收进程内存失败");
             return false;
         }
+
         // 3.回收进程控制块
         // 设置进程为终止态度
         process.getPCB().setStatus(PROCESS_STATES.TERMINATED);

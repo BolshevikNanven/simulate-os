@@ -1,7 +1,5 @@
 package scau.os.soos.module.process.model;
 
-import scau.os.soos.common.enums.DEVICE_TYPE;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
