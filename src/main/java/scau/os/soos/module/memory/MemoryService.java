@@ -111,6 +111,7 @@ public class MemoryService {
 
     private void freeMemoryBlock(MemoryBlock target) {
         target.setFree(true);
+        memory.setUsed(memory.getUsed() - target.getSize());
 
         MemoryBlock preBlock = target.getPre();
         MemoryBlock nextBlock = target.getNext();

@@ -2,6 +2,7 @@ package scau.os.soos.module.memory;
 
 import scau.os.soos.module.Module;
 import scau.os.soos.module.process.model.PCB;
+import scau.os.soos.module.process.model.Process;
 
 public class MemoryController implements Module {
     private static MemoryController instance;
@@ -40,16 +41,16 @@ public class MemoryController implements Module {
     }
 
     public static void main(String[] args) {
-        PCB pcb1 = new PCB();
-        PCB pcb2 = new PCB();
-        PCB pcb3 = new PCB();
+        PCB pcb1 = new Process(new PCB(),1).getPCB();
+        PCB pcb2 = new Process(new PCB(),2).getPCB();
+        PCB pcb3 = new Process(new PCB(),3).getPCB();
 
         getInstance().allocate(pcb1, 128);
         getInstance().allocate(pcb2, 44);
         getInstance().allocate(pcb3, 15);
 
-//        getInstance().free(pcb2);
-//        getInstance().free(pcb1);
+        getInstance().free(pcb2);
+        getInstance().free(pcb1);
 
         getInstance().memoryService.printMemory();
     }
