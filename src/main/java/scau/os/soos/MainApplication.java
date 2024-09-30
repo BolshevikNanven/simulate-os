@@ -3,8 +3,10 @@ package scau.os.soos;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import scau.os.soos.common.OS;
+import scau.os.soos.common.GlobalUI;
 import scau.os.soos.common.ThreadsPool;
 import scau.os.soos.common.enums.OS_STATES;
 import scau.os.soos.module.Module;
@@ -14,15 +16,17 @@ import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.terminal.TerminalController;
+import scau.os.soos.ui.TaskBarManager;
 
 import java.io.IOException;
 
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         stage.setScene(scene);
+        stage.setFullScreen(true);
         stage.show();
 
         stage.setOnCloseRequest((e) -> {
@@ -30,6 +34,12 @@ public class MainApplication extends Application {
             ThreadsPool.stop();
         });
 
+        GlobalUI.scene = scene;
+        GlobalUI.stage = stage;
+        setupModule();
+    }
+
+    private void setupModule() {
         Module cpu = CpuController.getInstance();
         Module process = ProcessController.getInstance();
         Module memory = MemoryController.getInstance();
@@ -48,7 +58,7 @@ public class MainApplication extends Application {
         ThreadsPool.run(() -> {
             OS.state = OS_STATES.RUNNING;
             while (OS.state != OS_STATES.STOPPED) {
-                showClock();
+                System.out.println("clock:" + OS.clock.get());
                 OS.clock.inc();
                 //测试用延时
                 try {
@@ -62,10 +72,5 @@ public class MainApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-    }
-
-    //测试
-    public static void showClock() {
-        System.out.println("clock:" + OS.clock.get());
     }
 }

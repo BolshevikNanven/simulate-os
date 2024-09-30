@@ -1,0 +1,61 @@
+.task-bar-container {
+    -fx-background-color: rgba(238, 238, 240, 0.982);
+    -fx-border-width: 1px 0 0 0;
+    -fx-border-style: solid;
+    -fx-border-color: #cccccc;
+    -fx-pref-height: 52px;
+}
+
+.task-bar {
+    -fx-padding: 0 16px;
+}
+
+.task-btn {
+    -fx-pref-width: 44px;
+    -fx-pref-height: 44px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-color: transparent;
+}
+
+.task-btn:hover, .tray-btn:hover {
+    -fx-background-color: rgb(255, 255, 255);
+    -fx-border-color: rgba(232, 232, 230);
+}
+
+.task-btn:pressed, .tray-btn:pressed {
+    -fx-background-color: rgb(248, 248, 248);
+    -fx-border-color: rgb(232, 232, 230);
+}
+
+.task-btn Region {
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+}
+
+.back-to-desktop-btn {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
+
+.tray-btn {
+    -fx-padding: 0 10px;
+    -fx-pref-height: 44px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-color: transparent;
+}
+
+.tray-btn > Region {
+    -fx-pref-height: 12px;
+    -fx-max-height: 12px;
+    -fx-background-color: #333333;
+}

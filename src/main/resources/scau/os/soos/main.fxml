@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane id="root" fx:id="root" prefHeight="592.0" prefWidth="980.0" styleClass="wallpaper" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scau.os.soos.MainUIController">
+    <bottom>
+        <BorderPane focusTraversable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="56.0" styleClass="task-bar-container" stylesheets="@css/task_bar.css" BorderPane.alignment="CENTER">
+            <center>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="56.0" prefWidth="253.0" spacing="4.0" styleClass="task-bar" BorderPane.alignment="CENTER_LEFT">
+                    <children>
+                        <Button id="windows-btn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="46.0" prefWidth="46.0" styleClass="task-btn">
+                            <graphic>
+                                <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="28.0" prefWidth="28.0" style="-fx-background-color: #0078d4;" styleClass="windows-icon" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </center>
+            <right>
+                <HBox alignment="CENTER" styleClass="tray-bar" BorderPane.alignment="CENTER">
+                    <children>
+                  <Button mnemonicParsing="false" styleClass="tray-btn">
+                     <graphic>
+                        <Region prefHeight="20.0" prefWidth="18.0" styleClass="battery-icon" />
+                     </graphic>
+                  </Button>
+                        <VBox alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="46.0" spacing="2.0" styleClass="tray-btn">
+                            <children>
+                                <Label text="17:45">
+                                    <font>
+                                        <Font size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label text="2024/9/30">
+                                    <font>
+                                        <Font size="11.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="56.0" prefWidth="12.0" styleClass="back-to-desktop-btn">
+                            <graphic>
+                                <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="16.0" prefWidth="1.0" style="-fx-background-color: #999999;" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </right>
+        </BorderPane>
+    </bottom>
+    <stylesheets>
+        <URL value="@css/common.css" />
+        <URL value="@css/icon.css" />
+    </stylesheets>
+    <center>
+        <Pane id="desktop" focusTraversable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+    </center>
+</BorderPane>
