@@ -108,7 +108,9 @@ public class CpuService {
      */
     private void handleProgramEndInterrupt() {
         System.out.println("CPU: 中断-程序结束");
+
         unload();
+
         Process process = interruptSource[0];
         if(process != null){
             ProcessController.getInstance().destroy(interruptSource[0]);
@@ -143,6 +145,7 @@ public class CpuService {
      */
     private void handleIOInterrupt() {
         System.out.println("CPU: 中断-IO中断");
+
         Process process = interruptSource[2];
         if(process != null){
             ProcessController.getInstance().wake(interruptSource[2]);
