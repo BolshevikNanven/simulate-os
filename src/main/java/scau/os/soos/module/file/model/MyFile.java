@@ -1,8 +1,6 @@
 package scau.os.soos.module.file.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MyFile implements Serializable, Cloneable {
     private  String fileName;//文件名
@@ -11,20 +9,21 @@ public class MyFile implements Serializable, Cloneable {
     private  String type;//文件类型
     private  String path;//文件路径
     private  int startDisk;//文件起始盘
-    private int diskNum;//文件盘数
+    private int numOfDiskBlock;//文件盘数
     private  int flag;//读写标志
     private Folder parent;//父目录
     private String content;//文件内容
     private boolean isOpen;//是否打开
 
-    public MyFile(String fileName, String path,int size, String extension, String type, int startDisk, int diskNum) {
+    public MyFile(String fileName, String path,int size, String extension, String type, int startDisk, int numOfDiskBlock,Folder parent){
         this.fileName = fileName;
         this.path = path;
         this.size = size;
         this.extension = extension;
         this.type = type;
         this.startDisk = startDisk;
-        this.diskNum = diskNum;
+        this.numOfDiskBlock = numOfDiskBlock;
+        this.parent = parent;
     }
 
     public String getFileName() {
@@ -75,12 +74,12 @@ public class MyFile implements Serializable, Cloneable {
         this.startDisk = startDisk;
     }
 
-    public int getDiskNum() {
-        return diskNum;
+    public int getNumOfDiskBlock() {
+        return numOfDiskBlock;
     }
 
-    public void setDiskNum(int diskNum) {
-        this.diskNum = diskNum;
+    public void setNumOfDiskBlock(int numOfDiskBlock) {
+        this.numOfDiskBlock = numOfDiskBlock;
     }
 
     public int getFlag() {
@@ -105,6 +104,7 @@ public class MyFile implements Serializable, Cloneable {
 
     public void setContent(String content) {
         this.content = content;
+        this.setSize(content.length());
     }
 
     public boolean isOpen() {

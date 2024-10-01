@@ -25,23 +25,23 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public MyFile createFile(String fileName){
-        if(fileService.findFile(fileName) != null){
+    public MyFile createFile(String path){
+        if(fileService.findFile(path) != null){
             System.out.println("文件已存在");
             return null;
         }else{
-            return fileService.createFile(fileName);
+            return fileService.createFile(path);
         }
     }
 
     /**
      * 删除文件
      */
-    public void deleteFile(String fileName){
-        if(fileService.findFile(fileName) == null){
+    public void deleteFile(String path){
+        if(fileService.findFile(path) == null){
             System.out.println("没有该文件");
         }else{
-            fileService.deleteFile(fileName);
+            fileService.deleteFile(path);
         }
     }
 
@@ -89,7 +89,7 @@ public class FileController implements Module {
         for(int i=1;i<paths.length;i++){
             pathName = pathName + "/" + paths[i];
             if(fileService.findFolder(pathName)==null){
-                parent=fileService.createFolder(paths[i],parent,pathName);
+                parent=fileService.createFolder(parent,pathName);
             }else parent =  fileService.findFolder(pathName);
         }
         return parent;
