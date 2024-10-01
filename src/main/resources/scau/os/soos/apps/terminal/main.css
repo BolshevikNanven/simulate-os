@@ -1,0 +1,33 @@
+.container {
+    -fx-background-color: rgb(12, 12, 12);
+    -fx-background-radius: 6px;
+}
+
+#terminal-display {
+    -fx-background-color: rgb(12, 12, 12);
+    -fx-control-inner-background: rgb(12, 12, 12);
+    -fx-background-radius: 0;
+    -fx-text-fill: #fafafa;
+}
+
+#terminal-display:focused {
+    -fx-background-color: rgb(12, 12, 12);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+#terminal-display .content {
+    -fx-background-color: rgb(12, 12, 12);
+    -fx-background-radius: 0;
+    -fx-cursor: default;
+}
+
+#terminal-input {
+    -fx-background-color: transparent;
+    -fx-cursor: default;
+    -fx-text-fill: #fafafa;
+}
+
+#terminal-input:focused {
+    -fx-background-color: transparent;
+}

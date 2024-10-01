@@ -39,7 +39,7 @@
             </HBox>
          </right>
          <left>
-            <Label text="窗口" BorderPane.alignment="CENTER">
+            <Label id="window-title" BorderPane.alignment="CENTER">
                <padding>
                   <Insets left="8.0" />
                </padding>

@@ -16,7 +16,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="文件管理器">
+            <Button id="windows-file-manager-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="文件管理器">
                <font>
                   <Font size="14.0" />
                </font>

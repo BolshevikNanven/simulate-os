@@ -1,10 +1,12 @@
 package scau.os.soos.ui.components;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -19,12 +21,15 @@ import scau.os.soos.ui.animation.Transition;
 import java.io.IOException;
 
 public class Window {
+    protected SimpleStringProperty title = new SimpleStringProperty();
+    protected Node body;
+    private String iconUrl;
     private BorderPane window;
     private Button hideButton;
     private Button scaleButton;
     private Button closeButton;
     private BorderPane topBar;
-    private AnchorPane body;
+    private AnchorPane bodyContainer;
     // 响应式状态
     private final SimpleObjectProperty<WINDOW_STATES> state = new SimpleObjectProperty<>();
 
@@ -41,7 +46,7 @@ public class Window {
 
     }
 
-    public Window(Node content) {
+    public Window(String title, String iconUrl, Node content) {
         FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("components/window.fxml"));
         try {
             window = loader.load();
@@ -52,13 +57,22 @@ public class Window {
         scaleButton = (Button) window.lookup("#scale-btn");
         closeButton = (Button) window.lookup("#close-btn");
         topBar = (BorderPane) window.lookup("#top-bar");
-        body = (AnchorPane) window.lookup("#window-body");
+        bodyContainer = (AnchorPane) window.lookup("#window-body");
 
-        body.getChildren().add(content);
-        AnchorPane.setLeftAnchor(body, 0.0);
-        AnchorPane.setBottomAnchor(body, 0.0);
-        AnchorPane.setRightAnchor(body, 0.0);
-        AnchorPane.setTopAnchor(body, 0.0);
+        this.body = content;
+        this.iconUrl = iconUrl;
+
+        // 标题绑定
+        Label titleLabel = (Label) window.lookup("#window-title");
+        this.title.set(title);
+        titleLabel.textProperty().bindBidirectional(this.title);
+
+        // 渲染窗口内容
+        bodyContainer.getChildren().add(content);
+        AnchorPane.setLeftAnchor(content, 0.0);
+        AnchorPane.setBottomAnchor(content, 0.0);
+        AnchorPane.setRightAnchor(content, 0.0);
+        AnchorPane.setTopAnchor(content, 0.0);
 
         // 初始化为隐藏
         setStates(WINDOW_STATES.HIDE);
@@ -130,7 +144,7 @@ public class Window {
         });
 
         // 点击窗口时激活
-        window.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+        window.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
             if (getState() == WINDOW_STATES.HANGUP) {
                 TaskBarManager.getInstance().selectTask(this);
             }
@@ -160,5 +174,9 @@ public class Window {
 
     public BorderPane getWindow() {
         return window;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
     }
 }

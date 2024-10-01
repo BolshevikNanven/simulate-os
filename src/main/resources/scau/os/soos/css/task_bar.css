@@ -42,11 +42,9 @@
     -fx-border-color: rgb(232, 232, 230);
 }
 
-.task-btn:pressed Region {
-    -fx-pref-width: 20px;
-    -fx-pref-height: 20px;
-    -fx-max-height: 20px;
-    -fx-max-width: 20px;
+.task-btn:pressed > * {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
 }
 
 .task-btn Region {
