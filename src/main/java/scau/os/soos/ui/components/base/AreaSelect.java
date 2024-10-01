@@ -23,10 +23,18 @@ public class AreaSelect {
         pane.getChildren().add(selectionRectangle);
 
         // 监听鼠标按下事件，开始绘制选框
-        pane.setOnMousePressed(this::startSelection);
+        pane.setOnMousePressed((e) -> {
+            if (e.getTarget() == pane) {
+                startSelection(e);
+            }
+        });
 
         // 监听鼠标拖动事件，更新选框的大小
-        pane.setOnMouseDragged(this::updateSelection);
+        pane.setOnMouseDragged((e) -> {
+            if (e.getTarget() == pane) {
+                updateSelection(e);
+            }
+        });
 
         // 监听鼠标释放事件，结束绘制选框
         pane.setOnMouseReleased(event -> endSelection());

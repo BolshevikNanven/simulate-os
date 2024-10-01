@@ -7,11 +7,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane focusTraversable="true" prefHeight="143.0" stylesheets="@../css/common.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<Pane focusTraversable="true" prefHeight="180.0" stylesheets="@../css/common.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox styleClass="popover">
          <children>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="终端">
+            <Button id="windows-cmd-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="终端">
                <font>
                   <Font size="14.0" />
                </font>
@@ -22,6 +22,16 @@
                </font>
             </Button>
             <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="任务管理器">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Region prefHeight="1.0">
+               <VBox.margin>
+                  <Insets bottom="2.0" top="2.0" />
+               </VBox.margin>
+            </Region>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="设置">
                <font>
                   <Font size="14.0" />
                </font>
