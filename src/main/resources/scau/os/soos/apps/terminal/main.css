@@ -1,6 +1,5 @@
 .container {
     -fx-background-color: rgb(12, 12, 12);
-    -fx-background-radius: 6px;
 }
 
 #terminal-display {

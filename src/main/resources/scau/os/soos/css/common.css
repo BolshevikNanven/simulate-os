@@ -106,3 +106,7 @@ Button {
 .window-control-btn.danger:hover > Region {
     -fx-background-color: #ffffff;
 }
+
+.window-body {
+    -fx-background-radius: 0 0 6px 6px;
+}

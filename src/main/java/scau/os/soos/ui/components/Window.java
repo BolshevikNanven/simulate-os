@@ -59,8 +59,10 @@ public class Window {
         topBar = (BorderPane) window.lookup("#top-bar");
         bodyContainer = (AnchorPane) window.lookup("#window-body");
 
-        this.body = content;
+        body = content;
         this.iconUrl = iconUrl;
+
+        body.getStyleClass().add("window-body");
 
         // 标题绑定
         Label titleLabel = (Label) window.lookup("#window-title");
@@ -119,6 +121,7 @@ public class Window {
                 Animation.playSlideInY(window, Duration.millis(80), preY);
 
                 window.getStyleClass().remove("full-screen");
+                body.getStyleClass().add("window-body");
                 isFull = false;
             } else {
                 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -134,6 +137,7 @@ public class Window {
                 Animation.playSlideInY(window, Duration.millis(80), 0);
 
                 window.getStyleClass().add("full-screen");
+                body.getStyleClass().remove("window-body");
                 isFull = true;
             }
         });
