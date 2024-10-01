@@ -1,15 +1,13 @@
 package scau.os.soos.ui.components.base;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import scau.os.soos.common.GlobalUI;
+import scau.os.soos.ui.animation.Animation;
+import scau.os.soos.ui.animation.Transition;
 
 public class Popover {
     protected Pane container;
@@ -35,6 +33,10 @@ public class Popover {
         render(top, left);
     }
 
+    protected void hide() {
+        container.setVisible(false);
+    }
+
     private void render(double top, double left) {
         // 首次渲染先插入
         if (!rendered) {
@@ -54,23 +56,10 @@ public class Popover {
         }
         container.setLayoutX(left);
 
-        playSlideInAnimation();
+        Transition.playSlideInY(container, Duration.millis(120), isTop ? 16 : -16, 0);
+        Transition.playFadeIn(container, Duration.millis(100));
+
         addOutsideClickListener();
-    }
-
-    private void playSlideInAnimation() {
-        // 滑入动画
-        TranslateTransition slideIn = new TranslateTransition(Duration.millis(120), container);
-        slideIn.setFromY(isTop ? 16 : -16);
-        slideIn.setToY(0);
-
-        // 淡入动画
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(100), container);
-        fadeIn.setFromValue(0.0);
-        fadeIn.setToValue(1.0);
-
-        fadeIn.play();
-        slideIn.play();
     }
 
     private void addOutsideClickListener() {

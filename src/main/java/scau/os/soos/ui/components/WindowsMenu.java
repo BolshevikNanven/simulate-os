@@ -4,12 +4,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import scau.os.soos.MainApplication;
 import scau.os.soos.common.GlobalUI;
+import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.components.base.Popover;
 
 import java.io.IOException;
 
 public class WindowsMenu extends Popover {
     private final Button shutdownBtn;
+    private final Button cmdBtn;
 
     public WindowsMenu() {
         this.gap = 8;
@@ -21,6 +23,7 @@ public class WindowsMenu extends Popover {
             throw new RuntimeException(e);
         }
         shutdownBtn = (Button) this.container.lookup("#shutdown-btn");
+        cmdBtn = (Button) this.container.lookup("#windows-cmd-btn");
 
         addListener();
     }
@@ -28,6 +31,10 @@ public class WindowsMenu extends Popover {
     private void addListener() {
         shutdownBtn.setOnAction((e) -> {
             GlobalUI.stage.close();
+        });
+        cmdBtn.setOnAction((e) -> {
+            TaskBarManager.getInstance().addTask(new Window(new Button("button")));
+            hide();
         });
     }
 }

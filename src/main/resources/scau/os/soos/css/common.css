@@ -11,7 +11,7 @@ Button {
 }
 
 .popover {
-    -fx-background-color: rgba(238, 238, 240, 0.96);
+    -fx-background-color: rgba(238, 238, 240, 0.956);
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
     -fx-border-width: 1px;
@@ -29,10 +29,80 @@ Button {
 .popover > Button:hover {
     -fx-background-color: rgb(224, 224, 224);
 }
+
 .popover > Button:pressed {
     -fx-background-color: rgb(216, 216, 216);
 }
+
+.popover > Button > Region {
+    -fx-background-color: #555555;
+}
+
 .popover > Region {
     -fx-pref-height: 1px;
     -fx-background-color: #dadada;
+}
+
+.window {
+    -fx-background-radius: 7px;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-border-color: #aaaaaa;
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+}
+
+.window.full-screen {
+    -fx-background-radius: 0px;
+    -fx-border-radius: 0px;
+    -fx-border-width: 0px;
+}
+
+.window.active {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.28), 24, 0.4, 0, 4);
+}
+
+.window.active.full-screen {
+    -fx-effect: null;
+}
+
+.window.active .window-control-btn Region {
+    -fx-background-color: #212121;
+}
+
+.window-control-btn {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+}
+
+.window-control-btn.danger {
+    -fx-background-radius: 0 6px 0 0;
+}
+
+.window.full-screen .window-control-btn.danger {
+    -fx-background-radius: 0;
+}
+
+.window-control-btn.danger:hover {
+    -fx-background-color: #ed4444;
+}
+
+.window-control-btn.danger:hover > Region {
+    -fx-background-color: #ffffff;
+}
+
+.window-control-btn.danger:pressed {
+    -fx-background-color: #d73b3b;
+}
+
+.window-control-btn:hover {
+    -fx-background-color: rgb(218, 218, 218);
+}
+
+.window-control-btn:pressed {
+    -fx-background-color: rgb(202, 202, 202);
+}
+
+.window-control-btn > Region {
+    -fx-background-color: #666666;
 }
