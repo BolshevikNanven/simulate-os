@@ -47,7 +47,7 @@ Button {
     -fx-background-radius: 7px;
     -fx-border-radius: 6px;
     -fx-border-width: 1px;
-    -fx-border-color: #aaaaaa;
+    -fx-border-color: #888888;
     -fx-background-color: rgba(255, 255, 255, 0.98);
 }
 
@@ -58,7 +58,7 @@ Button {
 }
 
 .window.active {
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.28), 24, 0.4, 0, 4);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.28), 24, 0.4, 0, 8);
 }
 
 .window.active.full-screen {
@@ -87,10 +87,6 @@ Button {
     -fx-background-color: #ed4444;
 }
 
-.window-control-btn.danger:hover > Region {
-    -fx-background-color: #ffffff;
-}
-
 .window-control-btn.danger:pressed {
     -fx-background-color: #d73b3b;
 }
@@ -105,4 +101,12 @@ Button {
 
 .window-control-btn > Region {
     -fx-background-color: #666666;
+}
+
+.window-control-btn.danger:hover > Region {
+    -fx-background-color: #ffffff;
+}
+
+.window-body {
+    -fx-background-radius: 0 0 6px 6px;
 }
