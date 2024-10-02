@@ -1,9 +1,12 @@
 package scau.os.soos.ui.components;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import scau.os.soos.MainApplication;
 import scau.os.soos.common.enums.WINDOW_STATES;
@@ -49,26 +52,41 @@ public class TaskButton extends Button {
         });
         // 右键菜单
         this.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.SECONDARY){
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 taskMenu.render(this);
             }
         });
     }
 
-    private static ImageView newIcon(String url) {
+    private static BorderPane newIcon(String url) {
+        BorderPane borderPane = new BorderPane();
+        borderPane.setMaxWidth(Double.MAX_VALUE);
+        borderPane.setMaxHeight(Double.MAX_VALUE);
+        BorderPane.setAlignment(borderPane, Pos.CENTER);
+
+        Region topIndicator = new Region();
+        Region bottomIndicator = new Region();
+
+        topIndicator.setPrefHeight(3);
+        bottomIndicator.setPrefHeight(3);
+        bottomIndicator.setMaxWidth(Region.USE_PREF_SIZE);
+        bottomIndicator.getStyleClass().add("task-indicator");
+
         ImageView imageView = new ImageView();
         imageView.setImage(new Image(MainApplication.class.getResource(url).toExternalForm()));
 
+        imageView.getStyleClass().add("task-icon");
         imageView.setFitWidth(24);
         imageView.setFitHeight(24);
 
-        return imageView;
+        HBox bottomContainer = new HBox(bottomIndicator);
+        bottomContainer.setAlignment(Pos.CENTER);
+
+        borderPane.setTop(topIndicator);
+        borderPane.setCenter(imageView);
+        borderPane.setBottom(bottomContainer);
+
+        return borderPane;
     }
 
-    private static Region newRegion() {
-        Region region = new Region();
-        region.getStyleClass().add("cmd-icon");
-
-        return region;
-    }
 }

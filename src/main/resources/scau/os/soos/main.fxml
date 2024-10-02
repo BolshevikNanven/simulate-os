@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -18,7 +19,11 @@
                     <children>
                         <Button id="windows-btn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="46.0" prefWidth="46.0" styleClass="task-btn">
                             <graphic>
-                                <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="28.0" prefWidth="28.0" style="-fx-background-color: #0078d4;" styleClass="windows-icon" />
+                                <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="28.0" prefWidth="28.0" style="-fx-background-color: #0078d4;">
+                           <styleClass>
+                              <String fx:value="windows-icon" />
+                              <String fx:value="task-icon" />
+                           </styleClass></Region>
                             </graphic>
                         </Button>
                   <HBox id="task-area" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="4.0" HBox.hgrow="ALWAYS" />
