@@ -111,34 +111,22 @@ public class Window {
             setStates(WINDOW_STATES.HIDE);
         });
 
+        //双击标题栏窗口化
+        topBar.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            if (mouseEvent.getClickCount() == 2) {
+                if (isFull) {
+                    zoomOutWindow();
+                } else {
+                    zoomInWindow();
+                }
+            }
+        });
         //窗口化
         scaleButton.setOnAction(actionEvent -> {
             if (isFull) {
-                Animation.playWidthIn(window, Duration.millis(80), preWidth);
-                Animation.playHeightIn(window, Duration.millis(80), preHeight);
-
-                Animation.playSlideInX(window, Duration.millis(80), preX);
-                Animation.playSlideInY(window, Duration.millis(80), preY);
-
-                window.getStyleClass().remove("full-screen");
-                body.getStyleClass().add("window-body");
-                isFull = false;
+                zoomOutWindow();
             } else {
-                Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-                preWidth = window.getPrefWidth();
-                preHeight = window.getPrefHeight();
-                preX = window.getLayoutX();
-                preY = window.getLayoutY();
-
-                Animation.playWidthIn(window, Duration.millis(80), screenBounds.getWidth());
-                Animation.playHeightIn(window, Duration.millis(80), screenBounds.getHeight() - 52);
-
-                Animation.playSlideInX(window, Duration.millis(80), 0);
-                Animation.playSlideInY(window, Duration.millis(80), 0);
-
-                window.getStyleClass().add("full-screen");
-                body.getStyleClass().remove("window-body");
-                isFull = true;
+                zoomInWindow();
             }
         });
 
@@ -153,6 +141,36 @@ public class Window {
                 TaskBarManager.getInstance().selectTask(this);
             }
         });
+    }
+
+    private void zoomInWindow() {
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        preWidth = window.getPrefWidth();
+        preHeight = window.getPrefHeight();
+        preX = window.getLayoutX();
+        preY = window.getLayoutY();
+
+        Animation.playWidthIn(window, Duration.millis(80), screenBounds.getWidth());
+        Animation.playHeightIn(window, Duration.millis(80), screenBounds.getHeight() - 52);
+
+        Animation.playSlideInX(window, Duration.millis(80), 0);
+        Animation.playSlideInY(window, Duration.millis(80), 0);
+
+        window.getStyleClass().add("full-screen");
+        body.getStyleClass().remove("window-body");
+        isFull = true;
+    }
+
+    private void zoomOutWindow() {
+        Animation.playWidthIn(window, Duration.millis(80), preWidth);
+        Animation.playHeightIn(window, Duration.millis(80), preHeight);
+
+        Animation.playSlideInX(window, Duration.millis(80), preX);
+        Animation.playSlideInY(window, Duration.millis(80), preY);
+
+        window.getStyleClass().remove("full-screen");
+        body.getStyleClass().add("window-body");
+        isFull = false;
     }
 
     public WINDOW_STATES getState() {
