@@ -1,0 +1,129 @@
+Button {
+    -fx-background-insets: null
+}
+
+.color-palette {
+    -fx-background-color: #f6f6f6;
+    -fx-background-radius: 6;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-color: #cccccc;
+}
+
+.context-menu {
+    -fx-effect: dropshadow(three-pass-box, #bdbdbd, 8, 0.02, 0, 3);
+    -fx-padding: 2;
+    -fx-background-radius: 6;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-border-radius: 6;
+    -fx-border-color: #fff;
+}
+
+.menu-item {
+    -fx-border-width: 0;
+    -fx-padding: 4 8 4 8;
+    -fx-pref-height: 28;
+    -fx-background-radius: 4;
+}
+
+.menu-item .icon {
+    -fx-background-color: rgb(106, 111, 126);
+    -fx-pref-width: 13;
+    -fx-pref-height: 13;
+}
+
+.menu-item .hide {
+    -fx-background-color: transparent;
+}
+
+.menu-item .title {
+    -fx-text-fill: #212121;
+}
+
+.menu-item .description {
+    -fx-text-fill: #a1a1a1;
+}
+
+.menu-item:hover, .menu-item:focused {
+    -fx-background-color: rgb(228, 232, 234);
+}
+
+.menu-item:hover .label, .menu-item:focused .label {
+    -fx-text-fill: #212121;
+}
+
+.slider > .track {
+    -fx-background-color: #f8f8f8;
+    -fx-background-insets: 0;
+    -fx-padding: 2;
+}
+
+.slider > .thumb {
+    -fx-background-color: #525252;
+    -fx-border-width: 3.5;
+    -fx-border-color: primary-color;
+    -fx-padding: 8.5 1.5 8.5 1.5;
+    -fx-background-insets: 2;
+    -fx-border-radius: 8;
+    -fx-effect: null;
+}
+
+.slider > .thumb:pressed {
+    -fx-padding: 8.5 2 8.5 2;
+}
+
+.scroll-pane .corner {
+    -fx-background-color: null;
+}
+
+.scroll-bar {
+    -fx-background-color: null;
+    -fx-border-color: null;
+}
+
+/*轨道样式*/
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: null;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-radius: 2;
+}
+
+/*横向滚动条增减按钮样式*/
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0em;
+    -fx-padding: 0 0 10 0;
+}
+
+/*竖向滚动条增减按钮样式*/
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0em;
+    -fx-padding: 0 10 0 0;
+}
+
+/*增减按钮中图标样式*/
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+/*滚动条滑块样式*/
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #e1e1e1;
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2;
+}
+
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #b6b6b6;
+}
