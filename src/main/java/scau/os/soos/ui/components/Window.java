@@ -30,12 +30,15 @@ public class Window {
     private Button closeButton;
     private BorderPane topBar;
     private AnchorPane bodyContainer;
-    // 响应式状态
+
+    // 响应式窗口状态，为taskButton响应
     private final SimpleObjectProperty<WINDOW_STATES> state = new SimpleObjectProperty<>();
 
     // 记录鼠标相对于窗口的偏移量
     private final double[] mouseOffset = new double[]{0, 0};
     private final double[] windowPos = new double[]{0, 0};
+
+    // 记录窗口放大缩小相关值
     private boolean isFull = false;
     private double preWidth;
     private double preHeight;
@@ -43,10 +46,9 @@ public class Window {
     private double preY;
 
     private Window() {
-
     }
 
-    public Window(String title, String iconUrl, Node content) {
+    protected Window(String title, String iconUrl, double width, double height) {
         FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("components/window.fxml"));
         try {
             window = loader.load();
@@ -59,27 +61,34 @@ public class Window {
         topBar = (BorderPane) window.lookup("#top-bar");
         bodyContainer = (AnchorPane) window.lookup("#window-body");
 
-        body = content;
         this.iconUrl = iconUrl;
-
-        body.getStyleClass().add("window-body");
 
         // 标题绑定
         Label titleLabel = (Label) window.lookup("#window-title");
         this.title.set(title);
         titleLabel.textProperty().bindBidirectional(this.title);
 
-        // 渲染窗口内容
-        bodyContainer.getChildren().add(content);
-        AnchorPane.setLeftAnchor(content, 0.0);
-        AnchorPane.setBottomAnchor(content, 0.0);
-        AnchorPane.setRightAnchor(content, 0.0);
-        AnchorPane.setTopAnchor(content, 0.0);
+        window.setPrefWidth(width);
+        window.setPrefHeight(height);
 
         // 初始化为隐藏
         setStates(WINDOW_STATES.HIDE);
 
         addListener();
+    }
+
+    // 先加载窗口后加载应用
+    protected void load(Node body) {
+        this.body = body;
+        body.getStyleClass().add("window-body");
+
+        // 渲染窗口内容
+        bodyContainer.getChildren().add(body);
+        AnchorPane.setLeftAnchor(body, 0.0);
+        AnchorPane.setBottomAnchor(body, 0.0);
+        AnchorPane.setRightAnchor(body, 0.0);
+        AnchorPane.setTopAnchor(body, 0.0);
+
     }
 
     private void addListener() {
@@ -121,7 +130,8 @@ public class Window {
                 }
             }
         });
-        //窗口化
+
+        //按钮控制窗口化
         scaleButton.setOnAction(actionEvent -> {
             if (isFull) {
                 zoomOutWindow();
@@ -157,7 +167,11 @@ public class Window {
         Animation.playSlideInY(window, Duration.millis(80), 0);
 
         window.getStyleClass().add("full-screen");
-        body.getStyleClass().remove("window-body");
+
+        if (body != null) {
+            body.getStyleClass().remove("window-body");
+        }
+
         isFull = true;
     }
 
@@ -169,7 +183,11 @@ public class Window {
         Animation.playSlideInY(window, Duration.millis(80), preY);
 
         window.getStyleClass().remove("full-screen");
-        body.getStyleClass().add("window-body");
+
+        if (body != null) {
+            body.getStyleClass().add("window-body");
+        }
+
         isFull = false;
     }
 
