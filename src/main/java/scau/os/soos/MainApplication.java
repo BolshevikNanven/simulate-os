@@ -36,7 +36,7 @@ public class MainApplication extends Application {
 
         GlobalUI.scene = scene;
         GlobalUI.stage = stage;
-        //setupModule();
+        setupModule();
     }
 
     private void setupModule() {

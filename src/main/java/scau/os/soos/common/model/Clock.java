@@ -15,13 +15,13 @@ public class Clock {
         listeners = new ArrayList<>();
     }
 
-    /**
-     * 监听时钟更新
-     *
-     * @param handler
-     */
+    // 监听时钟更新
     public void bind(Handler handler) {
         listeners.add(handler);
+    }
+
+    public void unBind(Handler handler) {
+        listeners.remove(handler);
     }
 
     public void inc() {

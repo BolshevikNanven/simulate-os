@@ -3,6 +3,7 @@ package scau.os.soos.ui.components;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import scau.os.soos.MainApplication;
+import scau.os.soos.common.enums.WINDOW_STATES;
 import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.components.base.Popover;
 import scau.os.soos.ui.components.base.Window;
@@ -30,7 +31,7 @@ public class TaskMenu extends Popover {
 
     private void addListener() {
         closeButton.setOnAction(actionEvent -> {
-            TaskBarManager.getInstance().closeTask(window);
+            window.setState(WINDOW_STATES.CLOSE);
             hide();
         });
     }

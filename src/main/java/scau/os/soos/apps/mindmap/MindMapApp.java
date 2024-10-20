@@ -47,4 +47,9 @@ public class MindMapApp extends Window {
 
         SidebarController.init(sideBarTab, sidebar, sidebarContent);
     }
+
+    @Override
+    protected void close() {
+
+    }
 }

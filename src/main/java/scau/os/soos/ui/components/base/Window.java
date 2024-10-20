@@ -94,20 +94,6 @@ public abstract class Window implements Initializable {
         loadAndLinkFXML(this, fxmlName);
     }
 
-    // 先加载窗口后加载应用
-    protected void setup(Node body) {
-        this.body = body;
-        body.getStyleClass().add("window-body");
-
-        // 渲染窗口内容
-        bodyContainer.getChildren().add(body);
-        AnchorPane.setLeftAnchor(body, 0.0);
-        AnchorPane.setBottomAnchor(body, 0.0);
-        AnchorPane.setRightAnchor(body, 0.0);
-        AnchorPane.setTopAnchor(body, 0.0);
-
-    }
-
     private void addListener() {
         // 当鼠标按下时记录偏移量
         topBar.setOnMousePressed((MouseEvent event) -> {
@@ -159,13 +145,21 @@ public abstract class Window implements Initializable {
 
         // 关闭窗口
         closeButton.setOnAction(actionEvent -> {
-            TaskBarManager.getInstance().closeTask(this);
+            setState(WINDOW_STATES.CLOSE);
         });
 
         // 点击窗口时激活
         window.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
             if (getState() == WINDOW_STATES.HANGUP) {
                 TaskBarManager.getInstance().selectTask(this);
+            }
+        });
+
+        // 监听窗口是否为关闭
+        state.addListener((observableValue, windowStates, t1) -> {
+            if (t1 == WINDOW_STATES.CLOSE) {
+                close();
+                TaskBarManager.getInstance().closeTask(this);
             }
         });
     }
@@ -403,5 +397,8 @@ public abstract class Window implements Initializable {
 
         initialize();
     }
+
     protected abstract void initialize();
+
+    protected abstract void close();
 }

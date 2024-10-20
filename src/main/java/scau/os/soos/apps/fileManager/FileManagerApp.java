@@ -14,4 +14,9 @@ public class FileManagerApp extends Window {
     public void initialize() {
 
     }
+
+    @Override
+    protected void close() {
+
+    }
 }
