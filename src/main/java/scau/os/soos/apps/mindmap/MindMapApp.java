@@ -16,9 +16,7 @@ import scau.os.soos.ui.components.base.Window;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MindMapApp extends Window implements Initializable {
-    @FXML
-    private BorderPane mindMapApp;
+public class MindMapApp extends Window {
     @FXML
     private ScrollPane canvasContainer;
     @FXML
@@ -37,9 +35,7 @@ public class MindMapApp extends Window implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        setup(mindMapApp);
-
+    public void initialize() {
         SidebarFactory.init(sidebarContent);
         LayoutFactory.init(canvas);
 

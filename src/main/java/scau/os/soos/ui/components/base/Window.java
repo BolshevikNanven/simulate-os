@@ -2,7 +2,9 @@ package scau.os.soos.ui.components.base;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -24,10 +26,12 @@ import scau.os.soos.ui.animation.Transition;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ResourceBundle;
 
-public class Window {
+public abstract class Window implements Initializable {
     private static final int EDGE_SIZE = 5; // 可拖动边缘的宽度
     protected SimpleStringProperty title = new SimpleStringProperty();
+    @FXML
     protected Node body;
     private BorderPane window;
     private Button hideButton;
@@ -385,4 +389,19 @@ public class Window {
 
         return imageView;
     }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        body.getStyleClass().add("window-body");
+
+        // 渲染窗口内容
+        bodyContainer.getChildren().add(body);
+        AnchorPane.setLeftAnchor(body, 0.0);
+        AnchorPane.setBottomAnchor(body, 0.0);
+        AnchorPane.setRightAnchor(body, 0.0);
+        AnchorPane.setTopAnchor(body, 0.0);
+
+        initialize();
+    }
+    protected abstract void initialize();
 }
