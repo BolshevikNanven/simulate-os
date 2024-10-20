@@ -8,7 +8,7 @@ import scau.os.soos.common.enums.WINDOW_STATES;
 import scau.os.soos.ui.components.TaskButton;
 import scau.os.soos.ui.components.WindowsMenu;
 import scau.os.soos.ui.components.base.Popover;
-import scau.os.soos.ui.components.Window;
+import scau.os.soos.ui.components.base.Window;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,14 +65,14 @@ public class TaskBarManager {
     }
 
     public void selectTask(Window window) {
-        window.setStates(WINDOW_STATES.ACTIVE);
+        window.setState(WINDOW_STATES.ACTIVE);
         window.getWindow().toFront();
         window.getWindow().getStyleClass().add("active");
         // 设置其他窗口状态,仅运行一个活动窗口
         for (Window win : windowsList) {
             if (win != window && win.getState() == WINDOW_STATES.ACTIVE) {
                 win.getWindow().getStyleClass().remove("active");
-                win.setStates(WINDOW_STATES.HANGUP);
+                win.setState(WINDOW_STATES.HANGUP);
             }
         }
     }

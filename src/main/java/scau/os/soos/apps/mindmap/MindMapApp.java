@@ -1,6 +1,5 @@
 package scau.os.soos.apps.mindmap;
 
-import scau.os.soos.apps.AppUtil;
 import scau.os.soos.apps.mindmap.controller.SidebarController;
 import scau.os.soos.apps.mindmap.service.*;
 import scau.os.soos.apps.mindmap.service.layout.LayoutFactory;
@@ -12,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import scau.os.soos.ui.components.Window;
+import scau.os.soos.ui.components.base.Window;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,13 +33,12 @@ public class MindMapApp extends Window implements Initializable {
     private AnchorPane sidebarContent;
 
     public MindMapApp() {
-        super("思维导图", "apps/terminal/icon.png",1024, 640);
-        AppUtil.loadFXML(this, "main-view.fxml");
+        super("思维导图","main-view.fxml",1024, 640);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        load(mindMapApp);
+        setup(mindMapApp);
 
         SidebarFactory.init(sidebarContent);
         LayoutFactory.init(canvas);

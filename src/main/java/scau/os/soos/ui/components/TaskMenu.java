@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import scau.os.soos.MainApplication;
 import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.components.base.Popover;
+import scau.os.soos.ui.components.base.Window;
 
 import java.io.IOException;
 

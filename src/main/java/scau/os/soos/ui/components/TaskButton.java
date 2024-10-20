@@ -11,6 +11,7 @@ import javafx.scene.layout.Region;
 import scau.os.soos.MainApplication;
 import scau.os.soos.common.enums.WINDOW_STATES;
 import scau.os.soos.ui.TaskBarManager;
+import scau.os.soos.ui.components.base.Window;
 
 public class TaskButton extends Button {
     private Window window;
@@ -20,7 +21,7 @@ public class TaskButton extends Button {
     }
 
     public TaskButton(Window window) {
-        super("", newIcon(window.getIconUrl()));
+        super("", newIcon(window.getIcon()));
         this.getStyleClass().add("task-btn");
 
         this.window = window;
@@ -45,7 +46,7 @@ public class TaskButton extends Button {
         // 选择task
         this.setOnAction(actionEvent -> {
             if (window.getState() == WINDOW_STATES.ACTIVE) {
-                window.setStates(WINDOW_STATES.HIDE);
+                window.setState(WINDOW_STATES.HIDE);
             } else {
                 TaskBarManager.getInstance().selectTask(window);
             }
@@ -58,7 +59,7 @@ public class TaskButton extends Button {
         });
     }
 
-    private static BorderPane newIcon(String url) {
+    private static BorderPane newIcon(ImageView icon) {
         BorderPane borderPane = new BorderPane();
         borderPane.setMaxWidth(Double.MAX_VALUE);
         borderPane.setMaxHeight(Double.MAX_VALUE);
@@ -72,18 +73,15 @@ public class TaskButton extends Button {
         bottomIndicator.setMaxWidth(Region.USE_PREF_SIZE);
         bottomIndicator.getStyleClass().add("task-indicator");
 
-        ImageView imageView = new ImageView();
-        imageView.setImage(new Image(MainApplication.class.getResource(url).toExternalForm()));
-
-        imageView.getStyleClass().add("task-icon");
-        imageView.setFitWidth(24);
-        imageView.setFitHeight(24);
+        icon.getStyleClass().add("task-icon");
+        icon.setFitWidth(24);
+        icon.setFitHeight(24);
 
         HBox bottomContainer = new HBox(bottomIndicator);
         bottomContainer.setAlignment(Pos.CENTER);
 
         borderPane.setTop(topIndicator);
-        borderPane.setCenter(imageView);
+        borderPane.setCenter(icon);
         borderPane.setBottom(bottomContainer);
 
         return borderPane;
