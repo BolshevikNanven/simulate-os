@@ -9,11 +9,15 @@ import scau.os.soos.common.GlobalUI;
 import scau.os.soos.ui.animation.Animation;
 import scau.os.soos.ui.animation.Transition;
 
-public class Popover {
+public abstract class Popover {
     protected Pane container;
     protected boolean isTop = false;
     protected int gap = 0;
     private boolean rendered = false;
+
+    public Popover() {
+        container = setup();
+    }
 
     public void render(Node target) {
         double left = target.localToScreen(target.getBoundsInLocal()).getMinX();
@@ -74,4 +78,6 @@ public class Popover {
             }
         });
     }
+
+    protected abstract Pane setup();
 }
