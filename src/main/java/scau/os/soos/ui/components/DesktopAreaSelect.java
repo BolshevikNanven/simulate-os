@@ -10,4 +10,9 @@ public class DesktopAreaSelect extends AreaSelect {
         this.render(desktop);
         this.edgeBottom = Screen.getPrimary().getBounds().getMaxY() - 52;
     }
+
+    @Override
+    protected void onSelect(double startX, double startY, double endX, double endY) {
+
+    }
 }
