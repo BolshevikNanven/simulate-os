@@ -39,14 +39,14 @@
                         <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="12.0" prefWidth="18.0" styleClass="battery-icon" />
                      </children>
                   </HBox>
-                        <VBox alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="46.0" spacing="2.0" styleClass="tray-btn">
+                        <VBox alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="46.0" prefWidth="84.0" spacing="2.0" styleClass="tray-btn">
                             <children>
-                                <Label text="17:45">
+                                <Label fx:id="time" text="17:45">
                                     <font>
                                         <Font size="11.0" />
                                     </font>
                                 </Label>
-                                <Label text="2024/9/30">
+                                <Label fx:id="date" text="2024/10/30">
                                     <font>
                                         <Font size="11.0" />
                                     </font>
