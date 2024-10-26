@@ -31,12 +31,13 @@ public class MainApplication extends Application {
 
         stage.setOnCloseRequest((e) -> {
             OS.state = OS_STATES.STOPPED;
+            System.out.println(OS.state);
             ThreadsPool.stop();
         });
 
         GlobalUI.scene = scene;
         GlobalUI.stage = stage;
-        //setupModule();
+        setupModule();
     }
 
     private void setupModule() {
@@ -62,7 +63,7 @@ public class MainApplication extends Application {
                 OS.clock.inc();
                 //测试用延时
                 try {
-                    Thread.sleep(800);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

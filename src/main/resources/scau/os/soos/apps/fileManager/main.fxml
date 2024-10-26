@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Pane?>
+
+
+<ScrollPane fx:id="body" fitToWidth="true" hbarPolicy="NEVER" prefHeight="498.0" prefWidth="731.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <Pane prefHeight="900.0" prefWidth="200.0" />
+   </content>
+</ScrollPane>

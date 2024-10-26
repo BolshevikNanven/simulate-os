@@ -4,4 +4,5 @@ public enum WINDOW_STATES {
     ACTIVE,
     HANGUP,
     HIDE,
+    CLOSE,
 }

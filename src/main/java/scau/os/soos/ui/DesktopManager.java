@@ -7,7 +7,7 @@ import scau.os.soos.ui.components.DesktopAreaSelect;
 import scau.os.soos.ui.components.DesktopMenu;
 import scau.os.soos.ui.components.base.AreaSelect;
 import scau.os.soos.ui.components.base.Popover;
-import scau.os.soos.ui.components.Window;
+import scau.os.soos.ui.components.base.Window;
 
 public class DesktopManager {
     private static DesktopManager instance;

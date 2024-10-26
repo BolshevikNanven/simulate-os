@@ -1,25 +1,28 @@
 package scau.os.soos.apps.terminal;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.BorderPane;
-import scau.os.soos.apps.AppUtil;
-import scau.os.soos.ui.components.Window;
+import javafx.scene.control.TextField;
+import scau.os.soos.common.OS;
+import scau.os.soos.common.model.Handler;
+import scau.os.soos.ui.components.base.Window;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class TerminalApp extends Window implements Initializable {
+public class TerminalApp extends Window {
     @FXML
-    private BorderPane TerminalApp;
+    private TextField input;
+    private Handler handler;
 
     public TerminalApp() {
-        super("终端", "apps/terminal/icon.png", 900, 520);
-        AppUtil.loadFXML(this, "main.fxml");
+        super("终端", "main.fxml", 900, 520);
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        load(TerminalApp);
+    protected void initialize() {
+        handler = () -> input.setText("时钟：" + OS.clock.get());
+        OS.clock.bind(handler);
+    }
+
+    @Override
+    protected void close() {
+        OS.clock.unBind(handler);
     }
 }
