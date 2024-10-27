@@ -15,8 +15,9 @@ public class Folder implements Serializable,Cloneable{
     public Folder(int StartDisk, Folder parent, String path){
         this.name = path.substring(path.lastIndexOf("/") + 1);
         this.StartDisk = StartDisk;
-        this.size = 0;
+        this.size = 8;
         this.path=path;
+        this.parent = parent;
         this.setChildren(new ArrayList<Object>());
     }
 

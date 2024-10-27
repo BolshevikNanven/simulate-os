@@ -15,8 +15,28 @@ public class FileService {
     private Fat fatTable;
     public FileService() {
         // TODO: 2024/9/28 读某个模拟文件作为磁盘disk 
-        this.DISK = new Disk();
-        this.fatTable = (Fat) DISK.getDisk()[0][0];
+//        this.DISK = new Disk();
+//        this.fatTable = (Fat) DISK.getDisk()[0][0];
+
+        Disk disk = new Disk();
+        Fat fat = new Fat();
+        disk.getDisk()[0][0]=fat;
+
+        Folder root = new Folder(2,null,"/");
+        disk.getDisk()[2][0]=root;
+
+        Folder a = new Folder(3,root,"/a");
+        Folder b = new Folder(4,root,"/b");
+        disk.getDisk()[3][0]=a;
+        disk.getDisk()[4][0]=b;
+        fat.getFat()[3] = -1;
+        fat.getFat()[4] = -1;
+        root.getChildren().add(a);
+        root.getChildren().add(b);
+
+        this.DISK = disk;
+        this.fatTable = (Fat) disk.getDisk()[0][0];
+
     }
     // 查找空闲磁盘块的编号
     public int findFreeDiskBlock(){
@@ -41,6 +61,12 @@ public class FileService {
     }
 
     public MyFile createFile(String path){
+
+        if(findFile(path) != null){
+            System.out.println("文件已存在！");
+            return null;
+        }
+
         MyFile myFile = null;
 
         //根据路径获取文件名和父目录的路径
@@ -63,6 +89,7 @@ public class FileService {
             myFile = new MyFile(name,path,0,"t","txt",diskNum,1,parent);
         }
         parent.getChildren().add(myFile);
+        DISK.getDisk()[diskNum][0] = myFile;
         return myFile;
     }
 
@@ -71,11 +98,19 @@ public class FileService {
     }
 
     public Folder createFolder(Folder parent,String path) {
+
+        if(findFolder(path) != null){
+            System.out.println("文件夹已存在！");
+            return null;
+        }
+
         Folder folder = null;
 
         int diskNum = findFreeDiskBlock();
         if(diskNum == -1){
             return null;
+        }else{
+            fatTable.getFat()[diskNum] = -1;//占用磁盘块
         }
 
         //创建在根目录下的
@@ -83,15 +118,17 @@ public class FileService {
             Folder root = (Folder) DISK.getDisk()[2][0];
             if(root.getChildren().size()==8){
                 System.out.println("根目录已满，无法创建新目录！");
+                fatTable.getFat()[diskNum] = 0;//无法创建目录，则释放之前的磁盘块占用
                 return null;
             }
             String name = path.substring(path.lastIndexOf("/")+1);
             folder =new Folder(diskNum,root,path);
-            fatTable.getFat()[diskNum] = -1;
+            //fatTable.getFat()[diskNum] = -1;
+            DISK.getDisk()[diskNum][0] = folder;
             root.getChildren().add(folder);
             return folder;
         }else{
-            fatTable.getFat()[diskNum] = -1;
+            //fatTable.getFat()[diskNum] = -1;
             if(parent.getChildren().size()!=0&&parent.getChildren().size()%8==0){//如果父目录所占磁盘已满，则新建一个磁盘块作为父目录的下一个磁盘块
                int newParentDisk = findFreeDiskBlock();
                if(newParentDisk == -1){
@@ -106,6 +143,7 @@ public class FileService {
             }
 
             folder = new Folder(diskNum,parent,path);
+            DISK.getDisk()[diskNum][0] = folder;
             parent.getChildren().add(folder);
             return folder;
         }
@@ -113,27 +151,48 @@ public class FileService {
     }
     public void deleteFolder(String path) {
         Folder folder = findFolder(path);
-        if (folder != null) {
-            for (Object e : folder.getChildren()) {
-                if (e instanceof MyFile) {
-                    deleteFile(((MyFile) e).getPath());
-                } else {
-                    deleteFolder(((Folder) e).getPath());
-                }
-            }
-            formatFatTable(folder.getStartDisk());
-        }
+//        if (folder != null) {
+//            for (Object e : folder.getChildren()) {
+//                if (e instanceof MyFile) {
+//                    deleteFile(((MyFile) e).getPath());
+//                } else {
+//                    deleteFolder(((Folder) e).getPath());
+//                }
+//            }
+//            formatFatTable(folder.getStartDisk());
+//        }
+        //将空文件夹从父目录和磁盘中删除，并更新父目录的大小Folder
+        Folder parent =folder.getParent();
+        parent.getChildren().remove(folder);
+        formatFatTable(folder.getStartDisk());
+        updateFolderSize(parent);
     }
 
 
 
     public void formatFatTable(int diskNum){
+
+        int[] fat = fatTable.getFat();
         int index = diskNum;
-        while(fatTable.getFat()[index]!=-1){
-            int temp = index;
-            index = fatTable.getFat()[index];
-            fatTable.getFat()[temp] = 0;
+        int nextIndex = fat[index];
+
+        // 将起始块标记为未使用
+        DISK.getDisk()[index][0] = null;
+        fat[index] = 0;
+        index = nextIndex;
+
+        // 循环FAT表，将该磁盘块之后的磁盘块全部置为0，直到下一个磁盘块为空
+        while (index !=-1&&fat[index] != -1) {
+            nextIndex = fat[index];
+            fat[index] = 0; // 标记当前块为未使用
+            index = nextIndex;
+            if (index == -1) {
+                break; // 退出循环，因为下一个块已经是未使用的
+            }
+            DISK.getDisk()[index][0] = null; // 标记下一个块为未使用
         }
+        if(index != -1) fat[index] = 0; // 标记最后一个块为未使用
+
     }
     public int getFolderSize(String path) {
       Folder folder = findFolder(path);
@@ -147,7 +206,14 @@ public class FileService {
     }
     public MyFile findFile(String path) {
        for(int i=2;i<Disk.BLOCKS_PER_DISK;i++){
+
+
+           if(DISK.getDisk()[i][0]==null) continue;
+
+
+
            if(DISK.getDisk()[i][0] instanceof MyFile && ((MyFile) DISK.getDisk()[i][0]).getPath().equals(path)){
+               String name =((MyFile) DISK.getDisk()[i][0]).getPath();
                return (MyFile) DISK.getDisk()[i][0];
            }
        }
@@ -155,7 +221,13 @@ public class FileService {
     }
     public Folder findFolder(String path) {
         for(int i=2;i<Disk.BLOCKS_PER_DISK;i++){
+
+            if(DISK.getDisk()[i][0]==null) continue;
+
             if(DISK.getDisk()[i][0] instanceof Folder && ((Folder) DISK.getDisk()[i][0]).getPath().equals(path)){
+
+                String name =((Folder) DISK.getDisk()[i][0]).getPath();
+
                 return (Folder) DISK.getDisk()[i][0];
             }
         }
@@ -164,11 +236,19 @@ public class FileService {
 
     public void deleteFile(String path) {
         MyFile file = findFile(path);
-        if(file != null) {
-            file.getParent().getChildren().remove(file);
-            updateFileSize(file);
-            formatFatTable(file.getStartDisk());
-        }
+//        if(file != null) {
+//            file.getParent().getChildren().remove(file);
+//            updateFileSize(file);
+//            formatFatTable(file.getStartDisk());
+//        }
+        Folder parent =file.getParent();
+        parent.getChildren().remove(file);
+        int startDisk = file.getStartDisk();
+        //DISK.getDisk()[startDisk][0] = null;
+        formatFatTable(startDisk);
+
+        updateFileSize(file);
+
     }
 
 
@@ -219,13 +299,20 @@ public class FileService {
             if(needDisk.size()<needDiskNum){
                 System.out.println("拷贝失败!");
             }
-            MyFile newFile = createFile(path);
-            Folder parent = newFile.getParent();
-            newFile = (MyFile)file.clone();
+
+            String parentPath = path.substring(0,path.lastIndexOf("/"));
+            Folder parent = FileController.getInstance().createDirectory(parentPath);
+
+
+            //MyFile newFile = createFile(path);
+            //Folder parent = newFile.getParent();
+            MyFile newFile = (MyFile)file.clone();
             newFile.setParent(parent);
             newFile.setStartDisk(needDisk.get(0));
+            parent.getChildren().add(newFile);
             for(int i=0;i<needDisk.size()-1;i++){
                 fatTable.getFat()[needDisk.get(i)] = needDisk.get(i+1);
+                DISK.getDisk()[needDisk.get(i)][0] = newFile;
             }
             fatTable.getFat()[needDisk.get(needDiskNum-1)] = -1;
             return true;

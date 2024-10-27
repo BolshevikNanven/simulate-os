@@ -119,12 +119,12 @@ public class MyFile implements Serializable, Cloneable {
     public Object clone() throws CloneNotSupportedException {
         try {
             MyFile clonedFile = (MyFile) super.clone();
-            clonedFile.content = new String(this.content);
+            //clonedFile.content = new String(this.content);
 
             // 深拷贝parent Folder对象
-            if (this.parent != null) {
-                clonedFile.parent = (Folder) this.parent.clone();
-            }
+//            if (this.parent != null) {
+//                clonedFile.parent = (Folder) this.parent.clone();
+//            }
 
             return clonedFile;
         } catch (CloneNotSupportedException e) {
