@@ -13,7 +13,7 @@
 
 <BorderPane id="root" fx:id="root" prefHeight="592.0" prefWidth="980.0" styleClass="wallpaper" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scau.os.soos.MainUIController">
     <bottom>
-        <BorderPane focusTraversable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" styleClass="task-bar-container" stylesheets="@css/task_bar.css" BorderPane.alignment="CENTER">
+        <BorderPane id="task-bar" focusTraversable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" styleClass="task-bar-container" stylesheets="@css/task_bar.css" BorderPane.alignment="CENTER">
             <center>
                 <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="52.0" prefWidth="253.0" spacing="4.0" styleClass="task-bar" BorderPane.alignment="CENTER_LEFT">
                     <children>
