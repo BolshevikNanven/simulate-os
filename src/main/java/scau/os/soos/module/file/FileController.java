@@ -18,6 +18,10 @@ public class FileController implements Module {
         return instance;
     }
 
+    public FileService getFileService() {
+        return fileService;
+    }
+
     private FileController() {
         fileService = new FileService();
     }
@@ -65,10 +69,10 @@ public class FileController implements Module {
     /**
      * 拷贝文件
      */
-    public void copyFile(String path1,String path2){
-        MyFile file1= fileService.findFile(path1);
+    public void copyFile(String sourcePath,String targetPath){
+        MyFile file1= fileService.findFile(sourcePath);
         if(file1 != null){
-            fileService.copyFile(file1,path2);
+            fileService.copyFile(file1,targetPath);
         }else{
             System.out.println("没有该文件");
         }
@@ -80,7 +84,8 @@ public class FileController implements Module {
     public Folder createDirectory(String path) {
         if(fileService.findFolder(path) != null){
             System.out.println("目录已存在");
-            return null;
+            Folder f =  fileService.findFolder(path);
+            return f;
         }
         String[] paths = path.split("/");
         String pathName= paths[0];
@@ -117,6 +122,74 @@ public class FileController implements Module {
 
     @Override
     public void run() {
+
+    }
+
+    public static void main(String[] args) {
+
+        //显示根目录
+        Folder root = getInstance().fileService.findFolder("/");
+        System.out.println("root:" + root);
+        System.out.println("root children: "+root.getChildren());
+
+        //建立文件
+        MyFile c= getInstance().fileService.createFile("/a/c.e");
+        System.out.println("c:"+c);
+        System.out.println("c parent:"+c.getParent());
+
+
+        getInstance().writeFile(c);
+
+        System.out.println(getInstance().readFile(c));
+
+        //创建目录
+        Folder k = getInstance().createDirectory("/b/f/g");
+        System.out.println("k:" + k);
+        System.out.println("k parent:"+k.getParent());
+
+        //查找目录
+        Folder f = getInstance().fileService.findFolder("/b/f");
+        System.out.println("f:" + f);
+        System.out.println("f children: "+f.getChildren());
+
+        //查找目录
+        Folder a = getInstance().fileService.findFolder("/a");
+        System.out.println("a:" + a);
+        System.out.println("a children: "+a.getChildren());
+
+//        //删除目录
+//        getInstance().deleteDirectory("/b");
+//        System.out.println("root children: "+root.getChildren());
+//
+//        //删除文件
+//        getInstance().fileService.deleteFile("/a/c.e");
+//        System.out.println("a children: "+a.getChildren());
+//
+//        MyFile cc= getInstance().fileService.createFile("/a/c.e");
+//        System.out.println("cc:"+cc);
+//        System.out.println("cc parent:"+cc.getParent());
+
+        //拷贝文件
+        getInstance().copyFile("/a/c.e","/b/d.e");
+        System.out.println("b children:"+getInstance().fileService.findFolder("/b").getChildren());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }
