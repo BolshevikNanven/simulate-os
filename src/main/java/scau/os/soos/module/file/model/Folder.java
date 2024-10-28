@@ -8,14 +8,14 @@ public class Folder implements Serializable,Cloneable{
     private String name;
     String path;
     private int StartDisk;
-    private int size=8;
+    private int size=0;
     private Folder parent;
     private List<Object> children;
 
     public Folder(int StartDisk, Folder parent, String path){
         this.name = path.substring(path.lastIndexOf("/") + 1);
         this.StartDisk = StartDisk;
-        this.size = 8;
+        this.size = 0;
         this.path=path;
         this.parent = parent;
         this.setChildren(new ArrayList<Object>());
@@ -38,6 +38,7 @@ public class Folder implements Serializable,Cloneable{
     }
 
     public int getSize() {
+        setSize(0);
        for(Object e:children){
            if(e instanceof Folder) size+=((Folder) e).getSize();
            else size+=((MyFile) e).getSize();

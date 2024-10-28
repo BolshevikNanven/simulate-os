@@ -5,6 +5,7 @@ import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Folder;
 import scau.os.soos.module.file.model.MyFile;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,28 +15,14 @@ public class FileService {
     private Disk DISK;
     private Fat fatTable;
     public FileService() {
-        // TODO: 2024/9/28 读某个模拟文件作为磁盘disk 
-//        this.DISK = new Disk();
-//        this.fatTable = (Fat) DISK.getDisk()[0][0];
+        // TODO: 2024/9/28 读某个模拟文件作为磁盘disk
 
-        Disk disk = new Disk();
-        Fat fat = new Fat();
-        disk.getDisk()[0][0]=fat;
-
-        Folder root = new Folder(2,null,"/");
-        disk.getDisk()[2][0]=root;
-
-        Folder a = new Folder(3,root,"/a");
-        Folder b = new Folder(4,root,"/b");
-        disk.getDisk()[3][0]=a;
-        disk.getDisk()[4][0]=b;
-        fat.getFat()[3] = -1;
-        fat.getFat()[4] = -1;
-        root.getChildren().add(a);
-        root.getChildren().add(b);
-
-        this.DISK = disk;
-        this.fatTable = (Fat) disk.getDisk()[0][0];
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("disk.dat"))) {
+            this.DISK = (Disk) ois.readObject(); // 读取 Disk 对象
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        this.fatTable = (Fat) DISK.getDisk()[0][0];
 
     }
     // 查找空闲磁盘块的编号
@@ -286,6 +273,7 @@ public class FileService {
 
             fatTable.getFat()[endDisk] = -1;
             file.setContent(str);
+            file.setSize(str.length());
             updateFileSize(file);
             file.setNumOfDiskBlock(file.getNumOfDiskBlock()+list.size());
             System.out.println("写入成功!");
@@ -366,5 +354,16 @@ public class FileService {
         }
         return endDisk;
     }
+
+    public void disk2file(){
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("disk.dat"))) {
+            oos.writeObject(DISK); // 写入 Disk 对象
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
