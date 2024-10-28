@@ -7,6 +7,7 @@ import javafx.stage.WindowEvent;
 import scau.os.soos.MainApplication;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.mindmap.MindMapApp;
+import scau.os.soos.apps.taskManager.TaskManagerApp;
 import scau.os.soos.apps.terminal.TerminalApp;
 import scau.os.soos.common.GlobalUI;
 import scau.os.soos.common.OS;
@@ -19,6 +20,7 @@ public class WindowsMenu extends Popover {
     private final Button shutdownBtn;
     private final Button cmdBtn;
     private final Button fileManagerBtn;
+    private final Button taskManagerBtn;
     private final Button mindMapBtn;
 
     public WindowsMenu() {
@@ -29,7 +31,7 @@ public class WindowsMenu extends Popover {
         cmdBtn = (Button) this.container.lookup("#windows-cmd-btn");
         fileManagerBtn = (Button) this.container.lookup("#windows-file-manager-btn");
         mindMapBtn = (Button) this.container.lookup("#windows-mind-map-btn");
-
+        taskManagerBtn = (Button) this.container.lookup("#windows-task-manager-btn");
 
         addListener();
     }
@@ -45,6 +47,10 @@ public class WindowsMenu extends Popover {
         });
         fileManagerBtn.setOnAction(actionEvent -> {
             TaskBarManager.getInstance().addTask(new FileManagerApp());
+            hide();
+        });
+        taskManagerBtn.setOnAction(actionEvent -> {
+            TaskBarManager.getInstance().addTask(new TaskManagerApp());
             hide();
         });
         mindMapBtn.setOnAction(actionEvent -> {

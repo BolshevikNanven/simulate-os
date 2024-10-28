@@ -2,6 +2,7 @@ package scau.os.soos.ui;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import scau.os.soos.common.GlobalUI;
 import scau.os.soos.common.enums.WINDOW_STATES;
@@ -19,6 +20,7 @@ public class TaskBarManager {
     private Button windowsButton;
     private Popover windowsMenu;
     private HBox taskArea;
+    private BorderPane taskBar;
 
     public static TaskBarManager getInstance() {
         if (instance == null) {
@@ -33,6 +35,7 @@ public class TaskBarManager {
     public void init() {
         windowsButton = (Button) GlobalUI.rootNode.lookup("#windows-btn");
         taskArea = (HBox) GlobalUI.rootNode.lookup("#task-area");
+        taskBar = (BorderPane) GlobalUI.rootNode.lookup("#task-bar");
 
         windowsMenu = new WindowsMenu();
         windowsList = new ArrayList<>();
@@ -75,6 +78,9 @@ public class TaskBarManager {
                 win.setState(WINDOW_STATES.HANGUP);
             }
         }
+
+        // 始终保持任务栏在最前
+        taskBar.toFront();
     }
 
     private void addListener() {
