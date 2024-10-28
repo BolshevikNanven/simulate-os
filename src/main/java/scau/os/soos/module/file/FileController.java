@@ -127,25 +127,27 @@ public class FileController implements Module {
 
     public static void main(String[] args) {
 
+
+
         //显示根目录
         Folder root = getInstance().fileService.findFolder("/");
         System.out.println("root:" + root);
         System.out.println("root children: "+root.getChildren());
 
-        //建立文件
-        MyFile c= getInstance().fileService.createFile("/a/c.e");
-        System.out.println("c:"+c);
-        System.out.println("c parent:"+c.getParent());
+//        //建立文件
+//        MyFile c= getInstance().fileService.createFile("/a/c.e");
+//        System.out.println("c:"+c);
+//        System.out.println("c parent:"+c.getParent());
 
 
-        getInstance().writeFile(c);
+        //getInstance().writeFile(c);
 
-        System.out.println(getInstance().readFile(c));
+        //System.out.println(getInstance().readFile(c));
 
-        //创建目录
-        Folder k = getInstance().createDirectory("/b/f/g");
-        System.out.println("k:" + k);
-        System.out.println("k parent:"+k.getParent());
+//        //创建目录
+//        Folder k = getInstance().createDirectory("/b/f/g");
+//        System.out.println("k:" + k);
+//        System.out.println("k parent:"+k.getParent());
 
         //查找目录
         Folder f = getInstance().fileService.findFolder("/b/f");
@@ -169,23 +171,12 @@ public class FileController implements Module {
 //        System.out.println("cc:"+cc);
 //        System.out.println("cc parent:"+cc.getParent());
 
-        //拷贝文件
-        getInstance().copyFile("/a/c.e","/b/d.e");
-        System.out.println("b children:"+getInstance().fileService.findFolder("/b").getChildren());
+//        //拷贝文件
+//        getInstance().copyFile("/a/c.e","/b/d.e");
+//        System.out.println("b children:"+getInstance().fileService.findFolder("/b").getChildren());
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+        getInstance().fileService.disk2file();
 
 
 
