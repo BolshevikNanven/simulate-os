@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.WindowEvent;
 import scau.os.soos.MainApplication;
+import scau.os.soos.apps.diskManager.DiskManagerApp;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.mindmap.MindMapApp;
 import scau.os.soos.apps.taskManager.TaskManagerApp;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class WindowsMenu extends Popover {
     private final Button shutdownBtn;
     private final Button cmdBtn;
+    private final Button diskManagerBtn;
     private final Button fileManagerBtn;
     private final Button taskManagerBtn;
     private final Button mindMapBtn;
@@ -29,6 +31,7 @@ public class WindowsMenu extends Popover {
 
         shutdownBtn = (Button) this.container.lookup("#shutdown-btn");
         cmdBtn = (Button) this.container.lookup("#windows-cmd-btn");
+        diskManagerBtn = (Button) this.container.lookup("#windows-disk-manager-btn");
         fileManagerBtn = (Button) this.container.lookup("#windows-file-manager-btn");
         mindMapBtn = (Button) this.container.lookup("#windows-mind-map-btn");
         taskManagerBtn = (Button) this.container.lookup("#windows-task-manager-btn");
@@ -43,6 +46,10 @@ public class WindowsMenu extends Popover {
         });
         cmdBtn.setOnAction(actionEvent -> {
             TaskBarManager.getInstance().addTask(new TerminalApp());
+            hide();
+        });
+        diskManagerBtn.setOnAction(actionEvent -> {
+            TaskBarManager.getInstance().addTask(new DiskManagerApp());
             hide();
         });
         fileManagerBtn.setOnAction(actionEvent -> {
