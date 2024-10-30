@@ -5,10 +5,9 @@ import java.util.Arrays;
 public class Item {
     private final byte[] name = new byte[3];
     private final byte type;
-    private final byte attribute;
+    private byte attribute;
     private final byte startBlockNum;
     private final byte[] size = new byte[2];
-    private boolean exist;
 
     public Item(byte[] data) {
         System.arraycopy(data, 0, name, 0, 3);
@@ -16,7 +15,14 @@ public class Item {
         attribute = data[4];
         startBlockNum = data[5];
         System.arraycopy(data, 6, size, 0, 2);
-        exist = startBlockNum != 0x00;
+    }
+
+    public byte[] getData(){
+        return new byte[]{
+                name[0], name[1], name[2],
+                type, attribute, startBlockNum,
+                size[0], size[1]
+        };
     }
 
     public String getName() {
@@ -27,8 +33,40 @@ public class Item {
         return (char) type;
     }
 
-    public char getAttribute() {
-        return (char) attribute;
+    // 设置属性（使用位操作）
+    public void setAttribute(boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
+        attribute = 0;
+
+        // 利用位运算设置各个属性
+        if (readOnly) {
+            attribute |= 1; // 设置第0位
+        }
+        if (systemFile) {
+            attribute |= 1 << 1; // 设置第1位
+        }
+        if (regularFile) {
+            attribute |= 1 << 2; // 设置第2位
+        }
+        if (isDirectory) {
+            attribute |= 1 << 3; // 设置第3位
+        }
+    }
+
+    // 获取属性
+    public boolean isReadOnly() {
+        return (attribute & (1)) != 0;
+    }
+
+    public boolean isSystemFile() {
+        return (attribute & (1 << 1)) != 0;
+    }
+
+    public boolean isRegularFile() {
+        return (attribute & (1 << 2)) != 0;
+    }
+
+    public boolean isDirectory() {
+        return (attribute & (1 << 3)) != 0;
     }
 
     public int getStartBlockNum() {
@@ -37,14 +75,6 @@ public class Item {
 
     public int getSize() {
         return size[0] << 8 + size[1];
-    }
-
-    public void updateExist(){
-        exist = !exist;
-    }
-
-    public boolean isExist() {
-        return exist;
     }
 
     protected byte[][] getContent(Disk disk) {

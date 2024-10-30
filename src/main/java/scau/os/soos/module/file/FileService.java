@@ -1,9 +1,6 @@
 package scau.os.soos.module.file;
 
-import scau.os.soos.module.file.model.Disk;
-import scau.os.soos.module.file.model.Fat;
-import scau.os.soos.module.file.model.Directory;
-import scau.os.soos.module.file.model.Txt;
+import scau.os.soos.module.file.model.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,12 +10,12 @@ import java.util.Scanner;
 public class FileService {
 
     private Disk DISK;
-
+    private Fat fatTable;
     public FileService() {
         // TODO: 2024/9/28 读某个模拟文件作为磁盘disk
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("disk.dat"))) {
-            this.DISK = (Disk) ois.read();
+            this.DISK = (Disk) ois.readObject(); // 读取 Disk 对象
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -188,7 +185,7 @@ public class FileService {
       }
       else return -1;
     }
-    public int getFileSize(Txt file) {
+    public int getFileSize(Item file) {
         return file.getSize();
     }
     public Txt findFile(String path) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Exe extends Item{
-    public static final int BYTES_PER_ITEM = 1;
     private final List<Byte> instructions;
 
     public Exe(Disk disk, byte[]data) {
@@ -21,7 +20,6 @@ public class Exe extends Item{
                 instructions.add(itemData);
             }
         }
-
     }
 
     public List<Byte> getInstructions(){

@@ -2,6 +2,8 @@ package scau.os.soos.module.file;
 
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Exe;
+import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.model.Txt;
 
 public class FileController implements Module {
@@ -56,12 +58,14 @@ public class FileController implements Module {
     /**
      * 读文件
      */
-    public Object readFile(Txt file) {
+    public Object readFile(Item file) {
         if(file == null){
             System.out.println("没有该文件");
         }
-
-        return file.getContent();
+        if (file != null) {
+            return ((Exe) file).getInstructions();
+        }
+        return null;
     }
 
     /**
@@ -109,7 +113,7 @@ public class FileController implements Module {
         else System.out.println("该目录不为空或目录不存在");
     }
 
-    public int getFileSize(Txt file) {
+    public int getFileSize(Item file) {
         if (file == null) {
             return 0;
         }

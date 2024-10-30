@@ -5,7 +5,7 @@ import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
 import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.file.FileController;
-import scau.os.soos.module.file.model.Txt;
+import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.model.BlockingQueue;
 import scau.os.soos.module.process.model.EmptyPCBQueue;
@@ -36,7 +36,7 @@ public class ProcessService {
     }
 
     // 新建 -> 就绪
-    public synchronized Process create(Txt file) {
+    public synchronized Process create(Item file) {
         if (file == null) {
             System.out.println("-------Process-------文件为空");
             return null;
