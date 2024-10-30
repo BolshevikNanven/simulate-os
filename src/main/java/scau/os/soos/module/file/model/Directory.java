@@ -158,4 +158,8 @@ public class Directory extends Item {
         return children;
     }
 
+    public boolean addChildren(Item item) {
+        return children.add(item);
+    }
+
 }

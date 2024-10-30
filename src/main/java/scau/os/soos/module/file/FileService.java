@@ -22,92 +22,125 @@ public class FileService {
         return disk.findDirectory(path);
     }
 
-    public Item createFile(String path) {
-        if (findFile(path) != null) {
+    public Item createFile(String path) {;
+
+        if(findFile(path) != null){
             System.out.println("文件已存在！");
             return null;
         }
 
-        Txt file = null;
-
-        //根据路径获取文件名和父目录的路径
-        String name = path.substring(path.lastIndexOf("/") + 1);
-        String parentPath = path.substring(0, path.lastIndexOf("/"));//父目录不存在则创建
-        if (findFile(parentPath) == null) {
+        Item file = null;
+        String parentPath = path.substring(0,path.lastIndexOf("/"));
+        Directory parent = (Directory) findFile(parentPath);
+        if(parent == null){
             System.out.println("父目录不存在！");
-            Directory parent = createDirectory(parentPath);
-        }
-
-        int diskNum = disk.findFreeDiskBlock();//磁盘块占用
-        if (diskNum == -1) {
-            System.out.println("磁盘空间不足！");
             return null;
-        } else {
-            disk.occupyDiskBlock(diskNum);//占用磁盘块
+        }else{
+            int startDisk = disk.findFreeDiskBlock();
+
+            if(startDisk == -1){
+                System.out.println("磁盘空间不足！");
+                return null;
+            }
+
+            String name = path.substring(path.lastIndexOf("/") + 1);
+
+            if(path.contains(".e")){
+                file = new Exe(name,'e',true,false,true,false,disk,parent,"");
+                file.setStartBlockNum((byte)startDisk);
+                ((Exe)file).writeContentToDisk(disk);
+            }else{
+                file = new Txt(name,'t',true,false,true,false,disk,parent,"");
+                file.setStartBlockNum((byte)startDisk);
+                ((Txt)file).writeContentToDisk(disk);
+            }
+            disk.getFat().setNextBlockIndex(startDisk,Fat.TERMINATED);
+            parent.addChildren(file);
+            return file;
         }
 
-        //创建文件对象
-        if (path.contains(".e")) {
-            file = new Txt(name, path, 0, "e", "exe", diskNum, 1, parent);
-        } else {
-            file = new Exe(name, path, 0, "t", "txt", diskNum, 1, parent);
-        }
-        parent.getChildren().add(file);
-        return file;
     }
 
-    public Directory createDirectory(Directory parent, String path) {
+    public Directory createDirectory(String path) {
 
-        if (findFolder(path) != null) {
+//        if (findFolder(path) != null) {
+//            System.out.println("文件夹已存在！");
+//            return null;
+//        }
+//
+//        Directory folder = null;
+//
+//        int diskNum = findFreeDiskBlock();
+//        if (diskNum == -1) {
+//            return null;
+//        } else {
+//            fatTable.getFat()[diskNum] = -1;//占用磁盘块
+//        }
+//
+//        //创建在根目录下的
+//        if (parent == null) {
+//            Directory root = (Directory) DISK.getDisk()[2][0];
+//            if (root.getChildren().size() == 8) {
+//                System.out.println("根目录已满，无法创建新目录！");
+//                fatTable.getFat()[diskNum] = 0;//无法创建目录，则释放之前的磁盘块占用
+//                return null;
+//            }
+//            String name = path.substring(path.lastIndexOf("/") + 1);
+//            folder = new Directory(diskNum, root, path);
+//            //fatTable.getFat()[diskNum] = -1;
+//            DISK.getDisk()[diskNum][0] = folder;
+//            root.getChildren().add(folder);
+//            return folder;
+//        } else {
+//            //fatTable.getFat()[diskNum] = -1;
+//            if (parent.getChildren().size() != 0 && parent.getChildren().size() % 8 == 0) {//如果父目录所占磁盘已满，则新建一个磁盘块作为父目录的下一个磁盘块
+//                int newParentDisk = findFreeDiskBlock();
+//                if (newParentDisk == -1) {
+//                    System.out.println("磁盘空间不足！");
+//                    fatTable.getFat()[diskNum] = 0;//无法创建目录，则释放之前的磁盘块占用
+//                    return null;
+//                }
+//
+//                int endDisk = findLastDisk(parent.getStartDisk());//更新fat表
+//                fatTable.getFat()[endDisk] = newParentDisk;
+//                fatTable.getFat()[newParentDisk] = -1;
+//            }
+//
+//            folder = new Directory(diskNum, parent, path);
+//            DISK.getDisk()[diskNum][0] = folder;
+//            parent.getChildren().add(folder);
+//            return folder;
+//        }
+        if(disk.findDirectory(path) != null){
             System.out.println("文件夹已存在！");
             return null;
         }
 
         Directory folder = null;
+        String parentPath = path.substring(0,path.lastIndexOf("/"));
+        Directory parent = (Directory) findDirectory(parentPath);
 
-        int diskNum = findFreeDiskBlock();
-        if (diskNum == -1) {
+        if(parent == null){
+            System.out.println("父目录不存在！");
             return null;
-        } else {
-            fatTable.getFat()[diskNum] = -1;//占用磁盘块
-        }
+        }else{
+            int startDisk = disk.findFreeDiskBlock();
 
-        //创建在根目录下的
-        if (parent == null) {
-            Directory root = (Directory) DISK.getDisk()[2][0];
-            if (root.getChildren().size() == 8) {
-                System.out.println("根目录已满，无法创建新目录！");
-                fatTable.getFat()[diskNum] = 0;//无法创建目录，则释放之前的磁盘块占用
+            if(startDisk == -1){
+                System.out.println("磁盘空间不足！");
                 return null;
             }
-            String name = path.substring(path.lastIndexOf("/") + 1);
-            folder = new Directory(diskNum, root, path);
-            //fatTable.getFat()[diskNum] = -1;
-            DISK.getDisk()[diskNum][0] = folder;
-            root.getChildren().add(folder);
-            return folder;
-        } else {
-            //fatTable.getFat()[diskNum] = -1;
-            if (parent.getChildren().size() != 0 && parent.getChildren().size() % 8 == 0) {//如果父目录所占磁盘已满，则新建一个磁盘块作为父目录的下一个磁盘块
-                int newParentDisk = findFreeDiskBlock();
-                if (newParentDisk == -1) {
-                    System.out.println("磁盘空间不足！");
-                    fatTable.getFat()[diskNum] = 0;//无法创建目录，则释放之前的磁盘块占用
-                    return null;
-                }
 
-                int endDisk = findLastDisk(parent.getStartDisk());//更新fat表
-                fatTable.getFat()[endDisk] = newParentDisk;
-                fatTable.getFat()[newParentDisk] = -1;
-            }
-
-            folder = new Directory(diskNum, parent, path);
-            DISK.getDisk()[diskNum][0] = folder;
-            parent.getChildren().add(folder);
+            String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
+            folder = new Directory(name,'\u0000',true,false,false,true,disk,parent,new ArrayList<>());
+            folder.setStartBlockNum((byte)startDisk);
+            disk.getFat().setNextBlockIndex(startDisk,Fat.TERMINATED);
+            parent.addChildren(folder);
             return folder;
         }
-
     }
+
+
 
     public void deleteFolder(String path) {
         Item folder = disk.find(path);
