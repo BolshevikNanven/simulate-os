@@ -1,11 +1,8 @@
 package scau.os.soos.module.file;
 
 import scau.os.soos.module.Module;
-import scau.os.soos.module.device.DeviceController;
-import scau.os.soos.module.device.DeviceService;
-import scau.os.soos.module.file.model.Fat;
-import scau.os.soos.module.file.model.Folder;
-import scau.os.soos.module.file.model.MyFile;
+import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Txt;
 
 public class FileController implements Module {
     private static FileController instance;
@@ -29,7 +26,7 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public MyFile createFile(String path){
+    public Txt createFile(String path){
         if(fileService.findFile(path) != null){
             System.out.println("文件已存在");
             return null;
@@ -52,17 +49,18 @@ public class FileController implements Module {
     /**
      * 写文件
      */
-    public void writeFile(MyFile file){
+    public void writeFile(Txt file){
             fileService.writeFile(file);
     }
 
     /**
      * 读文件
      */
-    public Object readFile(MyFile file) {
+    public Object readFile(Txt file) {
         if(file == null){
             System.out.println("没有该文件");
         }
+
         return file.getContent();
     }
 
@@ -70,7 +68,7 @@ public class FileController implements Module {
      * 拷贝文件
      */
     public void copyFile(String sourcePath,String targetPath){
-        MyFile file1= fileService.findFile(sourcePath);
+        Txt file1= fileService.findFile(sourcePath);
         if(file1 != null){
             fileService.copyFile(file1,targetPath);
         }else{
@@ -81,15 +79,15 @@ public class FileController implements Module {
     /**
      * 建立目录
      */
-    public Folder createDirectory(String path) {
+    public Directory createDirectory(String path) {
         if(fileService.findFolder(path) != null){
             System.out.println("目录已存在");
-            Folder f =  fileService.findFolder(path);
+            Directory f =  fileService.findFolder(path);
             return f;
         }
         String[] paths = path.split("/");
         String pathName= paths[0];
-        Folder parent = null;
+        Directory parent = null;
 
         for(int i=1;i<paths.length;i++){
             pathName = pathName + "/" + paths[i];
@@ -104,14 +102,14 @@ public class FileController implements Module {
      * 删除空目录
      */
     public void deleteDirectory(String path) {
-        Folder folder = fileService.findFolder(path);
+        Directory folder = fileService.findFolder(path);
         if(folder != null && folder.getChildren().size() == 0){
             fileService.deleteFolder(path);
         }
         else System.out.println("该目录不为空或目录不存在");
     }
 
-    public int getFileSize(MyFile file) {
+    public int getFileSize(Txt file) {
         if (file == null) {
             return 0;
         }
@@ -130,7 +128,7 @@ public class FileController implements Module {
 
 
         //显示根目录
-        Folder root = getInstance().fileService.findFolder("/");
+        Directory root = getInstance().fileService.findFolder("/");
         System.out.println("root:" + root);
         System.out.println("root children: "+root.getChildren());
 
@@ -150,12 +148,12 @@ public class FileController implements Module {
 //        System.out.println("k parent:"+k.getParent());
 
         //查找目录
-        Folder f = getInstance().fileService.findFolder("/b/f");
+        Directory f = getInstance().fileService.findFolder("/b/f");
         System.out.println("f:" + f);
         System.out.println("f children: "+f.getChildren());
 
         //查找目录
-        Folder a = getInstance().fileService.findFolder("/a");
+        Directory a = getInstance().fileService.findFolder("/a");
         System.out.println("a:" + a);
         System.out.println("a children: "+a.getChildren());
 

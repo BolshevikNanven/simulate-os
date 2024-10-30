@@ -1,31 +1,52 @@
 package scau.os.soos.module.file.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+public class Fat {
+    public static final int BLOCK_SIZE = 512;
+    public static final int FREE = 0;
+    public static final int TERMINATED = 1;
 
-public class Fat implements Serializable {
-    private final int[] fat;
-    private static  int BLOCKS_PER_DISK = 256;
-    public Fat() {
-        this.fat = new int[BLOCKS_PER_DISK];
+    private final byte[] fat;
+
+    public Fat(Disk disk, int block_per_disk, int[] nums) {
+        this.fat = new byte[block_per_disk];
+
+        int index = 0;
+        for (int i : nums) {
+            byte[] content = disk.getDiskBlock(i);
+            for (byte b : content) {
+                fat[index] = b;
+                index++;
+            }
+        }
     }
 
-    public int[] getFat() {
-        return fat;
+    public void reset(int block_per_disk, int bytes_per_block) {
+        for (int i = 0; i < block_per_disk; i++) {
+            fat[i] = FREE;
+        }
+        for (int i = 0; i < block_per_disk / bytes_per_block; i++) {
+            fat[i] = TERMINATED;
+        }
     }
 
-    public static int getBlocksPerDisk() {
-        return BLOCKS_PER_DISK;
+    public boolean setNextBlock(int diskNum, int nextDisk) {
+        if (isFreeBlock(diskNum)) {
+            fat[diskNum] = (byte) nextDisk;
+        } else {
+            System.out.println("Block is not free");
+            return false;
+        }
+        return true;
     }
 
-    public static void setBlocksPerDisk(int blocksPerDisk) {
-        BLOCKS_PER_DISK = blocksPerDisk;
+    public int getNextBlockNum(int diskNum) {
+        return fat[diskNum];
     }
-    public boolean isEmptyDisk(int diskNum){
-       if(getFat()[diskNum]==0){
-           return true;
-       }
-       return false;
+
+    public boolean isFreeBlock(int diskNum) {
+        if (diskNum < 0 || diskNum >= fat.length) {
+            System.out.println("Block is out of range");
+        }
+        return fat[diskNum] == FREE;
     }
 }

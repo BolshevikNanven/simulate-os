@@ -1,24 +1,35 @@
 package scau.os.soos.module.file.model;
 
-import java.io.Serializable;
-
-public class Disk implements Serializable {
+public class Disk {
     public static final int BLOCKS_PER_DISK = 256;
     public static final int BYTES_PER_BLOCK = 64;
+    public static final int[] FAT_NUMS = {0, 1, 2, 3};
+    public static final int ROOT_BLOCK_NUM = 4;
 
-    private final Object[][] disk;
+    private final byte[][] disk;
+    private final Fat fat;
+    private final Directory rootDirectory;
 
     public Disk() {
-        this.disk = new Object[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
+        this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
+        this.fat = new Fat(this, BLOCKS_PER_DISK, FAT_NUMS);
+        this.rootDirectory = new Directory(this, disk[ROOT_BLOCK_NUM]);
     }
 
-    /**
-     * 获取特定磁盘块的内容。
-     *
-     * @param blockNumber 磁盘块的编号，从0到BLOCKS_PER_DISK-1。
-     * @return 指定编号的磁盘块的内容，如果编号无效则返回null。
-     */
-    public Object getDiskBlock(int blockNumber) {
+    public Directory getRootDirectory() {
+        return rootDirectory;
+    }
+
+    public Fat getFat() {
+        return fat;
+    }
+
+    public boolean findItem(String path){
+
+        return false;
+    }
+
+    public byte[] getDiskBlock(int blockNumber) {
         // 检查blockNumber是否在有效范围内
         if (blockNumber < 0 || blockNumber >= BLOCKS_PER_DISK) {
             return null;
@@ -26,8 +37,26 @@ public class Disk implements Serializable {
         return disk[blockNumber];
     }
 
-    public Object[][] getDisk() {
-        return disk;
+    public boolean setDiskBlock(int blockNumber, byte[] newContent) {
+        // 检查blockNumber是否在有效范围内
+        if (blockNumber < 0 || blockNumber >= BLOCKS_PER_DISK) {
+            return false;
+        }
+        System.arraycopy(newContent, 0, disk[blockNumber], 0, BYTES_PER_BLOCK);
+        return true;
     }
 
+    public boolean isFreeBlock(int diskBlock) {
+        return fat.isFreeBlock(diskBlock);
+    }
+
+    public boolean readDisk() {
+
+        return true;
+    }
+
+    public boolean writeDisk() {
+
+        return true;
+    }
 }
