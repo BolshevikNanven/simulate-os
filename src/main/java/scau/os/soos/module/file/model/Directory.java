@@ -13,10 +13,10 @@ public class Directory extends Item {
 
         children = new ArrayList<>();
 
-        initFromDisk();
+        //initFromDisk();
     }
 
-    public Directory(String name, char type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, List<Item> children) {
+    public Directory(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, List<Item> children) {
         super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
         setDisk(disk);
         this.children = children;
@@ -77,10 +77,16 @@ public class Directory extends Item {
     private Item find(String path) {
         //读文件"dir1/dir2/file.txt"
         //读目录"dir1/dir2"
+
+        if(path.equals("")||path==null)
+            return this;
+
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
         List<String> pathParts = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
-            pathParts.add(tokenizer.nextToken());
+            String pathPart = tokenizer.nextToken();
+            pathParts.add(pathPart);
+            System.out.println(pathPart+"----");
         }
 
         // 从根目录（即this）开始查找
@@ -88,6 +94,9 @@ public class Directory extends Item {
     }
 
     public Item findDirectory(String path){
+        if(path.equals("")||path==null)
+            return this;
+
         Item item = find(path); // 查找项目
         if (item instanceof Directory) {
             return item;
