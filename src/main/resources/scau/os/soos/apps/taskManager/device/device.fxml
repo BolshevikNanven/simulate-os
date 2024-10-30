@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="587.0" prefWidth="635.0" styleClass="detail-container" stylesheets="@../main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane>
+         <left>
+            <Label prefHeight="38.0" prefWidth="62.0" styleClass="detail-title" text="设备" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label prefHeight="28.0" styleClass="detail-subtitle" text="A,B,C" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-col-title" text="设备A" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-col-title" text="2台" BorderPane.alignment="CENTER" />
+         </right>
+         <VBox.margin>
+            <Insets bottom="2.0" />
+         </VBox.margin>
+      </BorderPane>
+      <BorderPane prefWidth="603.0">
+         <center>
+            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" prefWidth="240.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+               <xAxis>
+                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+               </yAxis>
+            </LineChart>
+         </center>
+      </BorderPane>
+      <HBox styleClass="detail-col-container">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="已使用" />
+                  <Label styleClass="detail-col-content-l" text="2" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="可用" />
+                  <Label styleClass="detail-col-content-l" text="0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="使用中" />
+                  <Label styleClass="detail-col-content-l" text="2;1" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="等待" />
+                  <Label styleClass="detail-col-content-l" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-col-title" text="设备B" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-col-title" text="3台" BorderPane.alignment="CENTER" />
+         </right>
+         <VBox.margin>
+            <Insets top="16.0" />
+         </VBox.margin>
+      </BorderPane>
+      <BorderPane prefWidth="603.0">
+         <center>
+            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" prefWidth="240.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+               <xAxis>
+                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+               </yAxis>
+            </LineChart>
+         </center>
+      </BorderPane>
+      <HBox styleClass="detail-col-container">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="已使用" />
+                  <Label styleClass="detail-col-content-l" text="2" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="可用" />
+                  <Label styleClass="detail-col-content-l" text="0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="使用中" />
+                  <Label styleClass="detail-col-content-l" text="2;1" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="等待" />
+                  <Label styleClass="detail-col-content-l" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-col-title" text="设备C" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-col-title" text="3台" BorderPane.alignment="CENTER" />
+         </right>
+         <VBox.margin>
+            <Insets top="16.0" />
+         </VBox.margin>
+      </BorderPane>
+      <BorderPane prefWidth="603.0">
+         <center>
+            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" prefWidth="240.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+               <xAxis>
+                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+               </yAxis>
+            </LineChart>
+         </center>
+      </BorderPane>
+      <HBox styleClass="detail-col-container">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="已使用" />
+                  <Label styleClass="detail-col-content-l" text="2" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="可用" />
+                  <Label styleClass="detail-col-content-l" text="0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="使用中" />
+                  <Label styleClass="detail-col-content-l" text="2;1" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="等待" />
+                  <Label styleClass="detail-col-content-l" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>
