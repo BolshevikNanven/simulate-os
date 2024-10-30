@@ -34,6 +34,35 @@
     -fx-background-color: transparent;
 }
 
+.chart-area-symbol {
+    -fx-background-color: transparent;
+    -fx-shape: "";
+}
+
+.cpu-chart .chart-series-area-line {
+    -fx-stroke: rgb(96, 165, 187);
+}
+
+.cpu-chart .chart-series-area-fill {
+    -fx-fill: rgb(195, 236, 250);
+}
+
+.memory-chart .chart-series-area-line {
+    -fx-stroke: rgb(9, 91, 222);
+}
+
+.memory-chart .chart-series-area-fill {
+    -fx-fill: rgb(201, 225, 255);
+}
+
+.device-chart .chart-series-area-line {
+    -fx-stroke: rgb(147, 173, 101);
+}
+
+.device-chart .chart-series-area-fill {
+    -fx-fill: rgb(216, 244, 181);
+}
+
 .progress-bar .bar {
     -fx-background-color: #ffffff;
 }
@@ -102,7 +131,7 @@
     -fx-text-fill: #666666;
 }
 
-#detailArea {
+#detailContainer {
     -fx-background-color: #ffffff;
     -fx-effect: null;
     -fx-padding: 0;
@@ -111,12 +140,12 @@
     -fx-background-radius: 0 0 6px 0;
 }
 
-#detailArea .viewport {
+#detailContainer .viewport {
     -fx-background-color: #ffffff;
     -fx-background-radius: 0 0 6px 0;
 }
 
-.detail-container {
+.detail {
     -fx-padding: 8px 16px;
     -fx-background-color: #ffffff;
 }

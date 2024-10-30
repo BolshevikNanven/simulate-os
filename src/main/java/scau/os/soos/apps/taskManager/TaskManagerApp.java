@@ -2,23 +2,31 @@ package scau.os.soos.apps.taskManager;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import scau.os.soos.apps.taskManager.service.CpuService;
+import scau.os.soos.apps.taskManager.service.DeviceService;
+import scau.os.soos.apps.taskManager.service.MemoryService;
 import scau.os.soos.common.OS;
+import scau.os.soos.common.enums.OS_STATES;
 import scau.os.soos.common.model.Handler;
 import scau.os.soos.ui.components.base.Window;
 
-import java.io.IOException;
+import java.util.Random;
 
 public class TaskManagerApp extends Window {
     @FXML
-    private ScrollPane detailArea;
+    private ScrollPane detailContainer;
     @FXML
     private Label clock;
+    @FXML
+    private Button clockButton;
     @FXML
     private VBox cardContainer;
     @FXML
@@ -27,11 +35,18 @@ public class TaskManagerApp extends Window {
     private HBox memoryCard;
     @FXML
     private HBox deviceCard;
-    private VBox cpuDetail;
-    private VBox memoryDetail;
-
-    private VBox deviceDetail;
-
+    @FXML
+    private AreaChart<String, Integer> cpuOverviewChart;
+    private XYChart.Series<String, Integer> cpuSeries;
+    @FXML
+    private AreaChart<String, Integer> memoryOverviewChart;
+    private XYChart.Series<String, Integer> memorySeries;
+    @FXML
+    private AreaChart<String, Integer> deviceOverviewChart;
+    private XYChart.Series<String, Integer> deviceSeries;
+    private TaskManagerService cpuService;
+    private TaskManagerService memoryService;
+    private TaskManagerService deviceService;
     private Handler handler;
     private String activeCardName;
 
@@ -41,17 +56,40 @@ public class TaskManagerApp extends Window {
 
     @Override
     protected void initialize() {
+        if (OS.state.equals(OS_STATES.RUNNING)) {
+            clockButton.setText("暂停时钟");
+        } else {
+            clockButton.setText("开启时钟");
+        }
+
         handler = () -> {
-            Platform.runLater(() ->
-                    clock.setText(String.valueOf(OS.clock.get()))
-            );
+            switch (activeCardName) {
+                case "cpu" -> cpuService.render();
+                case "memory" -> memoryService.render();
+                case "device" -> deviceService.render();
+            }
+            Platform.runLater(() -> {
+                clock.setText(String.valueOf(OS.clock.get()));
+                renderOverview();
+            });
+
         };
 
-        OS.clock.bind(handler);
+        cpuService = new CpuService(detailContainer);
+        memoryService = new MemoryService(detailContainer);
+        deviceService = new DeviceService(detailContainer);
 
-        loadDetail();
+        cpuSeries = new XYChart.Series<>();
+        memorySeries = new XYChart.Series<>();
+        deviceSeries = new XYChart.Series<>();
+
+        cpuOverviewChart.getData().add(cpuSeries);
+        memoryOverviewChart.getData().add(memorySeries);
+        deviceOverviewChart.getData().add(deviceSeries);
+
         addListener();
 
+        OS.clock.bind(handler);
         setActiveCard("cpu");
     }
 
@@ -64,6 +102,15 @@ public class TaskManagerApp extends Window {
         cpuCard.setOnMouseClicked(mouseEvent -> setActiveCard("cpu"));
         memoryCard.setOnMouseClicked(mouseEvent -> setActiveCard("memory"));
         deviceCard.setOnMouseClicked(mouseEvent -> setActiveCard("device"));
+        clockButton.setOnAction(actionEvent -> {
+            if (OS.state.equals(OS_STATES.RUNNING)) {
+                OS.state = OS_STATES.PAUSE;
+                clockButton.setText("开启时钟");
+            } else {
+                OS.state = OS_STATES.RUNNING;
+                clockButton.setText("暂停时钟");
+            }
+        });
     }
 
     private void setActiveCard(String card) {
@@ -73,28 +120,34 @@ public class TaskManagerApp extends Window {
         switch (card) {
             case "cpu" -> {
                 cpuCard.getStyleClass().add("active");
-                detailArea.setContent(cpuDetail);
+                cpuService.show();
             }
             case "memory" -> {
                 memoryCard.getStyleClass().add("active");
-                detailArea.setContent(memoryDetail);
+                memoryService.show();
             }
             case "device" -> {
                 deviceCard.getStyleClass().add("active");
-                detailArea.setContent(deviceDetail);
+                deviceService.show();
             }
         }
         activeCardName = card;
-
     }
 
-    private void loadDetail() {
-        try {
-            cpuDetail = FXMLLoader.load(this.getClass().getResource("cpu/cpu.fxml"));
-            memoryDetail = FXMLLoader.load(this.getClass().getResource("memory/memory.fxml"));
-            deviceDetail = FXMLLoader.load(this.getClass().getResource("device/device.fxml"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private void renderOverview() {
+        cpuSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), new Random().nextInt(5)));
+        if (cpuSeries.getData().size() > 20) {
+            cpuSeries.getData().removeFirst();
+        }
+
+        memorySeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), new Random().nextInt(5)));
+        if (memorySeries.getData().size() > 20) {
+            memorySeries.getData().removeFirst();
+        }
+
+        deviceSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), new Random().nextInt(5)));
+        if (deviceSeries.getData().size() > 20) {
+            deviceSeries.getData().removeFirst();
         }
     }
 }

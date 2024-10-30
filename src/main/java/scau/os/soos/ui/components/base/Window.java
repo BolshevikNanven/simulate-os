@@ -118,6 +118,7 @@ public abstract class Window implements Initializable {
             window.setLayoutY(windowPos[1] + event.getScreenY() - mouseOffset[1]);
         });
 
+
         //最小化
         hideButton.setOnAction(actionEvent -> {
             setState(WINDOW_STATES.HIDE);
