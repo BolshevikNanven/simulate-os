@@ -20,6 +20,7 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 import scau.os.soos.MainApplication;
 import scau.os.soos.common.enums.WINDOW_STATES;
+import scau.os.soos.ui.DesktopManager;
 import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.animation.Animation;
 import scau.os.soos.ui.animation.Transition;
@@ -58,9 +59,8 @@ public abstract class Window implements Initializable {
     }
 
     protected Window(String title, String fxmlName, double width, double height) {
-        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("components/window.fxml"));
         try {
-            window = loader.load();
+            window = FXMLLoader.load(MainApplication.class.getResource("components/window.fxml"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,36 +89,13 @@ public abstract class Window implements Initializable {
         setState(WINDOW_STATES.HIDE);
 
         addListener();
+        addDragListener();
         addResizeListener();
 
         loadAndLinkFXML(this, fxmlName);
     }
 
     private void addListener() {
-        // 当鼠标按下时记录偏移量
-        topBar.setOnMousePressed((MouseEvent event) -> {
-            if (isFull) {
-                return;
-            }
-            // 记录鼠标按下时的偏移量
-            mouseOffset[0] = event.getSceneX();
-            mouseOffset[1] = event.getSceneY();
-
-            windowPos[0] = window.getLayoutX();
-            windowPos[1] = window.getLayoutY();
-        });
-
-        // 当拖动时更新窗口的位置
-        topBar.setOnMouseDragged((MouseEvent event) -> {
-            if (isFull) {
-                return;
-            }
-            // 根据鼠标拖动的位置更新窗口位置
-            window.setLayoutX(windowPos[0] + event.getScreenX() - mouseOffset[0]);
-            window.setLayoutY(windowPos[1] + event.getScreenY() - mouseOffset[1]);
-        });
-
-
         //最小化
         hideButton.setOnAction(actionEvent -> {
             setState(WINDOW_STATES.HIDE);
@@ -128,9 +105,10 @@ public abstract class Window implements Initializable {
         topBar.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
                 if (isFull) {
-                    zoomOutWindow();
+                    zoomOutWindow(-1, -1);
                 } else {
-                    zoomInWindow();
+                    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+                    zoomInWindow(0, 0, screenBounds.getWidth(), screenBounds.getHeight() - 52);
                 }
             }
         });
@@ -138,9 +116,10 @@ public abstract class Window implements Initializable {
         //按钮控制窗口化
         scaleButton.setOnAction(actionEvent -> {
             if (isFull) {
-                zoomOutWindow();
+                zoomOutWindow(-1, -1);
             } else {
-                zoomInWindow();
+                Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+                zoomInWindow(0, 0, screenBounds.getWidth(), screenBounds.getHeight() - 52);
             }
         });
 
@@ -292,19 +271,114 @@ public abstract class Window implements Initializable {
         });
     }
 
+    private void addDragListener() {
+        // 当鼠标按下时记录偏移量
+        topBar.setOnMousePressed((event) -> {
+            // 记录鼠标按下时的偏移量
+            mouseOffset[0] = event.getSceneX();
+            mouseOffset[1] = event.getSceneY();
 
-    private void zoomInWindow() {
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+            windowPos[0] = window.getLayoutX();
+            windowPos[1] = window.getLayoutY();
+        });
+
+        // 当拖动时更新窗口的位置
+        topBar.setOnMouseDragged((event) -> {
+            double x = windowPos[0] + event.getScreenX() - mouseOffset[0];
+            double y = windowPos[1] + event.getScreenY() - mouseOffset[1];
+            if (isFull) {
+                zoomOutWindow(x, y);
+                return;
+            }
+            // 根据鼠标拖动的位置更新窗口位置
+            window.setLayoutX(x);
+            window.setLayoutY(y);
+
+            AnchorPane indicator = DesktopManager.getInstance().getIndicator();
+            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+            // 拖拽至左边缘
+            if (event.getScreenX() <= 2) {
+                if (indicator.isVisible()) {
+                    return;
+                }
+                indicator.setLayoutX(0);
+                indicator.setLayoutY(0);
+                indicator.setPrefHeight(screenBounds.getHeight() - 52);
+                indicator.setPrefWidth(screenBounds.getWidth() / 2);
+                indicator.setVisible(true);
+
+                return;
+            }
+
+            // 拖拽至右边缘
+            if (event.getScreenX() >= screenBounds.getWidth() - 2) {
+                if (indicator.isVisible()) {
+                    return;
+                }
+                indicator.setLayoutX(screenBounds.getWidth() / 2);
+                indicator.setLayoutY(0);
+                indicator.setPrefHeight(screenBounds.getHeight() - 52);
+                indicator.setPrefWidth(screenBounds.getWidth() / 2);
+                indicator.setVisible(true);
+
+                return;
+            }
+
+            // 拖拽至上边缘
+            if (event.getScreenY() <= 2) {
+                if (indicator.isVisible()) {
+                    return;
+                }
+                indicator.setLayoutX(0);
+                indicator.setLayoutY(0);
+                indicator.setPrefHeight(screenBounds.getHeight() - 52);
+                indicator.setPrefWidth(screenBounds.getWidth());
+                indicator.setVisible(true);
+
+                return;
+            }
+
+            indicator.setVisible(false);
+
+        });
+        topBar.setOnMouseReleased(event -> {
+            AnchorPane indicator = DesktopManager.getInstance().getIndicator();
+            if (!indicator.isVisible()) {
+                return;
+            }
+
+            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+            // 拖拽至左边缘
+            if (event.getScreenX() <= 2) {
+                zoomInWindow(0, 0, screenBounds.getWidth() / 2, screenBounds.getHeight() - 52);
+            }
+
+            // 拖拽至右边缘
+            if (event.getScreenX() >= screenBounds.getWidth() - 2) {
+                zoomInWindow(screenBounds.getWidth() / 2, 0, screenBounds.getWidth() / 2, screenBounds.getHeight() - 52);
+            }
+
+            // 拖拽至上边缘
+            if (event.getScreenY() <= 2) {
+                zoomInWindow(0, 0, screenBounds.getWidth(), screenBounds.getHeight() - 52);
+            }
+
+            indicator.setVisible(false);
+        });
+    }
+
+    private void zoomInWindow(double x, double y, double width, double height) {
         preWidth = window.getPrefWidth();
         preHeight = window.getPrefHeight();
         preX = window.getLayoutX();
         preY = window.getLayoutY();
 
-        Animation.playWidthIn(window, Duration.millis(80), screenBounds.getWidth());
-        Animation.playHeightIn(window, Duration.millis(80), screenBounds.getHeight() - 52);
+        Animation.playWidthIn(window, Duration.millis(80), width);
+        Animation.playHeightIn(window, Duration.millis(80), height);
 
-        Animation.playSlideInX(window, Duration.millis(80), 0);
-        Animation.playSlideInY(window, Duration.millis(80), 0);
+        Animation.playSlideInX(window, Duration.millis(80), x);
+        Animation.playSlideInY(window, Duration.millis(80), y);
 
         window.getStyleClass().add("full-screen");
 
@@ -315,12 +389,18 @@ public abstract class Window implements Initializable {
         isFull = true;
     }
 
-    private void zoomOutWindow() {
+    /**
+     * 缩小窗口
+     *
+     * @param x 如果为负则缩小到放大前位置
+     * @param y 如果为负则缩小到放大前位置
+     */
+    private void zoomOutWindow(double x, double y) {
         Animation.playWidthIn(window, Duration.millis(80), preWidth);
         Animation.playHeightIn(window, Duration.millis(80), preHeight);
 
-        Animation.playSlideInX(window, Duration.millis(80), preX);
-        Animation.playSlideInY(window, Duration.millis(80), preY);
+        Animation.playSlideInX(window, Duration.millis(80), x < 0 ? preX : x);
+        Animation.playSlideInY(window, Duration.millis(80), y < 0 ? preY : y);
 
         window.getStyleClass().remove("full-screen");
 
@@ -330,6 +410,7 @@ public abstract class Window implements Initializable {
 
         isFull = false;
     }
+
 
     private void loadAndLinkFXML(Window controller, String url) {
         if (url.isEmpty()) {

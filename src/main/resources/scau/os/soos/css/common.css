@@ -167,7 +167,7 @@ Button {
 }
 
 .window-control-btn > Region {
-    -fx-background-color: #666666;
+    -fx-background-color: #888888;
 }
 
 .window-control-btn.danger:hover > Region {
@@ -176,4 +176,14 @@ Button {
 
 .window-body {
     -fx-background-radius: 0 0 6px 6px;
+}
+
+
+.window-skeleton {
+    -fx-background-radius: 6px;
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-border-color: #666666;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.48), 16, 0.4, 0, 0);
 }
