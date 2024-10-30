@@ -20,7 +20,7 @@ public class Item {
         System.arraycopy(data, 6, size, 0, 2);
     }
 
-    public Item(String name, char type, boolean readOnly, boolean systemFile,
+    public Item(String name, byte type, boolean readOnly, boolean systemFile,
                 boolean regularFile, boolean isDirectory,Disk disk,Item parent) {
         setDisk(disk);
         setName(name);
@@ -42,7 +42,7 @@ public class Item {
         this.name = name.getBytes();
     }
 
-    public void setType(char type) {
+    public void setType(byte type) {
         this.type = (byte) type;
     }
 
@@ -67,7 +67,11 @@ public class Item {
     }
 
     public String getName() {
-        return Arrays.toString(name);
+        StringBuilder sb = new StringBuilder();
+        for(byte b : name){
+            sb.append((char) b);
+        }
+        return sb.toString();
     }
 
     public char getType() {
@@ -186,8 +190,9 @@ public class Item {
     public int calculateTotalBlockNum(Fat fat) {
         int blockCount = 0; // 用于记录占用的磁盘块数量
         int currentBlock = startBlockNum;
-        while (currentBlock != Fat.TERMINATED) {
+        while (currentBlock != Fat.TERMINATED ) {
             blockCount++;
+            System.out.println(blockCount);
             currentBlock = fat.getNextBlockIndex(currentBlock);
         }
         return blockCount;

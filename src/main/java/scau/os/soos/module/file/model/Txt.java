@@ -12,7 +12,7 @@ public class Txt extends Item {
         initFromDisk(disk);
     }
 
-    public Txt(String name, char type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, String context) {
+    public Txt(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, String context) {
         super(name, type, readOnly, systemFile, regularFile, isDirectory, disk, parent);
         initFromString(context);
     }

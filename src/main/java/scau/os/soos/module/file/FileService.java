@@ -11,7 +11,7 @@ public class FileService {
     private Disk disk;
 
     public FileService() {
-
+        disk = new Disk();
     }
 
     public Item findFile(String path) {
@@ -31,7 +31,7 @@ public class FileService {
 
         Item file = null;
         String parentPath = path.substring(0,path.lastIndexOf("/"));
-        Directory parent = (Directory) findFile(parentPath);
+        Directory parent = (Directory) findDirectory(parentPath);
         if(parent == null){
             System.out.println("父目录不存在！");
             return null;
@@ -46,11 +46,11 @@ public class FileService {
             String name = path.substring(path.lastIndexOf("/") + 1);
 
             if(path.contains(".e")){
-                file = new Exe(name,'e',true,false,true,false,disk,parent,"");
+                file = new Exe(name,(byte)1,true,false,true,false,disk,parent,"");
                 file.setStartBlockNum((byte)startDisk);
                 ((Exe)file).writeContentToDisk(disk);
             }else{
-                file = new Txt(name,'t',true,false,true,false,disk,parent,"");
+                file = new Txt(name,(byte)2,true,false,true,false,disk,parent,"");
                 file.setStartBlockNum((byte)startDisk);
                 ((Txt)file).writeContentToDisk(disk);
             }
@@ -132,7 +132,7 @@ public class FileService {
             }
 
             String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
-            folder = new Directory(name,'\u0000',true,false,false,true,disk,parent,new ArrayList<>());
+            folder = new Directory(name,(byte)0,true,false,false,true,disk,parent,new ArrayList<>());
             folder.setStartBlockNum((byte)startDisk);
             disk.getFat().setNextBlockIndex(startDisk,Fat.TERMINATED);
             parent.addChildren(folder);
@@ -284,7 +284,7 @@ public class FileService {
         }
         fat.setNextBlockIndex(cur, Fat.TERMINATED);
         Item newFile = new Item(srcItem.getName(),
-                srcItem.getType(),
+                (byte)srcItem.getType(),
                 srcItem.isReadOnly(),
                 srcItem.isSystemFile(),
                 srcItem.isRegularFile(),

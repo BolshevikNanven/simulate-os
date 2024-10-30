@@ -18,6 +18,7 @@ public class Disk {
         this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
         this.fat = new Fat(this);
         this.rootDirectory = new Directory(this, disk[ROOT_BLOCK_NUM]);
+        this.rootDirectory.setStartBlockNum((byte)ROOT_BLOCK_NUM);
     }
 
     public Directory getRootDirectory() {

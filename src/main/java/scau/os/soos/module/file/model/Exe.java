@@ -13,7 +13,7 @@ public class Exe extends Item{
         initFromDisk(disk);
     }
 
-    public Exe(String name, char type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent,String instructions) {
+    public Exe(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent,String instructions) {
         super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
         initFromString(instructions);
     }
