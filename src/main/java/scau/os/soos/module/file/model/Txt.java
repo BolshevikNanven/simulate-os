@@ -1,5 +1,6 @@
 package scau.os.soos.module.file.model;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class Txt extends Item{
@@ -12,7 +13,7 @@ public class Txt extends Item{
     }
 
     public void initContext(Disk disk){
-        byte[][] content = super.getContent(disk);
+        byte[][] content = super.readContentFromDisk(disk);
 
         if (content != null) { // 检查content是否为null
             for (byte[] block : content) {
@@ -22,6 +23,32 @@ public class Txt extends Item{
                 }
             }
         }
+    }
+
+    /**
+     * 将内容写入磁盘
+     *
+     * @param disk 磁盘对象，用于存储内容
+     */
+    public void writeContentToDisk(Disk disk) {
+        // 将context转换为字节数组
+        byte[] contextBytes = context.toString().getBytes(StandardCharsets.UTF_8);
+
+        // 计算需要多少个数据块来存储所有子项
+        int blockNum = (int) Math.ceil((double) contextBytes.length / Disk.BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
+
+        // 将内容复制到数据块中
+        int byteIndex = 0;
+        for (int block = 0; block < blockNum; block++) {
+            byte[] currentBlock = allItemsData[block];
+            int bytesToCopy = Math.min(contextBytes.length - byteIndex, Disk.BYTES_PER_BLOCK);
+            System.arraycopy(contextBytes, byteIndex, currentBlock, 0, bytesToCopy);
+            byteIndex += bytesToCopy;
+        }
+
+        // 调用父类方法，将整合后的数据写入磁盘
+        super.writeContentToDisk(disk, allItemsData);
     }
 
     public String getContext(){

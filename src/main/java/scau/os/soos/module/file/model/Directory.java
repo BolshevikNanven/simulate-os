@@ -19,18 +19,53 @@ public class Directory extends Item {
     }
 
     public void initChildren() {
-        byte[][] content = super.getContent(disk);
+        byte[][] content = super.readContentFromDisk(disk);
 
         for (byte[] block : content) {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
                 Item item = new Item(itemData);
-                if(disk.isItemExist(item)){
+                if (disk.isItemExist(item)) {
                     children.add(item);
                 }
             }
         }
+
+        getChildren();
+    }
+
+    /**
+     * 将内容写入磁盘
+     */
+    public void writeContentToDisk() {
+        // 计算需要多少个数据块来存储所有子项
+        int blockNum = (int) Math.ceil((double) children.size() / BYTES_PER_ITEM);
+        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
+
+        int itemIndex = 0; // 用于追踪当前处理的Item
+        int byteIndex = 0; // 用于追踪当前数据块中的字节位置
+
+        for (int block = 0; block < blockNum; block++) {
+            byte[] currentBlock = allItemsData[block];
+
+            while (itemIndex < children.size() && byteIndex < Disk.BLOCKS_PER_DISK) {
+                Item item = children.get(itemIndex);
+                byte[] itemData = item.getData();
+
+                // 将Item数据复制到当前数据块
+                System.arraycopy(itemData, 0, currentBlock, byteIndex, itemData.length);
+
+                // 更新索引
+                byteIndex += BYTES_PER_ITEM;
+                itemIndex++;
+            }
+            // 重置字节索引，为下一个数据块做准备
+            byteIndex = 0;
+        }
+
+        // 调用父类方法，将整合后的数据写入磁盘
+        super.writeContentToDisk(disk, allItemsData);
     }
 
     public Item find(String path) {
@@ -92,6 +127,7 @@ public class Directory extends Item {
             } else if (children.get(i).getType() == 2) {
                 children.set(i, new Exe(disk, children.get(i).getData()));
             }
+            children.get(i).setParent(this);
         }
         return children;
     }

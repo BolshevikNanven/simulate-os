@@ -13,13 +13,42 @@ public class Exe extends Item{
     }
 
     public void initInstructions(Disk disk){
-        byte[][] content = super.getContent(disk);
+        byte[][] content = super.readContentFromDisk(disk);
 
         for (byte[] block : content) {
             for (byte itemData : block) {
                 instructions.add(itemData);
             }
         }
+    }
+
+    /**
+     * 将内容写入磁盘
+     *
+     * @param disk 磁盘对象，用于存储内容
+     */
+    public void writeContentToDisk(Disk disk) {
+        // 将instructions列表转换为字节数组
+        byte[] instructionsBytes = new byte[instructions.size()];
+        for (int i = 0; i < instructions.size(); i++) {
+            instructionsBytes[i] = instructions.get(i);
+        }
+
+        // 计算需要多少个数据块来存储所有子项
+        int blockNum = (int) Math.ceil((double) instructionsBytes.length / Disk.BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
+
+        // 将内容复制到数据块中
+        int byteIndex = 0;
+        for (int block = 0; block < blockNum; block++) {
+            byte[] currentBlock = allItemsData[block];
+            int bytesToCopy = Math.min(instructionsBytes.length - byteIndex, Disk.BYTES_PER_BLOCK);
+            System.arraycopy(instructionsBytes, byteIndex, currentBlock, 0, bytesToCopy);
+            byteIndex += bytesToCopy;
+        }
+
+        // 调用父类方法，将整合后的数据写入磁盘
+        super.writeContentToDisk(disk, allItemsData);
     }
 
     public List<Byte> getInstructions(){

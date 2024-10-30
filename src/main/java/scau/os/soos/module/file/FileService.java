@@ -2,86 +2,54 @@ package scau.os.soos.module.file;
 
 import scau.os.soos.module.file.model.*;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class FileService {
 
-    private Disk DISK;
-    private Fat fatTable;
+    private Disk disk;
+
     public FileService() {
-        // TODO: 2024/9/28 读某个模拟文件作为磁盘disk
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("disk.dat"))) {
-            this.DISK = (Disk) ois.readObject(); // 读取 Disk 对象
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        this.fatTable = (Fat) DISK.getDisk()[0][0];
 
     }
-    // 查找空闲磁盘块的编号
-    public int findFreeDiskBlock(){
 
-        //从第3块磁盘块开始查询，如果找到空闲磁盘块则返回该编号，否则返回-1
-        for(int i=3;i<Disk.BLOCKS_PER_DISK;i++){
-            if(fatTable.isEmptyDisk(i)){
-                return i;
-            }
-        }
-        return -1;
+    public Item findFile(String path) {
+        return disk.find(path);
     }
 
-    public List<Integer> findFreeDiskBlock(int num){
-        List<Integer> list = new ArrayList<>();
-        for(int i=3;i<Disk.BLOCKS_PER_DISK && list.size() < num;i++){
-            if(fatTable.isEmptyDisk(i)){
-                list.add(i);
-            }
-        }
-        return list;
-    }
-
-    public Txt createFile(String path){
-
+    public Item createFile(String path){
         if(findFile(path) != null){
             System.out.println("文件已存在！");
             return null;
         }
 
-        Txt myFile = null;
+        Txt file = null;
 
         //根据路径获取文件名和父目录的路径
         String name = path.substring(path.lastIndexOf("/")+1);
         String parentPath = path.substring(0,path.lastIndexOf("/"));//父目录不存在则创建
         Directory parent = FileController.getInstance().createDirectory(parentPath);
 
-        int diskNum = findFreeDiskBlock();//磁盘块占用
+        int diskNum = disk.findFreeDiskBlock();//磁盘块占用
         if(diskNum == -1){
+            System.out.println("磁盘空间不足！");
             return null;
         }else{
-            fatTable.getFat()[diskNum] = -1;//占用磁盘块
+            disk.occupyDiskBlock(diskNum);//占用磁盘块
         }
-
 
         //创建文件对象
         if(path.contains(".e")){
-            myFile = new Txt(name,path,0,"e","exe",diskNum,1,parent);
+            file = new Txt(name,path,0,"e","exe",diskNum,1,parent);
         }else{
-            myFile = new Txt(name,path,0,"t","txt",diskNum,1,parent);
+            file = new Exe(name,path,0,"t","txt",diskNum,1,parent);
         }
-        parent.getChildren().add(myFile);
-        DISK.getDisk()[diskNum][0] = myFile;
-        return myFile;
+        parent.getChildren().add(file);
+        return file;
     }
 
-    public boolean isEmpty(int diskNum){//磁盘块是否为空
-       return fatTable.isEmptyDisk(diskNum);
-    }
-
-    public Directory createFolder(Directory parent, String path) {
+    public Directory createDirectory(Directory parent, String path) {
 
         if(findFolder(path) != null){
             System.out.println("文件夹已存在！");
@@ -134,7 +102,11 @@ public class FileService {
 
     }
     public void deleteFolder(String path) {
-        Directory folder = findFolder(path);
+        Item folder = disk.find(path);
+        if(folder == null||folder instanceof Txt||folder instanceof Exe){
+            System.out.println("不是文件夹！");
+            return;
+        }
 //        if (folder != null) {
 //            for (Object e : folder.getChildren()) {
 //                if (e instanceof MyFile) {
@@ -152,32 +124,6 @@ public class FileService {
         updateFolderSize(parent);
     }
 
-
-
-    public void formatFatTable(int diskNum){
-
-        int[] fat = fatTable.getFat();
-        int index = diskNum;
-        int nextIndex = fat[index];
-
-        // 将起始块标记为未使用
-        DISK.getDisk()[index][0] = null;
-        fat[index] = 0;
-        index = nextIndex;
-
-        // 循环FAT表，将该磁盘块之后的磁盘块全部置为0，直到下一个磁盘块为空
-        while (index !=-1&&fat[index] != -1) {
-            nextIndex = fat[index];
-            fat[index] = 0; // 标记当前块为未使用
-            index = nextIndex;
-            if (index == -1) {
-                break; // 退出循环，因为下一个块已经是未使用的
-            }
-            DISK.getDisk()[index][0] = null; // 标记下一个块为未使用
-        }
-        if(index != -1) fat[index] = 0; // 标记最后一个块为未使用
-
-    }
     public int getFolderSize(String path) {
       Directory folder = findFolder(path);
       if(folder!=null){
@@ -187,35 +133,6 @@ public class FileService {
     }
     public int getFileSize(Item file) {
         return file.getSize();
-    }
-    public Txt findFile(String path) {
-       for(int i=2;i<Disk.BLOCKS_PER_DISK;i++){
-
-
-           if(DISK.getDisk()[i][0]==null) continue;
-
-
-
-           if(DISK.getDisk()[i][0] instanceof Txt && ((Txt) DISK.getDisk()[i][0]).getPath().equals(path)){
-               String name =((Txt) DISK.getDisk()[i][0]).getPath();
-               return (Txt) DISK.getDisk()[i][0];
-           }
-       }
-       return null;
-    }
-    public Directory findFolder(String path) {
-        for(int i=2;i<Disk.BLOCKS_PER_DISK;i++){
-
-            if(DISK.getDisk()[i][0]==null) continue;
-
-            if(DISK.getDisk()[i][0] instanceof Directory && ((Directory) DISK.getDisk()[i][0]).getPath().equals(path)){
-
-                String name =((Directory) DISK.getDisk()[i][0]).getPath();
-
-                return (Directory) DISK.getDisk()[i][0];
-            }
-        }
-        return null;
     }
 
     public void deleteFile(String path) {
@@ -234,7 +151,6 @@ public class FileService {
         updateFileSize(file);
 
     }
-
 
     public void writeFile(Txt file){
 
@@ -343,24 +259,4 @@ public class FileService {
     public void updateFolderSize(Directory folder){
         folder.setSize(folder.getSize());
     }
-
-    public int findLastDisk(int startDisk){
-        int endDisk=startDisk;
-        while(fatTable.getFat()[endDisk]!=-1){
-            endDisk = fatTable.getFat()[endDisk];
-        }
-        return endDisk;
-    }
-
-    public void disk2file(){
-
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("disk.dat"))) {
-            oos.writeObject(DISK); // 写入 Disk 对象
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
 }

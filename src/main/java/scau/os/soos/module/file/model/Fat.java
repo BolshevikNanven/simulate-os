@@ -7,6 +7,12 @@ public class Fat {
 
     private final byte[] fat;
 
+    /**
+     * Fat类的构造函数
+     *
+     * @param disk 硬盘对象
+     *             硬盘对象，用于初始化Fat对象中的disk属性，并从中读取FAT信息
+     */
     public Fat(Disk disk) {
         this.disk = disk;
         this.fat = new byte[Disk.BLOCKS_PER_DISK];
@@ -21,7 +27,11 @@ public class Fat {
         }
     }
 
-    public void reset() {
+    /**
+     * 重置FAT表
+     * 将FAT表中的所有块状态重置为FREE（空闲）状态，除了最后一个块设置为TERMINATED（终止）状态。
+     */
+    public void resetFat() {
         for (int i = 0; i < Disk.BLOCKS_PER_DISK; i++) {
             fat[i] = FREE;
         }
@@ -30,17 +40,21 @@ public class Fat {
         }
     }
 
-    public boolean setNextBlock(int diskNum, int nextDisk) {
+    /**
+     * 设置指定磁盘块的下一个磁盘块索引
+     */
+    public void setNextBlockIndex(int diskNum, int nextDisk) {
         if (isFreeBlock(diskNum)) {
             fat[diskNum] = (byte) nextDisk;
         } else {
             System.out.println("Block is not free");
-            return false;
         }
-        return true;
     }
 
-    public int getNextBlockNum(int diskNum) {
+    /**
+     * 获取指定磁盘块的下一个磁盘块索引
+     */
+    public int getNextBlockIndex(int diskNum) {
         return fat[diskNum];
     }
 
@@ -51,7 +65,13 @@ public class Fat {
         return fat[diskNum] == FREE;
     }
 
-    public boolean updateDisk() {
+    /**
+     * 更新磁盘块信息
+     * 将FAT表中的数据更新到磁盘中对应的磁盘块中
+     *
+     * @return 总是返回true，表示更新操作成功
+     */
+    public boolean writeFatToDisk() {
         byte[] data = new byte[Disk.BLOCKS_PER_DISK];
 
         int index = 0;
@@ -63,5 +83,18 @@ public class Fat {
         }
 
         return true;
+    }
+
+    /**
+     * 分配一个新的磁盘块
+     * 设置该磁盘块的前一个磁盘块的下一个磁盘块索引为当前需要分配的磁盘块的索引
+     * 设置该磁盘块的下一个磁盘块索引为TERMINATED（终止）状态
+     *
+     * @param pre 前一个磁盘块的索引
+     * @param cur 当前需要分配的磁盘块的索引
+     */
+    public void allocateNewBlock(int pre,int cur) {
+        setNextBlockIndex(pre,cur);
+        setNextBlockIndex(cur,TERMINATED);
     }
 }
