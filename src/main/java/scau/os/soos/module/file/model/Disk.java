@@ -28,8 +28,12 @@ public class Disk {
         return fat;
     }
 
-    public Item find(String path) {
-        return rootDirectory.find(path);
+    public Item findFile(String path) {
+        return rootDirectory.findFile(path);
+    }
+
+    public Item findDirectory(String path) {
+        return rootDirectory.findDirectory(path);
     }
 
     public boolean isItemExist(Item item) {

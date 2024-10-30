@@ -1,18 +1,25 @@
 package scau.os.soos.module.file.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Exe extends Item{
-    private final List<Byte> instructions;
+    private List<Byte> instructions;
 
     public Exe(Disk disk, byte[]data) {
-        super(data);
-        this.instructions = new ArrayList<>();
-        initInstructions(disk);
+        super(disk,data);
+        initFromDisk(disk);
     }
 
-    public void initInstructions(Disk disk){
+    public Exe(String name, char type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent,String instructions) {
+        super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
+        initFromString(instructions);
+    }
+
+    public void initFromDisk(Disk disk){
+        this.instructions = new ArrayList<>();
         byte[][] content = super.readContentFromDisk(disk);
 
         for (byte[] block : content) {
@@ -20,6 +27,14 @@ public class Exe extends Item{
                 instructions.add(itemData);
             }
         }
+    }
+
+    public void initFromString(String instructions){
+        this.instructions = Arrays.stream(instructions.split("\\s+")) // 分割字符串
+                .map(String::trim) // 去除可能的前后空格
+                .filter(s -> !s.isEmpty()) // 过滤掉空字符串
+                .map(Byte::parseByte) // 将每个字符串转换为Byte
+                .collect(Collectors.toList()); // 收集到List中
     }
 
     /**

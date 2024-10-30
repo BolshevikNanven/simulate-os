@@ -3,16 +3,23 @@ package scau.os.soos.module.file.model;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class Txt extends Item{
-    private final StringBuilder context;
+public class Txt extends Item {
+    private StringBuilder context;
 
-    public Txt(Disk disk, byte[]data){
-        super(data);
-        this.context = new StringBuilder();
-        initContext(disk);
+    public Txt(Disk disk, byte[] data) {
+        super(disk, data);
+
+        initFromDisk(disk);
     }
 
-    public void initContext(Disk disk){
+    public Txt(String name, char type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, String context) {
+        super(name, type, readOnly, systemFile, regularFile, isDirectory, disk, parent);
+        initFromString(context);
+    }
+
+    public void initFromDisk(Disk disk) {
+        this.context = new StringBuilder();
+
         byte[][] content = super.readContentFromDisk(disk);
 
         if (content != null) { // 检查content是否为null
@@ -23,6 +30,10 @@ public class Txt extends Item{
                 }
             }
         }
+    }
+
+    public void initFromString(String instructions) {
+        this.context = new StringBuilder(context);
     }
 
     /**
@@ -51,7 +62,7 @@ public class Txt extends Item{
         super.writeContentToDisk(disk, allItemsData);
     }
 
-    public String getContext(){
+    public String getContext() {
         return context.toString();
     }
 }

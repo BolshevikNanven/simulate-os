@@ -6,26 +6,31 @@ import java.util.StringTokenizer;
 
 public class Directory extends Item {
     public static final int BYTES_PER_ITEM = 8;
-    private final Disk disk;
     private final List<Item> children;
 
     public Directory(Disk disk, byte[] data) {
-        super(data);
-        this.disk = disk;
+        super(disk,data);
 
         children = new ArrayList<>();
 
-        initChildren();
+        initFromDisk();
     }
 
-    public void initChildren() {
+    public Directory(String name, char type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, List<Item> children) {
+        super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
+        setDisk(disk);
+        this.children = children;
+    }
+
+    public void initFromDisk() {
+        Disk disk = getDisk();
         byte[][] content = super.readContentFromDisk(disk);
 
         for (byte[] block : content) {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
-                Item item = new Item(itemData);
+                Item item = new Item(disk,itemData);
                 if (disk.isItemExist(item)) {
                     children.add(item);
                 }
@@ -65,10 +70,11 @@ public class Directory extends Item {
         }
 
         // 调用父类方法，将整合后的数据写入磁盘
+        Disk disk = getDisk();
         super.writeContentToDisk(disk, allItemsData);
     }
 
-    public Item find(String path) {
+    private Item find(String path) {
         //读文件"dir1/dir2/file.txt"
         //读目录"dir1/dir2"
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
@@ -79,6 +85,22 @@ public class Directory extends Item {
 
         // 从根目录（即this）开始查找
         return findInDirectory(this, pathParts, 0);
+    }
+
+    public Item findDirectory(String path){
+        Item item = find(path); // 查找项目
+        if (item instanceof Directory) {
+            return item;
+        }
+        return null;
+    }
+
+    public Item findFile(String path){
+        Item item = find(path); // 查找项目
+        if (item instanceof Txt || item instanceof Exe) {
+            return item;
+        }
+        return null;
     }
 
     private Item findInDirectory(Directory currentDir, List<String> pathParts, int index) {
@@ -119,6 +141,8 @@ public class Directory extends Item {
     }
 
     public List<Item> getChildren() {
+        Disk disk = getDisk();
+        int size = 0;
         for (int i = 0; i < children.size(); i++) {
             if (children.get(i).getType() == 0) {
                 children.set(i, new Directory(disk, children.get(i).getData()));
@@ -128,7 +152,10 @@ public class Directory extends Item {
                 children.set(i, new Exe(disk, children.get(i).getData()));
             }
             children.get(i).setParent(this);
+            size += children.get(i).getSize();
         }
+        this.setSize(size);
         return children;
     }
+
 }

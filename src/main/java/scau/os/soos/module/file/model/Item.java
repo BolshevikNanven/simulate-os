@@ -3,19 +3,51 @@ package scau.os.soos.module.file.model;
 import java.util.Arrays;
 
 public class Item {
+    private Disk disk;
     private Item parent;
-    private final byte[] name = new byte[3];
-    private final byte type;
+    private byte[] name = new byte[3];
+    private byte type;
     private byte attribute;
-    private final byte startBlockNum;
+    private byte startBlockNum;
     private final byte[] size = new byte[2];
 
-    public Item(byte[] data) {
+    public Item(Disk disk,byte[] data) {
+        setDisk(disk);
         System.arraycopy(data, 0, name, 0, 3);
         type = data[3];
         attribute = data[4];
         startBlockNum = data[5];
         System.arraycopy(data, 6, size, 0, 2);
+    }
+
+    public Item(String name, char type, boolean readOnly, boolean systemFile,
+                boolean regularFile, boolean isDirectory,Disk disk,Item parent) {
+        setDisk(disk);
+        setName(name);
+        setType(type);
+        setParent(parent);
+        setSize(0);
+        setAttribute(readOnly, systemFile, regularFile, isDirectory);
+    }
+
+    public Disk getDisk() {
+        return disk;
+    }
+
+    public void setDisk(Disk disk) {
+        this.disk = disk;
+    }
+
+    public void setName(String name) {
+        this.name = name.getBytes();
+    }
+
+    public void setType(char type) {
+        this.type = (byte) type;
+    }
+
+    public void setStartBlockNum(byte startBlockNum) {
+        this.startBlockNum = startBlockNum;
     }
 
     public byte[] getData(){
@@ -86,6 +118,11 @@ public class Item {
         return size[0] << 8 + size[1];
     }
 
+    public void setSize(int size) {
+        this.size[0] = (byte) ((size >> 8) & 0xFF);
+        this.size[1] = (byte) (size & 0xFF);
+    }
+
     /**
      * 从磁盘中读取指定起始块之后的所有数据块的内容，并存储到二维数组中
      *
@@ -146,7 +183,7 @@ public class Item {
      * @param fat Fat对象，用于访问FAT表以获取磁盘块索引
      * @return 占用的磁盘块总数
      */
-    private int calculateTotalBlockNum(Fat fat) {
+    public int calculateTotalBlockNum(Fat fat) {
         int blockCount = 0; // 用于记录占用的磁盘块数量
         int currentBlock = startBlockNum;
         while (currentBlock != Fat.TERMINATED) {
@@ -154,5 +191,9 @@ public class Item {
             currentBlock = fat.getNextBlockIndex(currentBlock);
         }
         return blockCount;
+    }
+
+    public void initFromString(String content){
+
     }
 }
