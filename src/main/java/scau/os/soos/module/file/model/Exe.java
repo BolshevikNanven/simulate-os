@@ -35,6 +35,7 @@ public class Exe extends Item{
                 .filter(s -> !s.isEmpty()) // 过滤掉空字符串
                 .map(Byte::parseByte) // 将每个字符串转换为Byte
                 .collect(Collectors.toList()); // 收集到List中
+        setSize(this.instructions.size());
     }
 
     /**

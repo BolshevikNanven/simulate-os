@@ -162,4 +162,7 @@ public class Directory extends Item {
         return children.add(item);
     }
 
+    public void removeChild(Item item) {
+        children.remove(item);
+    }
 }

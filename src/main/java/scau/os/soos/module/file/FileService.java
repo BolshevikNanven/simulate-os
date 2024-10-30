@@ -1,10 +1,10 @@
 package scau.os.soos.module.file;
 
+import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class FileService {
 
@@ -140,66 +140,73 @@ public class FileService {
         }
     }
 
-
-
-    public void deleteFolder(String path) {
-        Item folder = disk.find(path);
-        if (folder == null || folder instanceof Txt || folder instanceof Exe) {
+    public void deleteDirectory(String path, boolean isDeleteNotEmpty) {
+        // 在磁盘上查找指定路径的目录
+        Item item = this.findDirectory(path);
+        // 如果目录为空，或者找到的项是一个Txt文件或Exe文件，则不是文件夹
+        if (item == null) {
             System.out.println("不是文件夹！");
             return;
         }
-//        if (folder != null) {
-//            for (Object e : folder.getChildren()) {
-//                if (e instanceof MyFile) {
-//                    deleteFile(((MyFile) e).getPath());
-//                } else {
-//                    deleteFolder(((Folder) e).getPath());
-//                }
-//            }
-//            formatFatTable(folder.getStartDisk());
-//        }
-        //将空文件夹从父目录和磁盘中删除，并更新父目录的大小Folder
-        Directory parent = folder.getParent();
-        parent.getChildren().remove(folder);
-        formatFatTable(folder.getStartDisk());
-        updateFolderSize(parent);
-    }
 
-    public int getFolderSize(String path) {
-        Directory folder = findFolder(path);
-        if (folder != null) {
-            return folder.getSize();
-        } else return -1;
-    }
+        if (!isDeleteNotEmpty) {
+            if (item.getSize() != 0) {
+                System.out.println("不是空目录");
+            }
+            return;
+        }
 
-    public int getFileSize(Item file) {
-        return file.getSize();
+        this.updateParent(item);
     }
 
     public void deleteFile(String path) {
-        Txt file = findFile(path);
-//        if(file != null) {
-//            file.getParent().getChildren().remove(file);
-//            updateFileSize(file);
-//            formatFatTable(file.getStartDisk());
-//        }
-        Directory parent = file.getParent();
-        parent.getChildren().remove(file);
-        int startDisk = file.getStartDisk();
-        //DISK.getDisk()[startDisk][0] = null;
-        formatFatTable(startDisk);
-
-        updateFileSize(file);
-
+        Item item = this.findFile(path);
+        // 如果目录为空，或者找到的项是一个目录，则不是文件
+        if (item == null) {
+            System.out.println("不是文件或不存在！");
+            return;
+        }
+        this.updateParent(item);
     }
 
-    public void writeFile(Item file, String content) {
+    private void updateParent(Item item) {
+        Directory directory = (Directory) item;
+
+        // 获取目录的父目录，并确保类型转换安全
+        Item parentItem = directory.getParent();
+        if (!(parentItem instanceof Directory parent)) {
+            System.out.println("父目录类型错误！");
+            return;
+        }
+        // 从父目录中移除当前目录
+        parent.removeChild(directory);
+        // 格式化FAT表，从指定目录的起始块开始（确保directory非空）
+        disk.formatFatTable(directory.getStartBlockNum());
+        // 调用父目录的getChildren方法（更新parent的子节点）
+        parent.getChildren();
+
+        // 将修改后的父目录内容写回磁盘
+        parent.writeContentToDisk();
+    }
+
+    public int getSize(Item item) {
+        if (item == null) {
+            return 0;
+        }
+        if (item instanceof Directory) {
+            ((Directory) item).getChildren();
+        }
+        return item.getSize();
+    }
+
+
+    public void writeFile(Item item, String content, FILE_TYPE type) {
         //获取需要写入的字符串长度，计算需要多少个磁盘块
         List<Integer> list = new ArrayList<>();
-        Disk disk = file.getDisk();
-        Fat fat = file.getDisk().getFat();
+        Disk disk = item.getDisk();
+        Fat fat = item.getDisk().getFat();
         //需要的块数=文件总大小需要的磁盘块数-已占有的块数
-        int needDiskNum = (int) Math.ceil((double) content.length() / Disk.BYTES_PER_BLOCK) - file.calculateTotalBlockNum(fat);
+        int needDiskNum = (int) Math.ceil((double) content.length() / Disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
         int num = 0;
         for (int i = 3; i < Disk.BLOCKS_PER_DISK && num < needDiskNum; i++) {
             if (fat.isFreeBlock(i)) {
@@ -213,78 +220,111 @@ public class FileService {
             System.out.println("磁盘空间不足!");
         } else {
             //更新fat表
-            int endDisk = disk.findLastDisk(file.getStartBlockNum());
+            int endDisk = disk.findLastDisk(item.getStartBlockNum());
 
             for (Integer index : list) {
                 fat.allocateNewBlock(endDisk, index);
                 endDisk = index;
             }
 
-            file.initContentFromString(content);
-            file.setContent(str);
-            file.setSize(str.length());
-            updateFileSize(file);
-            file.setNumOfDiskBlock(file.getNumOfDiskBlock() + list.size());
+            switch (type) {
+                case EXE -> {
+                    Exe exe = (Exe) item;
+                    exe.initFromString(content);
+                    updateFileSize(exe, exe.getSize());
+                    exe.writeContentToDisk(exe.getDisk());
+                }
+                case FILE -> {
+                    Txt txt = (Txt) item;
+                    txt.initFromString(content);
+                    updateFileSize(txt, txt.getSize());
+                    txt.writeContentToDisk(txt.getDisk());
+                }
+            }
+
             System.out.println("写入成功!");
         }
     }
 
-    public boolean copyFile(Txt file, String path) {
-        try {
-            int needDiskNum = file.getNumOfDiskBlock();
-            List<Integer> needDisk = findFreeDiskBlock(needDiskNum);
-            if (needDisk.size() < needDiskNum) {
-                System.out.println("拷贝失败!");
-            }
-
-            String parentPath = path.substring(0, path.lastIndexOf("/"));
-            Directory parent = FileController.getInstance().createDirectory(parentPath);
-
-
-            //MyFile newFile = createFile(path);
-            //Folder parent = newFile.getParent();
-            Txt newFile = (Txt) file.clone();
-            newFile.setParent(parent);
-            newFile.setStartDisk(needDisk.get(0));
-            parent.getChildren().add(newFile);
-            for (int i = 0; i < needDisk.size() - 1; i++) {
-                fatTable.getFat()[needDisk.get(i)] = needDisk.get(i + 1);
-                DISK.getDisk()[needDisk.get(i)][0] = newFile;
-            }
-            fatTable.getFat()[needDisk.get(needDiskNum - 1)] = -1;
-            return true;
-        } catch (CloneNotSupportedException e) {
-            System.out.println("复制失败!");
-            throw new RuntimeException(e);
+    public boolean copyFile(String sourcePath, String targetPath) {
+        Item srcItem = this.findFile(sourcePath);
+        if (srcItem == null) {
+            System.out.println("文件不存在!");
+            return false;
         }
+
+        Disk disk = srcItem.getDisk();
+        Fat fat = disk.getFat();
+
+        int needDiskNum  = srcItem.calculateTotalBlockNum(fat);
+        List<Integer> needDiskBlocks = disk.findFreeDiskBlock(needDiskNum);
+        if (needDiskBlocks.size() < needDiskNum) {
+            System.out.println("磁盘空间不足!");
+            return false;
+        }
+
+        String parentPath = targetPath.substring(0, targetPath.lastIndexOf("/"));
+        Directory parent = (Directory) this.findDirectory(parentPath);
+        if (parent == null) {
+            System.out.println("操作不允许!");
+            return false;
+        }
+
+        int sourceBlock = srcItem.getStartBlockNum();
+        for(Integer block : needDiskBlocks) {
+            disk.copyDiskBlock(sourceBlock, block);
+            sourceBlock = fat.getNextBlockIndex(sourceBlock);
+        }
+        int cur = needDiskBlocks.get(0);
+        int pre = cur;
+        for (int i = 1; i < needDiskBlocks.size(); i++) {
+            cur = needDiskBlocks.get(i);
+            fat.setNextBlockIndex(pre, cur);
+            pre = cur;
+        }
+        fat.setNextBlockIndex(cur, Fat.TERMINATED);
+        Item newFile = new Item(srcItem.getName(),
+                srcItem.getType(),
+                srcItem.isReadOnly(),
+                srcItem.isSystemFile(),
+                srcItem.isRegularFile(),
+                srcItem.isDirectory(),
+                disk,
+                parent);
+
+        parent.addChildren(newFile);
+        return true;
     }
 
-    public boolean copyFolder(Directory directory, String newPath) {
-        try {
-            int needDiskNum = directory.calculateTotalBlockNum(directory.getDisk().getFat());
-            List<Integer> needDiskBlock = disk.findFreeDiskBlock(needDiskNum);
-            if (needDiskBlock.size() < needDiskNum) {
-                System.out.println("磁盘空间不足！");
-                return false;
-            }
+//    public boolean copyFolder(String  sourcePath, String targetPath) {
+//
+//        try {
+//            int needDiskNum = directory.calculateTotalBlockNum(directory.getDisk().getFat());
+//            List<Integer> needDiskBlock = disk.findFreeDiskBlock(needDiskNum);
+//            if (needDiskBlock.size() < needDiskNum) {
+//                System.out.println("磁盘空间不足！");
+//                return false;
+//            }
+//
+//            String parentPath = newPath.substring(0, newPath.lastIndexOf("/"));
+//            Directory parent = FileController.getInstance().createDirectory(parentPath);
+//            for (Integer block : needDiskBlock) {
+//
+//            }
+//            newFolder.setParent(parent);
+//            newFolder.setStartDisk(needDisk.get(0));
+//            for (int i = 0; i < needDisk.size() - 1; i++) {
+//                fatTable.getFat()[needDisk.get(i)] = needDisk.get(i + 1);
+//            }
+//            fatTable.getFat()[needDisk.get(needDiskNum - 1)] = -1;
+//            return true;
+//        } catch (CloneNotSupportedException e) {
+//            System.out.println("复制失败!");
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-            String parentPath = newPath.substring(0, newPath.lastIndexOf("/"));
-            Directory parent = FileController.getInstance().createDirectory(parentPath);
-            Directory newFolder = (Directory) folder.clone();
-            newFolder.setParent(parent);
-            newFolder.setStartDisk(needDisk.get(0));
-            for (int i = 0; i < needDisk.size() - 1; i++) {
-                fatTable.getFat()[needDisk.get(i)] = needDisk.get(i + 1);
-            }
-            fatTable.getFat()[needDisk.get(needDiskNum - 1)] = -1;
-            return true;
-        } catch (CloneNotSupportedException e) {
-            System.out.println("复制失败!");
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void updateFileSize(Txt file, int size) {
+    public void updateFileSize(Item file, int size) {
         file.setSize(size);
         Directory parent = (Directory) file.getParent();
         while (parent != null) {

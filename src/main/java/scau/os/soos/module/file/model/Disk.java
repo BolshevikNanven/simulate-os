@@ -92,6 +92,10 @@ public class Disk {
         fat.setNextBlockIndex(blockNumber, Fat.TERMINATED);
     }
 
+    public void copyDiskBlock(int src, int dest) {
+        System.arraycopy(disk[src], 0, disk[dest], 0, BYTES_PER_BLOCK);
+    }
+
     public void formatFatTable(int startBlockNum) {
         int currentIndex = startBlockNum;
         int nextIndex;
