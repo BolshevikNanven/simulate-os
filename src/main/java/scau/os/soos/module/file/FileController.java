@@ -28,13 +28,8 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public Txt createFile(String path){
-        if(fileService.findFile(path) != null){
-            System.out.println("文件已存在");
-            return null;
-        }else{
-            return fileService.createFile(path);
-        }
+    public Item createFile(String path){
+         return fileService.createFile(path);
     }
 
     /**
@@ -84,22 +79,23 @@ public class FileController implements Module {
      * 建立目录
      */
     public Directory createDirectory(String path) {
-        if(fileService.findFolder(path) != null){
-            System.out.println("目录已存在");
-            Directory f =  fileService.findFolder(path);
-            return f;
-        }
-        String[] paths = path.split("/");
-        String pathName= paths[0];
-        Directory parent = null;
-
-        for(int i=1;i<paths.length;i++){
-            pathName = pathName + "/" + paths[i];
-            if(fileService.findFolder(pathName)==null){
-                parent=fileService.createFolder(parent,pathName);
-            }else parent =  fileService.findFolder(pathName);
-        }
-        return parent;
+//        if(fileService.findFolder(path) != null){
+//            System.out.println("目录已存在");
+//            Directory f =  fileService.findFolder(path);
+//            return f;
+//        }
+//        String[] paths = path.split("/");
+//        String pathName= paths[0];
+//        Directory parent = null;
+//
+//        for(int i=1;i<paths.length;i++){
+//            pathName = pathName + "/" + paths[i];
+//            if(fileService.findFolder(pathName)==null){
+//                parent=fileService.createFolder(parent,pathName);
+//            }else parent =  fileService.findFolder(pathName);
+//        }
+//        return parent;
+        return fileService.createDirectory(path);
     }
 
     /**
