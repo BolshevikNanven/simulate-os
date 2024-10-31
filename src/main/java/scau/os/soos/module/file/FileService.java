@@ -206,9 +206,9 @@ public class FileService {
         Disk disk = item.getDisk();
         Fat fat = item.getDisk().getFat();
         //需要的块数=文件总大小需要的磁盘块数-已占有的块数
-        int needDiskNum = (int) Math.ceil((double) content.length() / Disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
+        int needDiskNum = (int) Math.ceil((double) content.length() / disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
         int num = 0;
-        for (int i = 3; i < Disk.BLOCKS_PER_DISK && num < needDiskNum; i++) {
+        for (int i = 3; i < disk.BLOCKS_PER_DISK && num < needDiskNum; i++) {
             if (fat.isFreeBlock(i)) {
                 list.add(i);
                 num++;
@@ -223,7 +223,8 @@ public class FileService {
             int endDisk = disk.findLastDisk(item.getStartBlockNum());
 
             for (Integer index : list) {
-                fat.allocateNewBlock(endDisk, index);
+                fat.setNextBlockIndex(endDisk,index);
+                fat.setNextBlockIndex(index,Fat.TERMINATED);
                 endDisk = index;
             }
 
@@ -283,7 +284,7 @@ public class FileService {
             pre = cur;
         }
         fat.setNextBlockIndex(cur, Fat.TERMINATED);
-        Item newFile = new Item(srcItem.getName(),
+        Item newFile = FileService.getItemFromCreate(srcItem.getName(),
                 (byte)srcItem.getType(),
                 srcItem.isReadOnly(),
                 srcItem.isSystemFile(),
@@ -335,5 +336,45 @@ public class FileService {
 
     public void updateDirectorySize(Directory directory) {
         directory.getChildren();
+    }
+
+    public static Item getItemFromDisk(Disk disk, byte[] data) {
+        // 获取数据中的类型字节
+        byte type = data[3];
+        // 获取数据中的属性字节
+        byte attribute = data[4];
+
+        // 判断属性字节的第三位是否为0
+        if ((attribute & 0x08) != 0) {
+            // 是目录类型，返回目录实例
+            return new Directory(disk, data);
+        } else {
+            // 如果不是目录，继续判断类型字节
+            if (type != 0) {
+                // 类型字节为'e'，返回exe实例
+                if (type == 'e') {
+                    return new Exe(disk, data);
+                }
+                // 类型字节不是'e'，返回null
+                return null;
+            } else {
+                // 类型字节为0，返回txt实例
+                return new Txt(disk, data);
+            }
+        }
+    }
+
+
+    public static Item getItemFromCreate(String name, byte type, boolean readOnly, boolean systemFile,
+                                  boolean regularFile, boolean isDirectory,Disk disk,Item parent){
+        if(isDirectory) {
+            return new Directory(name, (byte) 0, readOnly, systemFile, regularFile, true, disk, parent,null);
+        }else {
+            if(type == 'e') {
+                return new Exe(name, (byte) 'e', readOnly, systemFile, regularFile, false, disk, parent,null);
+            }else {
+                return new Txt(name, (byte) 0, readOnly, systemFile, regularFile, false, disk, parent,null);
+            }
+        }
     }
 }

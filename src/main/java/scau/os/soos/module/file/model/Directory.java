@@ -1,5 +1,7 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.module.file.FileService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -16,7 +18,9 @@ public class Directory extends Item {
         //initFromDisk();
     }
 
-    public Directory(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, List<Item> children) {
+    public Directory(String name, byte type, boolean readOnly, boolean systemFile,
+                     boolean regularFile, boolean isDirectory, Disk disk, Item parent,
+                     List<Item> children) {
         super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
         setDisk(disk);
         this.children = children;
@@ -30,8 +34,8 @@ public class Directory extends Item {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
-                Item item = new Item(disk,itemData);
-                if (disk.isItemExist(item)) {
+                Item item = FileService.getItemFromDisk(disk,itemData);
+                if (item != null && disk.isItemExist(item)) {
                     children.add(item);
                 }
             }
@@ -46,7 +50,7 @@ public class Directory extends Item {
     public void writeContentToDisk() {
         // 计算需要多少个数据块来存储所有子项
         int blockNum = (int) Math.ceil((double) children.size() / BYTES_PER_ITEM);
-        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
+        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
 
         int itemIndex = 0; // 用于追踪当前处理的Item
         int byteIndex = 0; // 用于追踪当前数据块中的字节位置
@@ -54,7 +58,7 @@ public class Directory extends Item {
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
 
-            while (itemIndex < children.size() && byteIndex < Disk.BLOCKS_PER_DISK) {
+            while (itemIndex < children.size() && byteIndex < getDisk().BLOCKS_PER_DISK) {
                 Item item = children.get(itemIndex);
                 byte[] itemData = item.getData();
 
@@ -167,11 +171,16 @@ public class Directory extends Item {
         return children;
     }
 
-    public boolean addChildren(Item item) {
-        return children.add(item);
+    public void addChildren(Item item) {
+        children.add(item);
     }
 
     public void removeChild(Item item) {
         children.remove(item);
+    }
+
+
+    public void initFromString(String content){
+
     }
 }

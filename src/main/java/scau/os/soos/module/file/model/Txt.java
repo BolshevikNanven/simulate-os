@@ -32,9 +32,7 @@ public class Txt extends Item {
         }
     }
 
-    public void initFromString(String instructions) {
-        this.context = new StringBuilder(context);
-    }
+
 
     /**
      * 将内容写入磁盘
@@ -46,14 +44,14 @@ public class Txt extends Item {
         byte[] contextBytes = context.toString().getBytes(StandardCharsets.UTF_8);
 
         // 计算需要多少个数据块来存储所有子项
-        int blockNum = (int) Math.ceil((double) contextBytes.length / Disk.BYTES_PER_BLOCK);
-        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
+        int blockNum = (int) Math.ceil((double) contextBytes.length / disk.BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][disk.BYTES_PER_BLOCK];
 
         // 将内容复制到数据块中
         int byteIndex = 0;
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
-            int bytesToCopy = Math.min(contextBytes.length - byteIndex, Disk.BYTES_PER_BLOCK);
+            int bytesToCopy = Math.min(contextBytes.length - byteIndex, disk.BYTES_PER_BLOCK);
             System.arraycopy(contextBytes, byteIndex, currentBlock, 0, bytesToCopy);
             byteIndex += bytesToCopy;
         }
@@ -64,5 +62,13 @@ public class Txt extends Item {
 
     public String getContext() {
         return context.toString();
+    }
+
+    public void initFromString(String instructions) {
+        this.context = new StringBuilder(context);
+    }
+
+    public  void initFromDisk(){
+
     }
 }

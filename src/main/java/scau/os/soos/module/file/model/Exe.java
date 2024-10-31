@@ -13,7 +13,8 @@ public class Exe extends Item{
         initFromDisk(disk);
     }
 
-    public Exe(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent,String instructions) {
+    public Exe(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile,
+               boolean isDirectory, Disk disk, Item parent,String instructions) {
         super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
         initFromString(instructions);
     }
@@ -51,14 +52,14 @@ public class Exe extends Item{
         }
 
         // 计算需要多少个数据块来存储所有子项
-        int blockNum = (int) Math.ceil((double) instructionsBytes.length / Disk.BYTES_PER_BLOCK);
-        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
+        int blockNum = (int) Math.ceil((double) instructionsBytes.length / disk.BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][disk.BYTES_PER_BLOCK];
 
         // 将内容复制到数据块中
         int byteIndex = 0;
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
-            int bytesToCopy = Math.min(instructionsBytes.length - byteIndex, Disk.BYTES_PER_BLOCK);
+            int bytesToCopy = Math.min(instructionsBytes.length - byteIndex, disk.BYTES_PER_BLOCK);
             System.arraycopy(instructionsBytes, byteIndex, currentBlock, 0, bytesToCopy);
             byteIndex += bytesToCopy;
         }
@@ -69,5 +70,9 @@ public class Exe extends Item{
 
     public List<Byte> getInstructions(){
         return instructions;
+    }
+
+    public  void initFromDisk(){
+
     }
 }
