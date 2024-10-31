@@ -20,13 +20,13 @@ public abstract class Item {
         System.arraycopy(data, 6, size, 0, 2);
     }
 
-    public Item(String name, byte type, boolean readOnly, boolean systemFile,
-                boolean regularFile, boolean isDirectory, Disk disk, Item parent) {
+    public Item(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         setDisk(disk);
         setName(name);
         setType(type);
         setParent(parent);
-        setSize(0);
+        setStartBlockNum(startBlockNum);
+        setSize(size);
         setAttribute(readOnly, systemFile, regularFile, isDirectory);
     }
 
@@ -106,8 +106,8 @@ public abstract class Item {
         return (attribute & (1 << 3)) != 0;
     }
 
-    public void setStartBlockNum(byte startBlockNum) {
-        this.startBlockNum = startBlockNum;
+    public void setStartBlockNum(int startBlockNum) {
+        this.startBlockNum = (byte) startBlockNum;
     }
 
     public int getStartBlockNum() {
@@ -124,11 +124,7 @@ public abstract class Item {
     }
 
     public byte[] getData() {
-        return new byte[]{
-                name[0], name[1], name[2],
-                type, attribute, startBlockNum,
-                size[0], size[1]
-        };
+        return new byte[]{name[0], name[1], name[2], type, attribute, startBlockNum, size[0], size[1]};
     }
 
 
@@ -137,22 +133,21 @@ public abstract class Item {
      *
      * @param disk 磁盘对象，用于从中读取数据
      * @return 二维字节数组，存储了从指定起始块开始的所有数据块的内容
+     * 返回 64 字节/块
      */
     protected byte[][] readContentFromDisk(Disk disk) {
         Fat fat = disk.getFat();
-        int bytesPerBlock = disk.BYTES_PER_BLOCK;
-        int startBlockNum = this.startBlockNum;
 
         int blockCount = calculateTotalBlockNum(fat);
 
-        byte[][] content = new byte[blockCount][bytesPerBlock];
+        byte[][] content = new byte[blockCount][disk.BYTES_PER_BLOCK];
 
         // 重新遍历FAT表，以实际读取数据块并填充二维数组
         int currentBlock = startBlockNum;
         for (int i = 0; i < blockCount; i++) {
             byte[] blockData = disk.getDiskBlock(currentBlock);
             // 复制数据到二维数组的当前行
-            System.arraycopy(blockData, 0, content[i], 0, bytesPerBlock);
+            System.arraycopy(blockData, 0, content[i], 0, disk.BYTES_PER_BLOCK);
             currentBlock = fat.getNextBlockIndex(currentBlock);
         }
 
@@ -172,10 +167,11 @@ public abstract class Item {
         int pre = cur;
         for (byte[] bytes : content) {
             if (cur == -1) {
-                System.out.println("分配新磁盘块");
                 cur = disk.findFreeDiskBlock();
+                System.out.println("分配新磁盘块");
                 if (cur == -1) {
                     System.out.println("磁盘已满");
+                    disk.formatFatTable(startBlockNum);
                     break;
                 }
                 fat.setNextBlockIndex(pre, cur);

@@ -22,39 +22,38 @@ public class FileService {
         return disk.findDirectory(path);
     }
 
-    public Item createFile(String path) {;
+    public Item createFile(String path) {
+        ;
 
-        if(findFile(path) != null){
+        if (findFile(path) != null) {
             System.out.println("文件已存在！");
             return null;
         }
 
         Item file = null;
-        String parentPath = path.substring(0,path.lastIndexOf("/"));
+        String parentPath = path.substring(0, path.lastIndexOf("/"));
         Directory parent = (Directory) findDirectory(parentPath);
-        if(parent == null){
+        if (parent == null) {
             System.out.println("父目录不存在！");
             return null;
-        }else{
+        } else {
             int startDisk = disk.findFreeDiskBlock();
 
-            if(startDisk == -1){
+            if (startDisk == -1) {
                 System.out.println("磁盘空间不足！");
                 return null;
             }
 
             String name = path.substring(path.lastIndexOf("/") + 1);
 
-            if(path.contains(".e")){
-                file = new Exe(name,(byte)1,true,false,true,false,disk,parent,"");
-                file.setStartBlockNum((byte)startDisk);
-                ((Exe)file).writeContentToDisk(disk);
-            }else{
-                file = new Txt(name,(byte)2,true,false,true,false,disk,parent,"");
-                file.setStartBlockNum((byte)startDisk);
-                ((Txt)file).writeContentToDisk(disk);
+            if (path.contains(".e")) {
+                file = FileService.getItemFromCreate(disk, parent,name, (byte) 'e',true,false,true,false,startDisk,0);
+                ((Exe) file).writeContentToDisk(disk);
+            } else {
+                file = FileService.getItemFromCreate(disk, parent,name, (byte) 0,true,false,true,false,startDisk,0);
+                ((Txt) file).writeContentToDisk(disk);
             }
-            disk.getFat().setNextBlockIndex(startDisk,Fat.TERMINATED);
+            disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
             parent.addChildren(file);
             return file;
         }
@@ -111,30 +110,29 @@ public class FileService {
 //            parent.getChildren().add(folder);
 //            return folder;
 //        }
-        if(disk.findDirectory(path) != null){
+        if (disk.findDirectory(path) != null) {
             System.out.println("文件夹已存在！");
             return null;
         }
 
         Directory folder = null;
-        String parentPath = path.substring(0,path.lastIndexOf("/"));
+        String parentPath = path.substring(0, path.lastIndexOf("/"));
         Directory parent = (Directory) findDirectory(parentPath);
 
-        if(parent == null){
+        if (parent == null) {
             System.out.println("父目录不存在！");
             return null;
-        }else{
+        } else {
             int startDisk = disk.findFreeDiskBlock();
 
-            if(startDisk == -1){
+            if (startDisk == -1) {
                 System.out.println("磁盘空间不足！");
                 return null;
             }
 
             String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
-            folder = new Directory(name,(byte)0,true,false,false,true,disk,parent,new ArrayList<>());
-            folder.setStartBlockNum((byte)startDisk);
-            disk.getFat().setNextBlockIndex(startDisk,Fat.TERMINATED);
+            folder = (Directory) FileService.getItemFromCreate(disk, parent,name, (byte) 0,true,false,false,true,startDisk,0);
+            disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
             parent.addChildren(folder);
             return folder;
         }
@@ -223,8 +221,8 @@ public class FileService {
             int endDisk = disk.findLastDisk(item.getStartBlockNum());
 
             for (Integer index : list) {
-                fat.setNextBlockIndex(endDisk,index);
-                fat.setNextBlockIndex(index,Fat.TERMINATED);
+                fat.setNextBlockIndex(endDisk, index);
+                fat.setNextBlockIndex(index, Fat.TERMINATED);
                 endDisk = index;
             }
 
@@ -257,7 +255,7 @@ public class FileService {
         Disk disk = srcItem.getDisk();
         Fat fat = disk.getFat();
 
-        int needDiskNum  = srcItem.calculateTotalBlockNum(fat);
+        int needDiskNum = srcItem.calculateTotalBlockNum(fat);
         List<Integer> needDiskBlocks = disk.findFreeDiskBlock(needDiskNum);
         if (needDiskBlocks.size() < needDiskNum) {
             System.out.println("磁盘空间不足!");
@@ -272,7 +270,7 @@ public class FileService {
         }
 
         int sourceBlock = srcItem.getStartBlockNum();
-        for(Integer block : needDiskBlocks) {
+        for (Integer block : needDiskBlocks) {
             disk.copyDiskBlock(sourceBlock, block);
             sourceBlock = fat.getNextBlockIndex(sourceBlock);
         }
@@ -284,14 +282,16 @@ public class FileService {
             pre = cur;
         }
         fat.setNextBlockIndex(cur, Fat.TERMINATED);
-        Item newFile = FileService.getItemFromCreate(srcItem.getName(),
-                (byte)srcItem.getType(),
+        Item newFile = FileService.getItemFromCreate(disk,
+                parent,
+                srcItem.getName(),
+                (byte) srcItem.getType(),
                 srcItem.isReadOnly(),
                 srcItem.isSystemFile(),
                 srcItem.isRegularFile(),
                 srcItem.isDirectory(),
-                disk,
-                parent);
+                0,
+                0);
 
         parent.addChildren(newFile);
         return true;
@@ -336,6 +336,7 @@ public class FileService {
 
     public void updateDirectorySize(Directory directory) {
         directory.getChildren();
+        directory.writeContentToDisk();
     }
 
     public static Item getItemFromDisk(Disk disk, byte[] data) {
@@ -365,15 +366,14 @@ public class FileService {
     }
 
 
-    public static Item getItemFromCreate(String name, byte type, boolean readOnly, boolean systemFile,
-                                  boolean regularFile, boolean isDirectory,Disk disk,Item parent){
-        if(isDirectory) {
-            return new Directory(name, (byte) 0, readOnly, systemFile, regularFile, true, disk, parent,null);
-        }else {
-            if(type == 'e') {
-                return new Exe(name, (byte) 'e', readOnly, systemFile, regularFile, false, disk, parent,null);
-            }else {
-                return new Txt(name, (byte) 0, readOnly, systemFile, regularFile, false, disk, parent,null);
+    public static Item getItemFromCreate(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        if (isDirectory) {
+            return new Directory(disk, parent, name, type, readOnly, systemFile, regularFile, true, startBlockNum, size);
+        } else {
+            if (type == (byte) 'e') {
+                return new Exe(disk, parent, name, (byte) 'e', readOnly, systemFile, regularFile, false, startBlockNum, size);
+            } else {
+                return new Txt(disk, parent, name, type, readOnly, systemFile, regularFile, false, startBlockNum, size);
             }
         }
     }

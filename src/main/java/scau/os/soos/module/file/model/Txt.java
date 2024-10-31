@@ -1,37 +1,42 @@
 package scau.os.soos.module.file.model;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class Txt extends Item {
     private StringBuilder context;
 
     public Txt(Disk disk, byte[] data) {
         super(disk, data);
-
-        initFromDisk(disk);
     }
 
-    public Txt(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, Disk disk, Item parent, String context) {
-        super(name, type, readOnly, systemFile, regularFile, isDirectory, disk, parent);
-        initFromString(context);
+    public Txt(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        super(disk, parent,name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum,size);
+        this.context = new StringBuilder();
     }
 
-    public void initFromDisk(Disk disk) {
+    public void initFromString(String content) {
+        this.context = new StringBuilder(context);
+        setSize(content.length());
+    }
+
+    public void initFromDisk() {
+        Disk disk = super.getDisk();
         this.context = new StringBuilder();
 
         byte[][] content = super.readContentFromDisk(disk);
 
-        if (content != null) { // 检查content是否为null
-            for (byte[] block : content) {
-                if (block != null) { // 检查block是否为null
-                    // 使用StringBuilder的append方法高效连接字符串
-                    this.context.append(Arrays.toString(block)); // 假设我们想要将byte数组转换为字符串形式并追加
-                }
+        int size = 0;
+        for (byte[] block : content) {
+            // 使用StringBuilder的append方法高效连接字符串
+            for(byte b : block){
+                this.context.append((char) b);
+                size += block.length;
             }
-        }
-    }
 
+        }
+
+        setSize(size);
+    }
 
 
     /**
@@ -41,7 +46,7 @@ public class Txt extends Item {
      */
     public void writeContentToDisk(Disk disk) {
         // 将context转换为字节数组
-        byte[] contextBytes = context.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] contextBytes = context.toString().getBytes(StandardCharsets.US_ASCII);
 
         // 计算需要多少个数据块来存储所有子项
         int blockNum = (int) Math.ceil((double) contextBytes.length / disk.BYTES_PER_BLOCK);
@@ -62,13 +67,5 @@ public class Txt extends Item {
 
     public String getContext() {
         return context.toString();
-    }
-
-    public void initFromString(String instructions) {
-        this.context = new StringBuilder(context);
-    }
-
-    public  void initFromDisk(){
-
     }
 }

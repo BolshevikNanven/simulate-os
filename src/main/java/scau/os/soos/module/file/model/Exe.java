@@ -5,38 +5,43 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Exe extends Item{
+public class Exe extends Item {
     private List<Byte> instructions;
 
-    public Exe(Disk disk, byte[]data) {
-        super(disk,data);
-        initFromDisk(disk);
-    }
-
-    public Exe(String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile,
-               boolean isDirectory, Disk disk, Item parent,String instructions) {
-        super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
-        initFromString(instructions);
-    }
-
-    public void initFromDisk(Disk disk){
+    public Exe(Disk disk, byte[] data) {
+        super(disk, data);
         this.instructions = new ArrayList<>();
-        byte[][] content = super.readContentFromDisk(disk);
-
-        for (byte[] block : content) {
-            for (byte itemData : block) {
-                instructions.add(itemData);
-            }
-        }
     }
 
-    public void initFromString(String instructions){
+    public Exe(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
+        this.instructions = new ArrayList<>();
+    }
+
+
+    public void initFromString(String instructions) {
         this.instructions = Arrays.stream(instructions.split("\\s+")) // 分割字符串
                 .map(String::trim) // 去除可能的前后空格
                 .filter(s -> !s.isEmpty()) // 过滤掉空字符串
                 .map(Byte::parseByte) // 将每个字符串转换为Byte
                 .collect(Collectors.toList()); // 收集到List中
         setSize(this.instructions.size());
+    }
+
+    public void initFromDisk() {
+        Disk disk = super.getDisk();
+        this.instructions = new ArrayList<>();
+        byte[][] content = super.readContentFromDisk(disk);
+        int size = 0;
+
+        for (byte[] block : content) {
+            for (byte itemData : block) {
+                instructions.add(itemData);
+                size++;
+            }
+        }
+
+        setSize(size);
     }
 
     /**
@@ -68,11 +73,7 @@ public class Exe extends Item{
         super.writeContentToDisk(disk, allItemsData);
     }
 
-    public List<Byte> getInstructions(){
+    public List<Byte> getInstructions() {
         return instructions;
-    }
-
-    public  void initFromDisk(){
-
     }
 }

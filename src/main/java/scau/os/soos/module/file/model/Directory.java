@@ -11,30 +11,27 @@ public class Directory extends Item {
     private final List<Item> children;
 
     public Directory(Disk disk, byte[] data) {
-        super(disk,data);
-
-        children = new ArrayList<>();
-
-        //initFromDisk();
+        super(disk, data);
+        this.children = new ArrayList<>();
     }
 
-    public Directory(String name, byte type, boolean readOnly, boolean systemFile,
-                     boolean regularFile, boolean isDirectory, Disk disk, Item parent,
-                     List<Item> children) {
-        super(name,type,readOnly,systemFile,regularFile,isDirectory,disk,parent);
-        setDisk(disk);
-        this.children = children;
+    public Directory(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
+        this.children = new ArrayList<>();
+    }
+
+    public void initFromString(String content) {
     }
 
     public void initFromDisk() {
-        Disk disk = getDisk();
+        Disk disk = super.getDisk();
         byte[][] content = super.readContentFromDisk(disk);
 
         for (byte[] block : content) {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
-                Item item = FileService.getItemFromDisk(disk,itemData);
+                Item item = FileService.getItemFromDisk(disk, itemData);
                 if (item != null && disk.isItemExist(item)) {
                     children.add(item);
                 }
@@ -44,63 +41,7 @@ public class Directory extends Item {
         getChildren();
     }
 
-    /**
-     * 将内容写入磁盘
-     */
-    public void writeContentToDisk() {
-        // 计算需要多少个数据块来存储所有子项
-        int blockNum = (int) Math.ceil((double) children.size() / BYTES_PER_ITEM);
-        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
-
-        int itemIndex = 0; // 用于追踪当前处理的Item
-        int byteIndex = 0; // 用于追踪当前数据块中的字节位置
-
-        for (int block = 0; block < blockNum; block++) {
-            byte[] currentBlock = allItemsData[block];
-
-            while (itemIndex < children.size() && byteIndex < getDisk().BLOCKS_PER_DISK) {
-                Item item = children.get(itemIndex);
-                byte[] itemData = item.getData();
-
-                // 将Item数据复制到当前数据块
-                System.arraycopy(itemData, 0, currentBlock, byteIndex, itemData.length);
-
-                // 更新索引
-                byteIndex += BYTES_PER_ITEM;
-                itemIndex++;
-            }
-            // 重置字节索引，为下一个数据块做准备
-            byteIndex = 0;
-        }
-
-        // 调用父类方法，将整合后的数据写入磁盘
-        Disk disk = getDisk();
-        super.writeContentToDisk(disk, allItemsData);
-    }
-
-    private Item find(String path) {
-        //读文件"dir1/dir2/file.txt"
-        //读目录"dir1/dir2"
-
-        if(path.equals("")||path==null)
-            return this;
-
-        StringTokenizer tokenizer = new StringTokenizer(path, "/");
-        List<String> pathParts = new ArrayList<>();
-        while (tokenizer.hasMoreTokens()) {
-            String pathPart = tokenizer.nextToken();
-            pathParts.add(pathPart);
-            System.out.println(pathPart+"----");
-        }
-
-        // 从根目录（即this）开始查找
-        return findInDirectory(this, pathParts, 0);
-    }
-
-    public Item findDirectory(String path){
-        if(path.equals("")||path==null)
-            return this;
-
+    public Item findDirectory(String path) {
         Item item = find(path); // 查找项目
         if (item instanceof Directory) {
             return item;
@@ -108,12 +49,32 @@ public class Directory extends Item {
         return null;
     }
 
-    public Item findFile(String path){
+    public Item findFile(String path) {
         Item item = find(path); // 查找项目
         if (item instanceof Txt || item instanceof Exe) {
             return item;
         }
         return null;
+    }
+
+
+    private Item find(String path) {
+        //读文件"dir1/dir2/file.txt"
+        //读目录"dir1/dir2"
+
+        if (path.isEmpty())
+            return this;
+
+        StringTokenizer tokenizer = new StringTokenizer(path, "/");
+        List<String> pathParts = new ArrayList<>();
+        while (tokenizer.hasMoreTokens()) {
+            String pathPart = tokenizer.nextToken();
+            pathParts.add(pathPart);
+            System.out.println(pathPart + "----");
+        }
+
+        // 从根目录（即this）开始查找
+        return findInDirectory(this, pathParts, 0);
     }
 
     private Item findInDirectory(Directory currentDir, List<String> pathParts, int index) {
@@ -153,34 +114,58 @@ public class Directory extends Item {
         return null;
     }
 
-    public List<Item> getChildren() {
-        Disk disk = getDisk();
-        int size = 0;
-        for (int i = 0; i < children.size(); i++) {
-            if (children.get(i).getType() == 0) {
-                children.set(i, new Directory(disk, children.get(i).getData()));
-            } else if (children.get(i).getType() == 1) {
-                children.set(i, new Txt(disk, children.get(i).getData()));
-            } else if (children.get(i).getType() == 2) {
-                children.set(i, new Exe(disk, children.get(i).getData()));
+
+    /**
+     * 将内容写入磁盘
+     */
+    public void writeContentToDisk() {
+        // 计算需要多少个数据块来存储所有子项
+        int blockNum = (int) Math.ceil((double) getChildren().size() / BYTES_PER_ITEM);
+        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
+
+        int itemIndex = 0; // 用于追踪当前处理的Item
+        int byteIndex = 0; // 用于追踪当前数据块中的字节位置
+
+        for (int block = 0; block < blockNum; block++) {
+            byte[] currentBlock = allItemsData[block];
+
+            while (itemIndex < children.size() && byteIndex < getDisk().BYTES_PER_BLOCK) {
+                Item item = children.get(itemIndex);
+                byte[] itemData = item.getData();
+
+                // 将Item数据复制到当前数据块
+                System.arraycopy(itemData, 0, currentBlock, byteIndex, BYTES_PER_ITEM);
+
+                // 更新索引
+                byteIndex += BYTES_PER_ITEM;
+                itemIndex++;
             }
-            children.get(i).setParent(this);
-            size += children.get(i).getSize();
+            // 重置字节索引，为下一个数据块做准备
+            byteIndex = 0;
+        }
+
+        // 调用父类方法，将整合后的数据写入磁盘
+        super.writeContentToDisk(getDisk(), allItemsData);
+    }
+
+    public List<Item> getChildren() {
+        int size = 0;
+        for (Item child : children) {
+            size += child.getSize();
         }
         this.setSize(size);
         return children;
     }
 
     public void addChildren(Item item) {
+        this.setSize(this.getSize() + item.getSize());
+        item.setParent(this);
         children.add(item);
     }
 
     public void removeChild(Item item) {
+        this.setSize(this.getSize() - item.getSize());
+        item.setParent(null);
         children.remove(item);
-    }
-
-
-    public void initFromString(String content){
-
     }
 }
