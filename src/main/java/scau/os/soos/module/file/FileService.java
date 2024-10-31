@@ -14,25 +14,19 @@ public class FileService {
         disk = new Disk();
     }
 
-    public Item findFile(String path) {
-        return disk.findFile(path);
-    }
-
-    public Item findDirectory(String path) {
-        return disk.findDirectory(path);
+    public Disk getDisk(){
+        return disk;
     }
 
     public Item createFile(String path) {
-        ;
-
-        if (findFile(path) != null) {
+        if (find(disk,path,FILE_TYPE.EXE) != null) {
             System.out.println("文件已存在！");
             return null;
         }
 
         Item file = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) findDirectory(parentPath);
+        Directory parent = (Directory) find(disk,parentPath,FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("父目录不存在！");
             return null;
@@ -44,7 +38,7 @@ public class FileService {
                 return null;
             }
 
-            String name = path.substring(path.lastIndexOf("/") + 1);
+            String name = path.substring(path.lastIndexOf("/") + 1,path.lastIndexOf('.'));
 
             if (path.contains(".e")) {
                 file = FileService.getItemFromCreate(disk, parent,name, (byte) 'e',true,false,true,false,startDisk,0);
@@ -110,14 +104,14 @@ public class FileService {
 //            parent.getChildren().add(folder);
 //            return folder;
 //        }
-        if (disk.findDirectory(path) != null) {
+        if (find(disk,path,FILE_TYPE.DIRECTORY) != null) {
             System.out.println("文件夹已存在！");
             return null;
         }
 
         Directory folder = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) findDirectory(parentPath);
+        Directory parent = (Directory) find(disk,parentPath,FILE_TYPE.DIRECTORY);
 
         if (parent == null) {
             System.out.println("父目录不存在！");
@@ -140,7 +134,7 @@ public class FileService {
 
     public void deleteDirectory(String path, boolean isDeleteNotEmpty) {
         // 在磁盘上查找指定路径的目录
-        Item item = this.findDirectory(path);
+        Item item = this.find(disk,path,FILE_TYPE.DIRECTORY);
         // 如果目录为空，或者找到的项是一个Txt文件或Exe文件，则不是文件夹
         if (item == null) {
             System.out.println("不是文件夹！");
@@ -158,7 +152,7 @@ public class FileService {
     }
 
     public void deleteFile(String path) {
-        Item item = this.findFile(path);
+        Item item = this.find(disk,path,FILE_TYPE.EXE);
         // 如果目录为空，或者找到的项是一个目录，则不是文件
         if (item == null) {
             System.out.println("不是文件或不存在！");
@@ -233,7 +227,7 @@ public class FileService {
                     updateFileSize(exe, exe.getSize());
                     exe.writeContentToDisk(exe.getDisk());
                 }
-                case FILE -> {
+                case TXT -> {
                     Txt txt = (Txt) item;
                     txt.initFromString(content);
                     updateFileSize(txt, txt.getSize());
@@ -246,7 +240,7 @@ public class FileService {
     }
 
     public boolean copyFile(String sourcePath, String targetPath) {
-        Item srcItem = this.findFile(sourcePath);
+        Item srcItem = this.find(disk,sourcePath,FILE_TYPE.EXE);
         if (srcItem == null) {
             System.out.println("文件不存在!");
             return false;
@@ -263,7 +257,7 @@ public class FileService {
         }
 
         String parentPath = targetPath.substring(0, targetPath.lastIndexOf("/"));
-        Directory parent = (Directory) this.findDirectory(parentPath);
+        Directory parent = (Directory) this.find(disk,parentPath,FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("操作不允许!");
             return false;
@@ -376,5 +370,10 @@ public class FileService {
                 return new Txt(disk, parent, name, type, readOnly, systemFile, regularFile, false, startBlockNum, size);
             }
         }
+    }
+
+    public static Item find(Disk disk,String path,FILE_TYPE type){
+        Directory root = disk.getRootDirectory();
+        return root.find(path,type);
     }
 }

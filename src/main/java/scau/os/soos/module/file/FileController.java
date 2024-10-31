@@ -167,7 +167,7 @@ public class FileController implements Module {
         getInstance().createFile("/a.e");
         //getInstance().createDirectory("/a/");
 
-        System.out.println(getInstance().fileService.findFile("/a.e"));
+        System.out.println(FileService.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
 
 
     }

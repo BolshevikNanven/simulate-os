@@ -59,15 +59,15 @@ public abstract class Item {
         for (byte b : name) {
             sb.append((char) b);
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public void setType(byte type) {
-        this.type = (byte) type;
+        this.type = type;
     }
 
-    public char getType() {
-        return (char) type;
+    public byte getType() {
+        return type;
     }
 
     // 设置属性（使用位操作）

@@ -1,5 +1,7 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.common.enums.FILE_TYPE;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +29,6 @@ public class Disk {
 
     public Fat getFat() {
         return fat;
-    }
-
-    public Item findFile(String path) {
-        return rootDirectory.findFile(path);
-    }
-
-    public Item findDirectory(String path) {
-        return rootDirectory.findDirectory(path);
     }
 
     public boolean isItemExist(Item item) {

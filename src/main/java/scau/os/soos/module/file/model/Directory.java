@@ -1,5 +1,6 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.FileService;
 
 import java.util.ArrayList;
@@ -41,30 +42,28 @@ public class Directory extends Item {
         getChildren();
     }
 
-    public Item findDirectory(String path) {
-        Item item = find(path); // 查找项目
-        if (item instanceof Directory) {
-            return item;
+    /***
+     *
+     * @param path 路径名不允许带 ‘.’ ，即取 ‘.’ 前面的路径
+     * @param fileType
+     * @return
+     */
+    public Item find(String path, FILE_TYPE fileType){
+        switch (fileType){
+            case EXE -> {
+                return find(path,false,(byte) 'e');
+            }
+            case TXT -> {
+                return find(path,false,(byte) 0);
+            }
+            case DIRECTORY -> {
+                return find(path,true,(byte) 0);
+            }
         }
         return null;
     }
 
-    public Item findFile(String path) {
-        Item item = find(path); // 查找项目
-        if (item instanceof Txt || item instanceof Exe) {
-            return item;
-        }
-        return null;
-    }
-
-
-    private Item find(String path) {
-        //读文件"dir1/dir2/file.txt"
-        //读目录"dir1/dir2"
-
-        if (path.isEmpty())
-            return this;
-
+    private Item find(String path,boolean isDirectory,byte type) {
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
         List<String> pathParts = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
@@ -74,34 +73,47 @@ public class Directory extends Item {
         }
 
         // 从根目录（即this）开始查找
-        return findInDirectory(this, pathParts, 0);
+        return findInDirectory(this, pathParts, 0,isDirectory,type);
     }
 
-    private Item findInDirectory(Directory currentDir, List<String> pathParts, int index) {
+    private Item findInDirectory(Directory currentDir, List<String> pathParts, int index,boolean isDirectory,byte type) {
         // 校验pathParts是否为空或index是否越界
-        if (pathParts == null || index < 0 || index >= pathParts.size()) {
-            throw new IllegalArgumentException("Invalid path parts or index");
+        if(pathParts.isEmpty()) {
+            return currentDir;
+        }
+
+        if (index < 0 || index >= pathParts.size()) {
+            return null;
         }
 
         // 获取当前目录的子项
         List<Item> children = currentDir.getChildren();
+        String nameToFind = pathParts.get(index);
 
         // 检查是否已到达路径的末尾
         if (index == pathParts.size() - 1) {
             // 遍历子项，寻找与路径最后一部分同名的项
-            for (Item child : children) {
-                if (child.getName().equals(pathParts.get(index))) {
-                    return child;
+            nameToFind = nameToFind.substring(0,nameToFind.lastIndexOf('.'));
+            if(isDirectory){
+                for (Item child : children) {
+                    if (child.getName().equals(nameToFind) && child.isDirectory()) {
+                        return child;
+                    }
+                }
+            }else{
+                for (Item child : children) {
+                    if (child.getName().equals(nameToFind) && child.getType()==type) {
+                        return child;
+                    }
                 }
             }
         } else {
             // 若未到达路径末尾，则继续递归查找
-            String nameToFind = pathParts.get(index);
             for (Item child : children) {
                 if (child.getName().equals(nameToFind)) {
                     // 如果找到了匹配的项，并且它是一个目录，则递归地在其内部查找
                     if (child instanceof Directory) {
-                        return findInDirectory((Directory) child, pathParts, index + 1);
+                        return findInDirectory((Directory) child, pathParts, index + 1,isDirectory,type);
                     } else {
                         // 如果找到了匹配的项，并且它是一个文件（不是目录），则返回它
                         // 注意：这里我们假设路径总是指向文件，除非进行特殊修改以允许目录返回
