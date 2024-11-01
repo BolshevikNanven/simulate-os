@@ -36,7 +36,7 @@ public class FileController implements Module {
      * 删除文件
      */
     public void deleteFile(String path) {
-        fileService.delete(path, FILE_TYPE.EXE,true);
+        fileService.delete(path, path.contains("e")?FILE_TYPE.EXE:FILE_TYPE.TXT,true);
     }
 
     /**
@@ -93,10 +93,20 @@ public class FileController implements Module {
 
     public static void main(String[] args) {//显示根目录
 
-        getInstance().createFile("/a.e");
-        //getInstance().createDirectory("/a/");
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/",FILE_TYPE.DIRECTORY));
 
+        getInstance().createFile("/a.t");
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
+
+
+        getInstance().createFile("/a.e");
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
+
+        getInstance().deleteFile("/a.e");
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
+
+
 
 
 
