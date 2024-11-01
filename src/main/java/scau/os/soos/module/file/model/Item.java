@@ -113,7 +113,7 @@ public abstract class Item {
     }
 
     public int getStartBlockNum() {
-        return startBlockNum;
+        return startBlockNum & 0xFF;
     }
 
     public void setSize(int size) {
@@ -148,7 +148,7 @@ public abstract class Item {
         byte[][] content = new byte[blockCount][disk.BYTES_PER_BLOCK];
 
         // 重新遍历FAT表，以实际读取数据块并填充二维数组
-        int currentBlock = startBlockNum;
+        int currentBlock = getStartBlockNum();
         for (int i = 0; i < blockCount; i++) {
             byte[] blockData = disk.getDiskBlock(currentBlock);
             // 复制数据到二维数组的当前行
@@ -168,7 +168,7 @@ public abstract class Item {
     protected boolean writeContentToDisk(byte[][] content) {
         Disk disk = getDisk();
         Fat fat = disk.getFat();
-        int cur = startBlockNum;
+        int cur = getStartBlockNum();
         int pre = cur;
         for (byte[] bytes : content) {
             if (cur == -1) {
@@ -176,7 +176,7 @@ public abstract class Item {
                 System.out.println("分配新磁盘块");
                 if (cur == -1) {
                     System.out.println("磁盘已满");
-                    disk.formatFatTable(startBlockNum);
+                    disk.formatFatTable(getStartBlockNum());
                     return false;
                 }
                 fat.setNextBlockIndex(pre, cur);
@@ -197,7 +197,7 @@ public abstract class Item {
      */
     public int calculateTotalBlockNum(Fat fat) {
         int blockCount = 0; // 用于记录占用的磁盘块数量
-        int currentBlock = startBlockNum;
+        int currentBlock = getStartBlockNum();
         while (currentBlock != Fat.TERMINATED) {
             blockCount++;
             currentBlock = fat.getNextBlockIndex(currentBlock);

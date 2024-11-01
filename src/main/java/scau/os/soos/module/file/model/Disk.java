@@ -66,13 +66,15 @@ public class Disk {
 
     public List<Integer> findFreeDiskBlock(int num) {
         List<Integer> list = new ArrayList<>();
-        for(int n=0;n<num;n++){
-            for (int i = ROOT_BLOCK_NUM + 1; i < BLOCKS_PER_DISK; i++) {
-                if (fat.isFreeBlock(i)) {
-                    list.add(i);
-                }
+        int n=0;
+
+        for (int i = ROOT_BLOCK_NUM + 1; i < BLOCKS_PER_DISK; i++) {
+            if (fat.isFreeBlock(i) && n<num) {
+                list.add(i);
+                n++;
             }
         }
+
         return list;
     }
 

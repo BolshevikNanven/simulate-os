@@ -1,5 +1,7 @@
 package scau.os.soos.module.file.model;
 
+import java.util.List;
+
 public class Fat {
     private final Disk disk;
     public static final int FREE = 0;
@@ -51,7 +53,7 @@ public class Fat {
      * 获取指定磁盘块的下一个磁盘块索引
      */
     public int getNextBlockIndex(int diskNum) {
-        return fat[diskNum];
+        return fat[diskNum] & 0xFF;
     }
 
     public boolean isFreeBlock(int diskNum) {

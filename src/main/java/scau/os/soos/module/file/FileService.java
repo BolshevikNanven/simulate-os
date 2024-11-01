@@ -22,7 +22,7 @@ public class FileService {
 
     public Item createFile(String path) {
         //查重
-        FILE_TYPE type = path.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+        FILE_TYPE type = FileServiceUtil.check(path);
 
         if (FileServiceUtil.find(disk,path,type) != null) {
             System.out.println("文件已存在！");
@@ -57,6 +57,7 @@ public class FileService {
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
         disk.getFat().writeFatToDisk();
         parent.addChildren(file);
+        parent.updateSize();
         FileServiceUtil.writeItemAndParentsToDisk(file);
         return file;
     }
@@ -92,13 +93,15 @@ public class FileService {
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
         disk.getFat().writeFatToDisk();
         parent.addChildren(folder);
+        parent.updateSize();
         FileServiceUtil.writeItemAndParentsToDisk(folder);
         return folder;
     }
 
     public void delete(String path,boolean isDeleteDirectory, boolean isDeleteNotEmpty){
         //查重
-        FILE_TYPE type = path.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+        FILE_TYPE type = FileServiceUtil.check(path);
+
         if(isDeleteDirectory){
             type = FILE_TYPE.DIRECTORY;
         }
@@ -172,7 +175,7 @@ public class FileService {
 
     public boolean copy(String sourcePath, String targetPath) {
         //查重
-        FILE_TYPE type = sourcePath.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+        FILE_TYPE type = FileServiceUtil.check(sourcePath);
 
         Item srcItem = FileServiceUtil.find(disk, sourcePath, type);
         if (srcItem == null) {
@@ -180,27 +183,43 @@ public class FileService {
             return false;
         }
 
+        if (targetPath.contains(".")) {
+            System.out.println("目标非路径!");
+            return false;
+        }
+
         Disk disk = srcItem.getDisk();
         Fat fat = disk.getFat();
 
         int needDiskNum = srcItem.calculateTotalBlockNum(fat);
+
         List<Integer> needDiskBlocks = disk.findFreeDiskBlock(needDiskNum);
         if (needDiskBlocks.size() < needDiskNum) {
             System.out.println("磁盘空间不足!");
             return false;
         }
 
-        String parentPath = targetPath.substring(0, targetPath.lastIndexOf("/"));
-        Directory parent = (Directory) FileServiceUtil.find(disk, parentPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) FileServiceUtil.find(disk, targetPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("操作不允许!");
             return false;
         }
 
+        if(targetPath.endsWith("/")){
+            targetPath = targetPath.substring(0,targetPath.length() - 1);
+        }
+        String targetItem = targetPath + "/" + srcItem.getName();
+        if (FileServiceUtil.find(disk,targetItem,type) != null) {
+            System.out.println("文件已存在！");
+            return false;
+        }
+
         int cur = needDiskBlocks.get(0);
         int pre = cur;
+        System.out.println("cur:"+cur);
         for (int i = 1; i < needDiskBlocks.size(); i++) {
             cur = needDiskBlocks.get(i);
+            System.out.println("cur:"+cur);
             fat.setNextBlockIndex(pre, cur);
             pre = cur;
         }
@@ -213,6 +232,8 @@ public class FileService {
         newItem.setStartBlockNum(needDiskBlocks.get(0));
 
         parent.addChildren(newItem);
+        FileServiceUtil.updateItemSize(newItem);
+        FileServiceUtil.writeItemAndParentsToDisk(newItem);
         return true;
     }
 }

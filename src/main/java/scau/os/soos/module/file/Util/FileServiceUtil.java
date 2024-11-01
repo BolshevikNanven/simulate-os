@@ -131,4 +131,16 @@ public class FileServiceUtil {
             deleteItem(child);
         }
     }
+
+    public static FILE_TYPE check(String path){
+        if(path.endsWith(".e")){
+            return FILE_TYPE.EXE;
+        } else if (path.endsWith(".t")){
+            return FILE_TYPE.TXT;
+        } else if (path.contains(".")){
+            return null;
+        } else {
+            return FILE_TYPE.DIRECTORY;
+        }
+    }
 }
