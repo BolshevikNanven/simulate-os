@@ -2,6 +2,7 @@ package scau.os.soos.module.file;
 
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.Module;
+import scau.os.soos.module.file.Util.FileServiceUtil;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
@@ -37,7 +38,7 @@ public class FileController implements Module {
      * 删除文件
      */
     public void deleteFile(String path) {
-        fileService.deleteFile(path);
+        fileService.delete(path, FILE_TYPE.EXE,true);
     }
 
     /**
@@ -64,7 +65,7 @@ public class FileController implements Module {
      * 拷贝文件
      */
     public void copyFile(String sourcePath, String targetPath) {
-        fileService.copyFile(sourcePath, targetPath);
+        fileService.copy(sourcePath, targetPath,FILE_TYPE.EXE);
     }
 
     /**
@@ -95,14 +96,14 @@ public class FileController implements Module {
      * 删除空目录
      */
     public void deleteEmptyDirectory(String path) {
-        fileService.deleteDirectory(path, false);
+        fileService.delete(path, FILE_TYPE.DIRECTORY,false);
     }
 
     /**
      * 删除目录
      */
     public void deleteDirectory(String path) {
-        fileService.deleteDirectory(path, true);
+        fileService.delete(path, FILE_TYPE.DIRECTORY,true);
     }
 
     public int getFileSize(Item file) {

@@ -66,4 +66,20 @@ public class Txt extends Item {
         // 调用父类方法，将整合后的数据写入磁盘
         return super.writeContentToDisk(allItemsData);
     }
+
+    public Item copy(){
+        Txt newItem = new Txt(
+                null,
+                null,
+                this.getName(),
+                this.getType(),
+                this.isReadOnly(),
+                this.isSystemFile(),
+                this.isRegularFile(),
+                this.isDirectory(),
+                0,
+                0);
+        newItem.initFromString(this.getContext());
+        return newItem;
+    }
 }

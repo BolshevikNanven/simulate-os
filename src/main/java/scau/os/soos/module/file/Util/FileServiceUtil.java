@@ -1,7 +1,9 @@
-package scau.os.soos.module.file;
+package scau.os.soos.module.file.Util;
 
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.model.*;
+
+import java.util.ArrayList;
 
 public class FileServiceUtil {
 
@@ -89,5 +91,41 @@ public class FileServiceUtil {
             parent = parent.getParent();
         }
         return true;
+    }
+
+    public static void deleteItemRecursively(Item item) {
+        if (item instanceof Directory) {
+            deleteDirectoryRecursively((Directory) item);
+        } else {
+            deleteFile(item);
+            parent = item.getParent();
+            // 更新父目录的大小
+            FileServiceUtil.updateItemSize(parent);
+            // 更新父目录及其上级目录到磁盘
+            FileServiceUtil.writeItemAndParentsToDisk(parent);
+        }
+    }
+
+    private static void deleteFile(Item file) {
+        Disk disk = file.getDisk();
+        disk.formatFatTable(file.getStartBlockNum());
+        Directory parent = (Directory) file.getParent();
+        file.setParent(null);
+        file.setDisk(null);
+        parent.removeChild(file);
+
+    }
+
+    private static void deleteDirectoryRecursively(Directory directory) {
+        for (Item child : directory.getChildren()) {
+            deleteItemRecursively(child);
+            deleteFile(child);
+        }
+        // 设置目录大小为0
+        directory.setSize(0);
+        // 更新目录的大小
+        FileServiceUtil.updateItemSize(directory);
+        // 更新目录及其上级目录到磁盘
+        FileServiceUtil.writeItemAndParentsToDisk(directory);
     }
 }

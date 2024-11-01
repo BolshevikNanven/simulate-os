@@ -207,4 +207,10 @@ public abstract class Item {
     public abstract void initFromDisk();
 
     public abstract boolean writeContentToDisk();
+
+    /***
+     * 需自行设置 disk, parent, startBlockNum 属性
+     * @return
+     */
+    public abstract Item copy();
 }

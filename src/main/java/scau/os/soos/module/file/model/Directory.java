@@ -1,7 +1,7 @@
 package scau.os.soos.module.file.model;
 
 import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.module.file.FileServiceUtil;
+import scau.os.soos.module.file.Util.FileServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,5 +168,24 @@ public class Directory extends Item {
 
         // 调用父类方法，将整合后的数据写入磁盘
         return super.writeContentToDisk(allItemsData);
+    }
+
+    public Item copy(){
+        Directory newItem = new Directory(
+                null,
+                null,
+                this.getName(),
+                this.getType(),
+                this.isReadOnly(),
+                this.isSystemFile(),
+                this.isRegularFile(),
+                this.isDirectory(),
+                0,
+                0);
+        for (Item child : this.getChildren()) {
+            Item newChild = child.copy();
+            newItem.getChildren().add(newChild);
+        }
+        return newItem;
     }
 }

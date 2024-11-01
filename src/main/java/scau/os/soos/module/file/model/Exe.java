@@ -76,4 +76,19 @@ public class Exe extends Item {
         return super.writeContentToDisk(allItemsData);
     }
 
+    public Item copy(){
+        Exe newItem = new Exe(
+                null,
+                null,
+                this.getName(),
+                this.getType(),
+                this.isReadOnly(),
+                this.isSystemFile(),
+                this.isRegularFile(),
+                this.isDirectory(),
+                0,
+                0);
+        newItem.getInstructions().addAll(this.getInstructions());
+        return newItem;
+    }
 }
