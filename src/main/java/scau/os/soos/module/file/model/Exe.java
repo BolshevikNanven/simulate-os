@@ -19,6 +19,14 @@ public class Exe extends Item {
     }
 
 
+    public List<Byte> getInstructions() {
+        return instructions;
+    }
+
+    public void updateSize(){
+        setSize(instructions.size());
+    }
+
     public void initFromString(String instructions) {
         this.instructions = Arrays.stream(instructions.split("\\s+")) // 分割字符串
                 .map(String::trim) // 去除可能的前后空格
@@ -44,12 +52,7 @@ public class Exe extends Item {
         setSize(size);
     }
 
-    /**
-     * 将内容写入磁盘
-     *
-     * @param disk 磁盘对象，用于存储内容
-     */
-    public void writeContentToDisk(Disk disk) {
+    public boolean writeContentToDisk() {
         // 将instructions列表转换为字节数组
         byte[] instructionsBytes = new byte[instructions.size()];
         for (int i = 0; i < instructions.size(); i++) {
@@ -57,23 +60,20 @@ public class Exe extends Item {
         }
 
         // 计算需要多少个数据块来存储所有子项
-        int blockNum = (int) Math.ceil((double) instructionsBytes.length / disk.BYTES_PER_BLOCK);
-        byte[][] allItemsData = new byte[blockNum][disk.BYTES_PER_BLOCK];
+        int blockNum = (int) Math.ceil((double) instructionsBytes.length / getDisk().BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
 
         // 将内容复制到数据块中
         int byteIndex = 0;
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
-            int bytesToCopy = Math.min(instructionsBytes.length - byteIndex, disk.BYTES_PER_BLOCK);
+            int bytesToCopy = Math.min(instructionsBytes.length - byteIndex, getDisk().BYTES_PER_BLOCK);
             System.arraycopy(instructionsBytes, byteIndex, currentBlock, 0, bytesToCopy);
             byteIndex += bytesToCopy;
         }
 
         // 调用父类方法，将整合后的数据写入磁盘
-        super.writeContentToDisk(disk, allItemsData);
+        return super.writeContentToDisk(allItemsData);
     }
 
-    public List<Byte> getInstructions() {
-        return instructions;
-    }
 }

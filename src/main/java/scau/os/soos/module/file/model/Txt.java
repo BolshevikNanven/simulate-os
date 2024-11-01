@@ -14,6 +14,14 @@ public class Txt extends Item {
         this.context = new StringBuilder();
     }
 
+    public String getContext() {
+        return context.toString();
+    }
+
+    public void updateSize(){
+        setSize(context.length());
+    }
+
     public void initFromString(String content) {
         this.context = new StringBuilder(context);
         setSize(content.length());
@@ -38,34 +46,24 @@ public class Txt extends Item {
         setSize(size);
     }
 
-
-    /**
-     * 将内容写入磁盘
-     *
-     * @param disk 磁盘对象，用于存储内容
-     */
-    public void writeContentToDisk(Disk disk) {
+    public boolean writeContentToDisk() {
         // 将context转换为字节数组
         byte[] contextBytes = context.toString().getBytes(StandardCharsets.US_ASCII);
 
         // 计算需要多少个数据块来存储所有子项
-        int blockNum = (int) Math.ceil((double) contextBytes.length / disk.BYTES_PER_BLOCK);
-        byte[][] allItemsData = new byte[blockNum][disk.BYTES_PER_BLOCK];
+        int blockNum = (int) Math.ceil((double) contextBytes.length / getDisk().BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
 
         // 将内容复制到数据块中
         int byteIndex = 0;
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
-            int bytesToCopy = Math.min(contextBytes.length - byteIndex, disk.BYTES_PER_BLOCK);
+            int bytesToCopy = Math.min(contextBytes.length - byteIndex, getDisk().BYTES_PER_BLOCK);
             System.arraycopy(contextBytes, byteIndex, currentBlock, 0, bytesToCopy);
             byteIndex += bytesToCopy;
         }
 
         // 调用父类方法，将整合后的数据写入磁盘
-        super.writeContentToDisk(disk, allItemsData);
-    }
-
-    public String getContext() {
-        return context.toString();
+        return super.writeContentToDisk(allItemsData);
     }
 }

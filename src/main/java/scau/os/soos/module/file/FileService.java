@@ -19,14 +19,14 @@ public class FileService {
     }
 
     public Item createFile(String path) {
-        if (find(disk,path,FILE_TYPE.EXE) != null) {
+        if (FileServiceUtil.find(disk,path,FILE_TYPE.EXE) != null) {
             System.out.println("文件已存在！");
             return null;
         }
 
         Item file = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) find(disk,parentPath,FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) FileServiceUtil.find(disk,parentPath,FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("父目录不存在！");
             return null;
@@ -41,11 +41,11 @@ public class FileService {
             String name = path.substring(path.lastIndexOf("/") + 1,path.lastIndexOf('.'));
 
             if (path.contains(".e")) {
-                file = FileService.getItemFromCreate(disk, parent,name, (byte) 'e',true,false,true,false,startDisk,0);
-                ((Exe) file).writeContentToDisk(disk);
+                file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 'e',true,false,true,false,startDisk,0);
+                FileServiceUtil.writeItemAndParentsToDisk(file);
             } else {
-                file = FileService.getItemFromCreate(disk, parent,name, (byte) 0,true,false,true,false,startDisk,0);
-                ((Txt) file).writeContentToDisk(disk);
+                file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 0,true,false,true,false,startDisk,0);
+                FileServiceUtil.writeItemAndParentsToDisk(file);
             }
             disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
             parent.addChildren(file);
@@ -104,14 +104,14 @@ public class FileService {
 //            parent.getChildren().add(folder);
 //            return folder;
 //        }
-        if (find(disk,path,FILE_TYPE.DIRECTORY) != null) {
+        if (FileServiceUtil.find(disk,path,FILE_TYPE.DIRECTORY) != null) {
             System.out.println("文件夹已存在！");
             return null;
         }
 
         Directory folder = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) find(disk,parentPath,FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) FileServiceUtil.find(disk,parentPath,FILE_TYPE.DIRECTORY);
 
         if (parent == null) {
             System.out.println("父目录不存在！");
@@ -125,7 +125,7 @@ public class FileService {
             }
 
             String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
-            folder = (Directory) FileService.getItemFromCreate(disk, parent,name, (byte) 0,true,false,false,true,startDisk,0);
+            folder = (Directory) FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 0,true,false,false,true,startDisk,0);
             disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
             parent.addChildren(folder);
             return folder;
@@ -134,7 +134,7 @@ public class FileService {
 
     public void deleteDirectory(String path, boolean isDeleteNotEmpty) {
         // 在磁盘上查找指定路径的目录
-        Item item = this.find(disk,path,FILE_TYPE.DIRECTORY);
+        Item item = FileServiceUtil.find(disk,path,FILE_TYPE.DIRECTORY);
         // 如果目录为空，或者找到的项是一个Txt文件或Exe文件，则不是文件夹
         if (item == null) {
             System.out.println("不是文件夹！");
@@ -152,7 +152,7 @@ public class FileService {
     }
 
     public void deleteFile(String path) {
-        Item item = this.find(disk,path,FILE_TYPE.EXE);
+        Item item = FileServiceUtil.find(disk,path,FILE_TYPE.EXE);
         // 如果目录为空，或者找到的项是一个目录，则不是文件
         if (item == null) {
             System.out.println("不是文件或不存在！");
@@ -224,14 +224,14 @@ public class FileService {
                 case EXE -> {
                     Exe exe = (Exe) item;
                     exe.initFromString(content);
-                    updateFileSize(exe, exe.getSize());
-                    exe.writeContentToDisk(exe.getDisk());
+                    FileServiceUtil.updateItemSize(exe);
+                    FileServiceUtil.writeItemAndParentsToDisk(exe);
                 }
                 case TXT -> {
                     Txt txt = (Txt) item;
                     txt.initFromString(content);
-                    updateFileSize(txt, txt.getSize());
-                    txt.writeContentToDisk(txt.getDisk());
+                    FileServiceUtil.updateItemSize(txt);
+                    FileServiceUtil.writeItemAndParentsToDisk(item);
                 }
             }
 
@@ -240,7 +240,7 @@ public class FileService {
     }
 
     public boolean copyFile(String sourcePath, String targetPath) {
-        Item srcItem = this.find(disk,sourcePath,FILE_TYPE.EXE);
+        Item srcItem = FileServiceUtil.find(disk,sourcePath,FILE_TYPE.EXE);
         if (srcItem == null) {
             System.out.println("文件不存在!");
             return false;
@@ -257,7 +257,7 @@ public class FileService {
         }
 
         String parentPath = targetPath.substring(0, targetPath.lastIndexOf("/"));
-        Directory parent = (Directory) this.find(disk,parentPath,FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) FileServiceUtil.find(disk,parentPath,FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("操作不允许!");
             return false;
@@ -276,7 +276,7 @@ public class FileService {
             pre = cur;
         }
         fat.setNextBlockIndex(cur, Fat.TERMINATED);
-        Item newFile = FileService.getItemFromCreate(disk,
+        Item newFile = FileServiceUtil.getItemFromCreate(disk,
                 parent,
                 srcItem.getName(),
                 (byte) srcItem.getType(),
@@ -318,62 +318,4 @@ public class FileService {
 //            throw new RuntimeException(e);
 //        }
 //    }
-
-    public void updateFileSize(Item file, int size) {
-        file.setSize(size);
-        Directory parent = (Directory) file.getParent();
-        while (parent != null) {
-            updateDirectorySize(parent);
-            parent = (Directory) parent.getParent();
-        }
-    }
-
-    public void updateDirectorySize(Directory directory) {
-        directory.getChildren();
-        directory.writeContentToDisk();
-    }
-
-    public static Item getItemFromDisk(Disk disk, byte[] data) {
-        // 获取数据中的类型字节
-        byte type = data[3];
-        // 获取数据中的属性字节
-        byte attribute = data[4];
-
-        // 判断属性字节的第三位是否为0
-        if ((attribute & 0x08) != 0) {
-            // 是目录类型，返回目录实例
-            return new Directory(disk, data);
-        } else {
-            // 如果不是目录，继续判断类型字节
-            if (type != 0) {
-                // 类型字节为'e'，返回exe实例
-                if (type == 'e') {
-                    return new Exe(disk, data);
-                }
-                // 类型字节不是'e'，返回null
-                return null;
-            } else {
-                // 类型字节为0，返回txt实例
-                return new Txt(disk, data);
-            }
-        }
-    }
-
-
-    public static Item getItemFromCreate(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
-        if (isDirectory) {
-            return new Directory(disk, parent, name, type, readOnly, systemFile, regularFile, true, startBlockNum, size);
-        } else {
-            if (type == (byte) 'e') {
-                return new Exe(disk, parent, name, (byte) 'e', readOnly, systemFile, regularFile, false, startBlockNum, size);
-            } else {
-                return new Txt(disk, parent, name, type, readOnly, systemFile, regularFile, false, startBlockNum, size);
-            }
-        }
-    }
-
-    public static Item find(Disk disk,String path,FILE_TYPE type){
-        Directory root = disk.getRootDirectory();
-        return root.find(path,type);
-    }
 }

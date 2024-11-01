@@ -1,7 +1,7 @@
 package scau.os.soos.module.file.model;
 
 import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.module.file.FileService;
+import scau.os.soos.module.file.FileServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,33 +21,18 @@ public class Directory extends Item {
         this.children = new ArrayList<>();
     }
 
-    public void initFromString(String content) {
+    public List<Item> getChildren() {
+        return children;
     }
 
-    public void initFromDisk() {
-        Disk disk = super.getDisk();
-        byte[][] content = super.readContentFromDisk(disk);
-
-        for (byte[] block : content) {
-            for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
-                byte[] itemData = new byte[BYTES_PER_ITEM];
-                System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
-                Item item = FileService.getItemFromDisk(disk, itemData);
-                if (item != null && disk.isItemExist(item)) {
-                    children.add(item);
-                }
-            }
-        }
-
-        getChildren();
+    public void addChildren(Item item) {
+        children.add(item);
     }
 
-    /***
-     *
-     * @param path 路径名不允许带 ‘.’ ，即取 ‘.’ 前面的路径
-     * @param fileType
-     * @return
-     */
+    public void removeChild(Item item) {
+        children.remove(item);
+    }
+
     public Item find(String path, FILE_TYPE fileType){
         switch (fileType){
             case EXE -> {
@@ -126,11 +111,36 @@ public class Directory extends Item {
         return null;
     }
 
+    public void updateSize(){
+        int size = 0;
+        for (Item child : children) {
+            child.updateSize();
+            size += child.getSize();
+        }
+        this.setSize(size);
+    }
 
-    /**
-     * 将内容写入磁盘
-     */
-    public void writeContentToDisk() {
+    public void initFromString(String content) {
+
+    }
+
+    public void initFromDisk() {
+        Disk disk = super.getDisk();
+        byte[][] content = super.readContentFromDisk(disk);
+
+        for (byte[] block : content) {
+            for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
+                byte[] itemData = new byte[BYTES_PER_ITEM];
+                System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
+                Item item = FileServiceUtil.getItemFromDisk(disk, itemData);
+                if (item != null && disk.isItemExist(item)) {
+                    children.add(item);
+                }
+            }
+        }
+    }
+
+    public boolean writeContentToDisk() {
         // 计算需要多少个数据块来存储所有子项
         int blockNum = (int) Math.ceil((double) getChildren().size() / BYTES_PER_ITEM);
         byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
@@ -157,27 +167,6 @@ public class Directory extends Item {
         }
 
         // 调用父类方法，将整合后的数据写入磁盘
-        super.writeContentToDisk(getDisk(), allItemsData);
-    }
-
-    public List<Item> getChildren() {
-        int size = 0;
-        for (Item child : children) {
-            size += child.getSize();
-        }
-        this.setSize(size);
-        return children;
-    }
-
-    public void addChildren(Item item) {
-        this.setSize(this.getSize() + item.getSize());
-        item.setParent(this);
-        children.add(item);
-    }
-
-    public void removeChild(Item item) {
-        this.setSize(this.getSize() - item.getSize());
-        item.setParent(null);
-        children.remove(item);
+        return super.writeContentToDisk(allItemsData);
     }
 }

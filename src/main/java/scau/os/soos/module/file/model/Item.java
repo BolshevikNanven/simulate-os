@@ -157,11 +157,11 @@ public abstract class Item {
     /**
      * 将内容写入磁盘
      *
-     * @param disk    磁盘对象
      * @param content 需要写入磁盘的内容
      *                要求严格按照 64 字节/块的规定的格式进行填充
      */
-    protected void writeContentToDisk(Disk disk, byte[][] content) {
+    protected boolean writeContentToDisk(byte[][] content) {
+        Disk disk = getDisk();
         Fat fat = disk.getFat();
         int cur = startBlockNum;
         int pre = cur;
@@ -172,7 +172,7 @@ public abstract class Item {
                 if (cur == -1) {
                     System.out.println("磁盘已满");
                     disk.formatFatTable(startBlockNum);
-                    break;
+                    return false;
                 }
                 fat.setNextBlockIndex(pre, cur);
                 fat.setNextBlockIndex(cur, Fat.TERMINATED);
@@ -181,6 +181,7 @@ public abstract class Item {
             pre = cur;
             cur = fat.getNextBlockIndex(cur);
         }
+        return true;
     }
 
     /**
@@ -199,7 +200,11 @@ public abstract class Item {
         return blockCount;
     }
 
-    protected abstract void initFromString(String content);
+    public abstract void updateSize();
 
-    protected abstract void initFromDisk();
+    public abstract void initFromString(String content);
+
+    public abstract void initFromDisk();
+
+    public abstract boolean writeContentToDisk();
 }
