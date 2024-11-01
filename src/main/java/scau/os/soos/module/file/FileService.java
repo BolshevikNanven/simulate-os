@@ -48,10 +48,8 @@ public class FileService {
         String name = path.substring(path.lastIndexOf("/") + 1,path.lastIndexOf('.'));
         if (type == FILE_TYPE.EXE) {
             file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 'e',true,false,true,false,startDisk,0);
-            //FileServiceUtil.writeItemAndParentsToDisk(file);
         } else {
-            file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 0,true,false,true,false,startDisk,0);
-            //FileServiceUtil.writeItemAndParentsToDisk(file);
+            file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 't',true,false,true,false,startDisk,0);
         }
 
         //修改fat表，父目录添加孩子
@@ -93,7 +91,13 @@ public class FileService {
         return folder;
     }
 
-    public void delete(String path, FILE_TYPE type, boolean isDeleteNotEmpty){
+    public void delete(String path,boolean isDeleteDirectory, boolean isDeleteNotEmpty){
+        //查重
+        FILE_TYPE type = path.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+        if(isDeleteDirectory){
+            type = FILE_TYPE.DIRECTORY;
+        }
+
         Item item = FileServiceUtil.find(disk, path, type);
 
         if (item == null) {
@@ -123,7 +127,7 @@ public class FileService {
         return null;
     }
 
-    public void writeFile(Item item, String content, FILE_TYPE type) {
+    public void writeFile(Item item, String content) {
         //获取需要写入的字符串长度，计算需要多少个磁盘块
         List<Integer> list = new ArrayList<>();
         Disk disk = item.getDisk();

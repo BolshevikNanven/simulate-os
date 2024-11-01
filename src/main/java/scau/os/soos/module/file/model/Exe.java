@@ -91,4 +91,10 @@ public class Exe extends Item {
         newItem.getInstructions().addAll(this.getInstructions());
         return newItem;
     }
+
+    public String toString(){
+        return "Exe: "+
+                super.toString()+
+                " Instructions: " + getInstructions().toString();
+    }
 }

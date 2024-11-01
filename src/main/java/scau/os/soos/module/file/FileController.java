@@ -4,7 +4,9 @@ import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.Util.FileServiceUtil;
 import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
+import scau.os.soos.module.file.model.Txt;
 
 public class FileController implements Module {
     private static FileController instance;
@@ -36,14 +38,14 @@ public class FileController implements Module {
      * 删除文件
      */
     public void deleteFile(String path) {
-        fileService.delete(path, path.contains("e")?FILE_TYPE.EXE:FILE_TYPE.TXT,true);
+        fileService.delete(path,false,true);
     }
 
     /**
      * 写文件
      */
-    public void writeFile(Item file, String content,FILE_TYPE type) {
-        fileService.writeFile(file, content,type);
+    public void writeFile(Item file, String content) {
+        fileService.writeFile(file, content);
     }
 
     /**
@@ -71,14 +73,14 @@ public class FileController implements Module {
      * 删除空目录
      */
     public void deleteEmptyDirectory(String path) {
-        fileService.delete(path, FILE_TYPE.DIRECTORY,false);
+        fileService.delete(path,true,false);
     }
 
     /**
      * 删除目录
      */
     public void deleteDirectory(String path) {
-        fileService.delete(path, FILE_TYPE.DIRECTORY,true);
+        fileService.delete(path,true,true);
     }
 
     public int getFileSize(Item file) {
@@ -100,13 +102,11 @@ public class FileController implements Module {
 
 
         getInstance().createFile("/a.e");
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
+        //getInstance().createDirectory("/a/");
 
         getInstance().deleteFile("/a.e");
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
-
-
 
 
 

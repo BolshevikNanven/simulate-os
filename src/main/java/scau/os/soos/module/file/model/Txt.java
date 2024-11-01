@@ -82,4 +82,10 @@ public class Txt extends Item {
         newItem.initFromString(this.getContext());
         return newItem;
     }
+
+    public String toString(){
+        return "Txt: "+
+                super.toString()+
+                " Context: " + getContext();
+    }
 }

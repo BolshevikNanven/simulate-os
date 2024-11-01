@@ -6,6 +6,7 @@ import scau.os.soos.module.file.Util.FileServiceUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class Directory extends Item {
     public static final int BYTES_PER_ITEM = 8;
@@ -39,7 +40,7 @@ public class Directory extends Item {
                 return find(path,false,(byte) 'e');
             }
             case TXT -> {
-                return find(path,false,(byte) 0);
+                return find(path,false,(byte) 't');
             }
             case DIRECTORY -> {
                 return find(path,true,(byte) 0);
@@ -54,7 +55,6 @@ public class Directory extends Item {
         while (tokenizer.hasMoreTokens()) {
             String pathPart = tokenizer.nextToken();
             pathParts.add(pathPart);
-            System.out.println(pathPart + "----");
         }
 
         // 从根目录（即this）开始查找
@@ -85,12 +85,14 @@ public class Directory extends Item {
             if(isDirectory){
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.isDirectory()) {
+                        System.out.println("find in directory: " + nameToFind);
                         return child;
                     }
                 }
             }else{
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.getType()==type) {
+                        System.out.println("find in file: " + nameToFind);
                         return child;
                     }
                 }
@@ -190,5 +192,21 @@ public class Directory extends Item {
             newItem.getChildren().add(newChild);
         }
         return newItem;
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for(Item child : getChildren()){
+            sb.append(' ');
+            sb.append(child.getName()).append('.').append((char) child.getType());
+            sb.append(' ');
+        }
+        sb.append("]");
+
+            return "Directory: "+
+                    super.toString()+
+                    " Children: " +
+                    sb;
     }
 }

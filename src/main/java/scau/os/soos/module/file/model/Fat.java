@@ -44,11 +44,7 @@ public class Fat {
      * 设置指定磁盘块的下一个磁盘块索引
      */
     public void setNextBlockIndex(int diskNum, int nextDisk) {
-        if (isFreeBlock(diskNum)) {
-            fat[diskNum] = (byte) nextDisk;
-        } else {
-            System.out.println("Block is not free");
-        }
+        fat[diskNum] = (byte) nextDisk;
     }
 
     /**

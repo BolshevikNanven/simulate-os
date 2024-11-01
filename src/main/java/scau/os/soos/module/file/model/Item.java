@@ -213,4 +213,12 @@ public abstract class Item {
      * @return
      */
     public abstract Item copy();
+
+    public String toString() {
+        return "name: " + getName() +
+                " type: " + (char)getType() +
+                " attribute: " + attribute +
+                " startBlockNum: " + getStartBlockNum() +
+                " size: " + getSize();
+    }
 }
