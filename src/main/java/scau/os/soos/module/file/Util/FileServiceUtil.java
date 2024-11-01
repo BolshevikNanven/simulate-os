@@ -22,13 +22,13 @@ public class FileServiceUtil {
                 if (type == 'e') {
                     return new Exe(disk, data);
                 }
-                // 类型字节不是'e'，返回null
-                return null;
-            } else {
-                // 类型字节为0，返回txt实例
-                return new Txt(disk, data);
+                if (type == 't') {
+                    // 类型字节为't'，返回txt实例
+                    return new Txt(disk, data);
+                }
             }
         }
+        return null;
     }
 
 

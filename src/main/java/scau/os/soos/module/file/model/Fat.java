@@ -72,7 +72,7 @@ public class Fat {
 
         int index = 0;
         for (int i : disk.FAT_BLOCK_NUMS) {
-            for (int j = 0; j < disk.BLOCKS_PER_DISK; j++, index++) {
+            for (int j = 0; j < disk.BYTES_PER_BLOCK; j++, index++) {
                 data[j] = fat[index];
             }
             disk.setDiskBlock(i, data);

@@ -7,6 +7,7 @@ public class Txt extends Item {
 
     public Txt(Disk disk, byte[] data) {
         super(disk, data);
+        this.context = new StringBuilder();
     }
 
     public Txt(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
@@ -49,8 +50,6 @@ public class Txt extends Item {
     public boolean writeContentToDisk() {
         // 将context转换为字节数组
         byte[] contextBytes = context.toString().getBytes(StandardCharsets.US_ASCII);
-        System.out.println("---");
-        System.out.println(getStartBlockNum());
         // 计算需要多少个数据块来存储所有子项
         int blockNum = (int) Math.ceil((double) contextBytes.length / getDisk().BYTES_PER_BLOCK);
         byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];

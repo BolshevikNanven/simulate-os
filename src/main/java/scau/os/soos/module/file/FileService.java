@@ -54,6 +54,7 @@ public class FileService {
 
         //修改fat表，父目录添加孩子
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
+        disk.getFat().writeFatToDisk();
         parent.addChildren(file);
         FileServiceUtil.writeItemAndParentsToDisk(file);
         return file;
@@ -88,6 +89,7 @@ public class FileService {
 
         //修改fat表，父目录添加孩子
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
+        disk.getFat().writeFatToDisk();
         parent.addChildren(folder);
         return folder;
     }
@@ -157,6 +159,7 @@ public class FileService {
             endDisk = index;
         }
         fat.setNextBlockIndex(endDisk, Fat.TERMINATED);
+        fat.writeFatToDisk();
 
         item.initFromString(content);
         FileServiceUtil.updateItemSize(item);
@@ -200,6 +203,7 @@ public class FileService {
             pre = cur;
         }
         fat.setNextBlockIndex(cur, Fat.TERMINATED);
+        fat.writeFatToDisk();
 
         Item newItem = srcItem.copy();
         newItem.setDisk(disk);
