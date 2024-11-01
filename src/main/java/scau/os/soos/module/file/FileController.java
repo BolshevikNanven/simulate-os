@@ -97,16 +97,25 @@ public class FileController implements Module {
     public static void main(String[] args) {//显示根目录
 
 
-        getInstance().createFile("/a.t");
+        getInstance().createDirectory("/a");
         getInstance().createDirectory("/b");
-        getInstance().createFile("/b/a.t");
+        getInstance().createFile("/c.t");
+        getInstance().createFile("/c.e");
+        getInstance().createFile("/a/d.t");
+        getInstance().createFile("/a/e.t");
+        getInstance().createDirectory("/b/f");
+        getInstance().createFile("/b/f/g.t");
 
 
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY));
+        Directory root = (Directory) FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
+        System.out.println(root);
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/b", FILE_TYPE.DIRECTORY));
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/b/a.t",FILE_TYPE.TXT));
-
-        getInstance().fileService.getDisk().disk2file();
+        getInstance().deleteDirectory("/b");
+        System.out.println(root);
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/b", FILE_TYPE.DIRECTORY));
+        getInstance().deleteDirectory("/b");
+        System.out.println(root);
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/b", FILE_TYPE.DIRECTORY));
+//        getInstance().fileService.getDisk().disk2file();
     }
 }

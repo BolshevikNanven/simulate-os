@@ -99,14 +99,15 @@ public class FileServiceUtil {
     public static void delete(Item item) {
         if (item instanceof Directory) {
             deleteDirectoryRecursively((Directory) item);
-        } else {
-            deleteItem(item);
         }
 
-        Item parent = item.getParent();
+        Directory parent = (Directory) item.getParent();
         if (parent == null) {
             return;
         }
+
+        parent.getChildren().remove(item);
+        deleteItem(item);
 
         // 更新父目录的大小
         FileServiceUtil.updateItemSize(parent);
@@ -117,20 +118,17 @@ public class FileServiceUtil {
     private static void deleteItem(Item file) {
         Disk disk = file.getDisk();
         disk.formatFatTable(file.getStartBlockNum());
-        Directory parent = (Directory) file.getParent();
         file.setParent(null);
         file.setDisk(null);
-        parent.removeChild(file);
     }
 
     private static void deleteDirectoryRecursively(Directory directory) {
         for (Item child : directory.getChildren()) {
-            if (child instanceof Directory) {
-                deleteDirectoryRecursively((Directory) child);
-            } else {
-                deleteItem(child);
+            if (child instanceof Directory childDir) {
+                deleteDirectoryRecursively(childDir);
+                childDir.getChildren().clear();
             }
+            deleteItem(child);
         }
-        deleteItem(directory);
     }
 }

@@ -33,22 +33,22 @@ public class Directory extends Item {
         children.remove(item);
     }
 
-    public Item find(String path, FILE_TYPE fileType){
-        switch (fileType){
+    public Item find(String path, FILE_TYPE fileType) {
+        switch (fileType) {
             case EXE -> {
-                return find(path,false,(byte) 'e');
+                return find(path, false, (byte) 'e');
             }
             case TXT -> {
-                return find(path,false,(byte) 't');
+                return find(path, false, (byte) 't');
             }
             case DIRECTORY -> {
-                return find(path,true,(byte) 0);
+                return find(path, true, (byte) 0);
             }
         }
         return null;
     }
 
-    private Item find(String path,boolean isDirectory,byte type) {
+    private Item find(String path, boolean isDirectory, byte type) {
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
         List<String> pathParts = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
@@ -57,12 +57,12 @@ public class Directory extends Item {
         }
 
         // 从根目录（即this）开始查找
-        return findInDirectory(this, pathParts, 0,isDirectory,type);
+        return findInDirectory(this, pathParts, 0, isDirectory, type);
     }
 
-    private Item findInDirectory(Directory currentDir, List<String> pathParts, int index,boolean isDirectory,byte type) {
+    private Item findInDirectory(Directory currentDir, List<String> pathParts, int index, boolean isDirectory, byte type) {
         // 校验pathParts是否为空或index是否越界
-        if(pathParts.isEmpty()) {
+        if (pathParts.isEmpty()) {
             return currentDir;
         }
 
@@ -77,19 +77,19 @@ public class Directory extends Item {
         // 检查是否已到达路径的末尾
         if (index == pathParts.size() - 1) {
             // 遍历子项，寻找与路径最后一部分同名的项
-            if(nameToFind.contains(".")){
-                nameToFind = nameToFind.substring(0,nameToFind.lastIndexOf('.'));
+            if (nameToFind.contains(".")) {
+                nameToFind = nameToFind.substring(0, nameToFind.lastIndexOf('.'));
             }
-            if(isDirectory){
+            if (isDirectory) {
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.isDirectory()) {
                         System.out.println("find : " + nameToFind);
                         return child;
                     }
                 }
-            }else{
+            } else {
                 for (Item child : children) {
-                    if (child.getName().equals(nameToFind) && child.getType()==type) {
+                    if (child.getName().equals(nameToFind) && child.getType() == type) {
                         System.out.println("find : " + nameToFind);
                         return child;
                     }
@@ -101,7 +101,7 @@ public class Directory extends Item {
                 if (child.getName().equals(nameToFind)) {
                     // 如果找到了匹配的项，并且它是一个目录，则递归地在其内部查找
                     if (child instanceof Directory) {
-                        return findInDirectory((Directory) child, pathParts, index + 1,isDirectory,type);
+                        return findInDirectory((Directory) child, pathParts, index + 1, isDirectory, type);
                     }
                 }
             }
@@ -110,13 +110,8 @@ public class Directory extends Item {
         return null;
     }
 
-    public void updateSize(){
-        int size = 0;
-        for (Item child : children) {
-            child.updateSize();
-            size += child.getSize();
-        }
-        this.setSize(size);
+    public void updateSize() {
+        this.setSize(children.size() * BYTES_PER_ITEM);
     }
 
     public void initFromString(String content) {
@@ -126,6 +121,7 @@ public class Directory extends Item {
     public void initFromDisk() {
         Disk disk = super.getDisk();
         byte[][] content = super.readContentFromDisk(disk);
+
         for (byte[] block : content) {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
@@ -133,10 +129,13 @@ public class Directory extends Item {
                 Item item = FileServiceUtil.getItemFromDisk(disk, itemData);
                 if (item != null && disk.isItemExist(item)) {
                     children.add(item);
+                    item.setParent(this);
+                    item.setDisk(disk);
                 }
             }
         }
-        this.setSize(children.size()*BYTES_PER_ITEM);
+
+        this.setSize(children.size() * BYTES_PER_ITEM);
     }
 
     public boolean writeContentToDisk() {
@@ -169,7 +168,7 @@ public class Directory extends Item {
         return super.writeContentToDisk(allItemsData);
     }
 
-    public Item copy(){
+    public Item copy() {
         Directory newItem = new Directory(
                 null,
                 null,
@@ -188,19 +187,19 @@ public class Directory extends Item {
         return newItem;
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for(Item child : getChildren()){
+        for (Item child : getChildren()) {
             sb.append(' ');
             sb.append(child.getName()).append('.').append((char) child.getType());
             sb.append(' ');
         }
         sb.append("]");
 
-            return "Directory: "+
-                    super.toString()+
-                    " Children: " +
-                    sb;
+        return "Directory: " +
+                super.toString() +
+                " Children: " +
+                sb;
     }
 }
