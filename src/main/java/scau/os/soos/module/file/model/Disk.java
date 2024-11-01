@@ -15,10 +15,14 @@ public class Disk {
     private final Directory rootDirectory;
 
     public Disk() {
-        this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
+        this.file2disk();
         this.fat = new Fat(this);
         this.rootDirectory = new Directory(this, disk[ROOT_BLOCK_NUM]);
         this.rootDirectory.setStartBlockNum((byte)ROOT_BLOCK_NUM);
+    }
+
+    public byte[][] getDisk() {
+        return disk;
     }
 
     public Directory getRootDirectory() {

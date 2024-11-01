@@ -4,9 +4,10 @@ import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.Util.FileServiceUtil;
 import scau.os.soos.module.file.model.Directory;
-import scau.os.soos.module.file.model.Exe;
+import scau.os.soos.module.file.model.Disk;
 import scau.os.soos.module.file.model.Item;
-import scau.os.soos.module.file.model.Txt;
+
+import java.util.Arrays;
 
 public class FileController implements Module {
     private static FileController instance;
@@ -95,20 +96,12 @@ public class FileController implements Module {
 
     public static void main(String[] args) {//显示根目录
 
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/",FILE_TYPE.DIRECTORY));
 
         getInstance().createFile("/a.t");
+
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY));
 
-
-        getInstance().createFile("/a.e");
-        //getInstance().createDirectory("/a/");
-
-        getInstance().deleteFile("/a.e");
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
-
-
-
+        getInstance().fileService.getDisk().disk2file();
     }
 }

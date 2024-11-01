@@ -55,6 +55,7 @@ public class FileService {
         //修改fat表，父目录添加孩子
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
         parent.addChildren(file);
+        FileServiceUtil.writeItemAndParentsToDisk(file);
         return file;
     }
 

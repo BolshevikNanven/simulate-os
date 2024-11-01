@@ -60,7 +60,7 @@ public class FileServiceUtil {
 
     private static boolean writeItemToDiskAndPropagateToRoot(Item item, Directory root) {
         item.writeContentToDisk();
-
+        System.out.println("writeItemAndParentsToDisk: " + item);
         Item parent = item.getParent();
         while (parent != null) {
             if (!item.writeContentToDisk()) {
