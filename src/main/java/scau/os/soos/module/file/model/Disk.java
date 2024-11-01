@@ -1,7 +1,5 @@
 package scau.os.soos.module.file.model;
 
-import scau.os.soos.common.enums.FILE_TYPE;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,5 @@
 package scau.os.soos.module.file;
 
-import javafx.scene.Parent;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.Util.FileServiceUtil;
 import scau.os.soos.module.file.model.*;
@@ -23,6 +22,7 @@ public class FileService {
     public Item createFile(String path) {
         //查重
         FILE_TYPE type = path.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+
         if (FileServiceUtil.find(disk,path,type) != null) {
             System.out.println("文件已存在！");
             return null;
@@ -106,11 +106,21 @@ public class FileService {
             return;
         }
 
-        FileServiceUtil.deleteItemRecursively(item);
+        FileServiceUtil.delete(item);
     }
 
     public int getSize(Item item) {
         return item.getSize();
+    }
+
+    public Object readFile(Item file) {
+        if (file == null) {
+            System.out.println("没有该文件");
+        }
+        if (file != null) {
+            return ((Exe) file).getInstructions();
+        }
+        return null;
     }
 
     public void writeFile(Item item, String content, FILE_TYPE type) {
@@ -150,8 +160,11 @@ public class FileService {
         System.out.println("写入成功!");
     }
 
-    public boolean copy(String sourcePath, String targetPath, FILE_TYPE fileType) {
-        Item srcItem = FileServiceUtil.find(disk, sourcePath, fileType);
+    public boolean copy(String sourcePath, String targetPath) {
+        //查重
+        FILE_TYPE type = sourcePath.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+
+        Item srcItem = FileServiceUtil.find(disk, sourcePath, type);
         if (srcItem == null) {
             System.out.println("文件不存在!");
             return false;

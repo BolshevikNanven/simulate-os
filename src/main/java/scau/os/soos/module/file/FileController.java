@@ -4,9 +4,7 @@ import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.Util.FileServiceUtil;
 import scau.os.soos.module.file.model.Directory;
-import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
-import scau.os.soos.module.file.model.Txt;
 
 public class FileController implements Module {
     private static FileController instance;
@@ -44,7 +42,7 @@ public class FileController implements Module {
     /**
      * 写文件
      */
-    public void writeFile(Txt file, String content,FILE_TYPE type) {
+    public void writeFile(Item file, String content,FILE_TYPE type) {
         fileService.writeFile(file, content,type);
     }
 
@@ -52,43 +50,20 @@ public class FileController implements Module {
      * 读文件
      */
     public Object readFile(Item file) {
-        if (file == null) {
-            System.out.println("没有该文件");
-        }
-        if (file != null) {
-            return ((Exe) file).getInstructions();
-        }
-        return null;
+        return fileService.readFile(file);
     }
 
     /**
      * 拷贝文件
      */
     public void copyFile(String sourcePath, String targetPath) {
-        fileService.copy(sourcePath, targetPath,FILE_TYPE.EXE);
+        fileService.copy(sourcePath, targetPath);
     }
 
     /**
      * 建立目录
      */
     public Directory createDirectory(String path) {
-//        if(fileService.findFolder(path) != null){
-//            System.out.println("目录已存在");
-//            Directory f =  fileService.findFolder(path);
-//            return f;
-//        }
-//        String[] paths = path.split("/");
-//        String pathName= paths[0];
-//        Directory parent = null;
-//
-//        for(int i=1;i<paths.length;i++){
-//            pathName = pathName + "/" + paths[i];
-//            if(fileService.findFolder(pathName)==null){
-//                parent=fileService.createFolder(parent,pathName);
-//            }else parent =  fileService.findFolder(pathName);
-//        }
-//        return parent;
-
         return fileService.createDirectory(path);
     }
 

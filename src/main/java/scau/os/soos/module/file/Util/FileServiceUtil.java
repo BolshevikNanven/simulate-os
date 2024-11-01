@@ -3,8 +3,6 @@ package scau.os.soos.module.file.Util;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.model.*;
 
-import java.util.ArrayList;
-
 public class FileServiceUtil {
 
     public static Item getItemFromDisk(Disk disk, byte[] data) {
@@ -46,13 +44,13 @@ public class FileServiceUtil {
         }
     }
 
-    public static Item find(Disk disk, String path, FILE_TYPE type){
+    public static Item find(Disk disk, String path, FILE_TYPE type) {
         Directory root = disk.getRootDirectory();
-        return root.find(path,type);
+        return root.find(path, type);
     }
 
     public static boolean writeItemAndParentsToDisk(Item item) {
-        if(item == null|| item.getDisk() == null){
+        if (item == null || item.getDisk() == null) {
             return false;
         }
         Directory root = item.getDisk().getRootDirectory();
@@ -64,7 +62,7 @@ public class FileServiceUtil {
         item.writeContentToDisk();
 
         Item parent = item.getParent();
-        while (parent != root) {
+        while (parent != null) {
             if (!item.writeContentToDisk()) {
                 return false;
             }
@@ -73,8 +71,8 @@ public class FileServiceUtil {
         return true;
     }
 
-    public static boolean updateItemSize(Item item){
-        if(item == null|| item.getDisk() == null){
+    public static boolean updateItemSize(Item item) {
+        if (item == null || item.getDisk() == null) {
             return false;
         }
         Directory root = item.getDisk().getRootDirectory();
@@ -86,46 +84,48 @@ public class FileServiceUtil {
         item.updateSize();
 
         Item parent = item.getParent();
-        while (parent != root) {
+        while (parent != null) {
             parent.updateSize();
             parent = parent.getParent();
         }
         return true;
     }
 
-    public static void deleteItemRecursively(Item item) {
+    public static void delete(Item item) {
         if (item instanceof Directory) {
             deleteDirectoryRecursively((Directory) item);
         } else {
-            deleteFile(item);
-            parent = item.getParent();
-            // 更新父目录的大小
-            FileServiceUtil.updateItemSize(parent);
-            // 更新父目录及其上级目录到磁盘
-            FileServiceUtil.writeItemAndParentsToDisk(parent);
+            deleteItem(item);
         }
+
+        Item parent = item.getParent();
+        if (parent == null) {
+            return;
+        }
+
+        // 更新父目录的大小
+        FileServiceUtil.updateItemSize(parent);
+        // 更新父目录及其上级目录到磁盘
+        FileServiceUtil.writeItemAndParentsToDisk(parent);
     }
 
-    private static void deleteFile(Item file) {
+    private static void deleteItem(Item file) {
         Disk disk = file.getDisk();
         disk.formatFatTable(file.getStartBlockNum());
         Directory parent = (Directory) file.getParent();
         file.setParent(null);
         file.setDisk(null);
         parent.removeChild(file);
-
     }
 
     private static void deleteDirectoryRecursively(Directory directory) {
         for (Item child : directory.getChildren()) {
-            deleteItemRecursively(child);
-            deleteFile(child);
+            if (child instanceof Directory) {
+                deleteDirectoryRecursively((Directory) child);
+            } else {
+                deleteItem(child);
+            }
         }
-        // 设置目录大小为0
-        directory.setSize(0);
-        // 更新目录的大小
-        FileServiceUtil.updateItemSize(directory);
-        // 更新目录及其上级目录到磁盘
-        FileServiceUtil.writeItemAndParentsToDisk(directory);
+        deleteItem(directory);
     }
 }
