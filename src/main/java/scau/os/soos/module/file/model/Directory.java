@@ -81,7 +81,7 @@ public class Directory extends Item {
             if(nameToFind.contains(".")){
                 nameToFind = nameToFind.substring(0,nameToFind.lastIndexOf('.'));
             }
-
+            System.out.println(nameToFind);
             if(isDirectory){
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.isDirectory()) {
@@ -104,10 +104,6 @@ public class Directory extends Item {
                     // 如果找到了匹配的项，并且它是一个目录，则递归地在其内部查找
                     if (child instanceof Directory) {
                         return findInDirectory((Directory) child, pathParts, index + 1,isDirectory,type);
-                    } else {
-                        // 如果找到了匹配的项，并且它是一个文件（不是目录），则返回它
-                        // 注意：这里我们假设路径总是指向文件，除非进行特殊修改以允许目录返回
-                        return child;
                     }
                 }
             }
@@ -132,13 +128,14 @@ public class Directory extends Item {
     public void initFromDisk() {
         Disk disk = super.getDisk();
         byte[][] content = super.readContentFromDisk(disk);
-
+        System.out.println("--------1");
         for (byte[] block : content) {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
                 Item item = FileServiceUtil.getItemFromDisk(disk, itemData);
                 if (item != null && disk.isItemExist(item)) {
+                    System.out.println("--------11");
                     children.add(item);
                 }
             }

@@ -2,6 +2,7 @@ package scau.os.soos.module.file.model;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Disk {
@@ -15,10 +16,26 @@ public class Disk {
     private final Directory rootDirectory;
 
     public Disk() {
+//        this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
+//        disk2file();
         this.file2disk();
+//        for (byte[]bytes:getDisk()){
+//            System.out.println(Arrays.toString(bytes));
+//        }
         this.fat = new Fat(this);
-        this.rootDirectory = new Directory(this, disk[ROOT_BLOCK_NUM]);
-        this.rootDirectory.setStartBlockNum((byte)ROOT_BLOCK_NUM);
+        this.rootDirectory = new Directory(
+                this,
+                null,
+                "",
+                (byte)0,
+                false,
+                false,
+                false,
+                true,
+                ROOT_BLOCK_NUM,
+                0);
+        fat.setNextBlockIndex(ROOT_BLOCK_NUM, Fat.TERMINATED);
+        rootDirectory.initFromDisk();
     }
 
     public byte[][] getDisk() {
