@@ -1,17 +1,20 @@
 package scau.os.soos.module.file.model;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class Txt extends Item {
     private StringBuilder context;
 
     public Txt(Disk disk, byte[] data) {
         super(disk, data);
+        System.out.println(Arrays.toString(data));
         this.context = new StringBuilder();
     }
 
     public Txt(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         super(disk, parent,name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum,size);
+        System.out.println("000t: "+size);
         this.context = new StringBuilder();
     }
 
@@ -34,17 +37,11 @@ public class Txt extends Item {
 
         byte[][] content = super.readContentFromDisk(disk);
 
-        int size = 0;
         for (byte[] block : content) {
-            // 使用StringBuilder的append方法高效连接字符串
-            for(byte b : block){
-                this.context.append((char) b);
-                size += block.length;
-            }
-
+            context.append(new String(block, StandardCharsets.UTF_8).trim());
         }
 
-        setSize(size);
+        setSize(context.length());
     }
 
     public boolean writeContentToDisk() {

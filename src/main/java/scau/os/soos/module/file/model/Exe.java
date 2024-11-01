@@ -15,6 +15,7 @@ public class Exe extends Item {
 
     public Exe(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
+        System.out.println("000e: "+size);
         this.instructions = new ArrayList<>();
     }
 
@@ -40,16 +41,16 @@ public class Exe extends Item {
         Disk disk = super.getDisk();
         this.instructions = new ArrayList<>();
         byte[][] content = super.readContentFromDisk(disk);
-        int size = 0;
 
         for (byte[] block : content) {
             for (byte itemData : block) {
-                instructions.add(itemData);
-                size++;
+                if (itemData != 0) {
+                    instructions.add(itemData);
+                }
             }
         }
 
-        setSize(size);
+        setSize(instructions.size());
     }
 
     public boolean writeContentToDisk() {

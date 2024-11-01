@@ -14,17 +14,23 @@ public class FileServiceUtil {
         // 判断属性字节的第三位是否为0
         if ((attribute & 0x08) != 0) {
             // 是目录类型，返回目录实例
-            return new Directory(disk, data);
+            Directory directory = new Directory(disk, data);
+            directory.initFromDisk();
+            return directory;
         } else {
             // 如果不是目录，继续判断类型字节
             if (type != 0) {
                 // 类型字节为'e'，返回exe实例
                 if (type == 'e') {
-                    return new Exe(disk, data);
+                    Exe exe = new Exe(disk, data);
+                    exe.initFromDisk();
+                    return exe;
                 }
                 if (type == 't') {
                     // 类型字节为't'，返回txt实例
-                    return new Txt(disk, data);
+                    Txt txt = new Txt(disk, data);
+                    txt.initFromDisk();
+                    return txt;
                 }
             }
         }
