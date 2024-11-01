@@ -136,6 +136,7 @@ public class Directory extends Item {
                 }
             }
         }
+        this.setSize(children.size()*BYTES_PER_ITEM);
     }
 
     public boolean writeContentToDisk() {

@@ -97,11 +97,16 @@ public class FileController implements Module {
     public static void main(String[] args) {//显示根目录
 
 
-//        getInstance().createFile("/a.t");
+        getInstance().createFile("/a.t");
+        getInstance().createDirectory("/b");
+        getInstance().createFile("/b/a.t");
+
 
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.t",FILE_TYPE.TXT));
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY));
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/b", FILE_TYPE.DIRECTORY));
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/b/a.t",FILE_TYPE.TXT));
 
-//        getInstance().fileService.getDisk().disk2file();
+        getInstance().fileService.getDisk().disk2file();
     }
 }

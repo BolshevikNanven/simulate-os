@@ -13,6 +13,7 @@ public class FileService {
 
     public FileService() {
         disk = new Disk();
+        //disk.file2disk();
     }
 
     public Disk getDisk() {
@@ -91,6 +92,7 @@ public class FileService {
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
         disk.getFat().writeFatToDisk();
         parent.addChildren(folder);
+        FileServiceUtil.writeItemAndParentsToDisk(folder);
         return folder;
     }
 

@@ -18,6 +18,7 @@ public abstract class Item {
         attribute = data[4];
         startBlockNum = data[5];
         System.arraycopy(data, 6, size, 0, 2);
+        System.out.println(Arrays.toString(size));
     }
 
     public Item(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
@@ -26,6 +27,7 @@ public abstract class Item {
         setType(type);
         setParent(parent);
         setStartBlockNum(startBlockNum);
+        System.out.println("000: "+size);
         setSize(size);
         setAttribute(readOnly, systemFile, regularFile, isDirectory);
     }
@@ -120,7 +122,10 @@ public abstract class Item {
     }
 
     public int getSize() {
-        return size[1] << 8 + size[0];
+        int s = 0;
+        s+=size[0];
+        s+=size[1] << 8;
+        return s;
     }
 
     public byte[] getData() {
