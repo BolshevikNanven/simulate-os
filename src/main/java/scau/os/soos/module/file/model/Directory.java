@@ -78,7 +78,10 @@ public class Directory extends Item {
         // 检查是否已到达路径的末尾
         if (index == pathParts.size() - 1) {
             // 遍历子项，寻找与路径最后一部分同名的项
-            nameToFind = nameToFind.substring(0,nameToFind.lastIndexOf('.'));
+            if(nameToFind.contains(".")){
+                nameToFind = nameToFind.substring(0,nameToFind.lastIndexOf('.'));
+            }
+
             if(isDirectory){
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.isDirectory()) {

@@ -21,68 +21,76 @@ public class FileService {
     }
 
     public Item createFile(String path) {
-        if (FileServiceUtil.find(disk, path, FILE_TYPE.EXE) != null) {
+        //查重
+        FILE_TYPE type = path.contains(".e") ? FILE_TYPE.EXE : FILE_TYPE.TXT;//判断文件类型
+        if (FileServiceUtil.find(disk,path,type) != null) {
             System.out.println("文件已存在！");
             return null;
         }
 
+        //找空闲磁盘块
+        int startDisk = disk.findFreeDiskBlock();
+        if (startDisk == -1) {
+            System.out.println("磁盘空间不足！");
+            return null;
+        }
+
+        //找父目录
         Item file = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
         Directory parent = (Directory) FileServiceUtil.find(disk, parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("父目录不存在！");
             return null;
-        } else {
-            int startDisk = disk.findFreeDiskBlock();
-
-            if (startDisk == -1) {
-                System.out.println("磁盘空间不足！");
-                return null;
-            }
-
-            String name = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));
-
-            if (path.contains(".e")) {
-                file = FileServiceUtil.getItemFromCreate(disk, parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
-                FileServiceUtil.writeItemAndParentsToDisk(file);
-            } else {
-                file = FileServiceUtil.getItemFromCreate(disk, parent, name, (byte) 0, true, false, true, false, startDisk, 0);
-                FileServiceUtil.writeItemAndParentsToDisk(file);
-            }
-            disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
-            parent.addChildren(file);
-            return file;
         }
 
+        //创建文件
+        String name = path.substring(path.lastIndexOf("/") + 1,path.lastIndexOf('.'));
+        if (type == FILE_TYPE.EXE) {
+            file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 'e',true,false,true,false,startDisk,0);
+            //FileServiceUtil.writeItemAndParentsToDisk(file);
+        } else {
+            file = FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 0,true,false,true,false,startDisk,0);
+            //FileServiceUtil.writeItemAndParentsToDisk(file);
+        }
+
+        //修改fat表，父目录添加孩子
+        disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
+        parent.addChildren(file);
+        return file;
     }
 
     public Directory createDirectory(String path) {
-        if (FileServiceUtil.find(disk, path, FILE_TYPE.DIRECTORY) != null) {
+        //查重
+        if (FileServiceUtil.find(disk,path,FILE_TYPE.DIRECTORY) != null) {
             System.out.println("文件夹已存在！");
             return null;
         }
 
+        //找空闲磁盘块
+        int startDisk = disk.findFreeDiskBlock();
+        if (startDisk == -1) {
+            System.out.println("磁盘空间不足！");
+            return null;
+        }
+
+        //找父目录
         Directory folder = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) FileServiceUtil.find(disk, parentPath, FILE_TYPE.DIRECTORY);
-
+        Directory parent = (Directory) FileServiceUtil.find(disk,parentPath,FILE_TYPE.DIRECTORY);
         if (parent == null) {
             System.out.println("父目录不存在！");
             return null;
-        } else {
-            int startDisk = disk.findFreeDiskBlock();
-
-            if (startDisk == -1) {
-                System.out.println("磁盘空间不足！");
-                return null;
-            }
-
-            String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
-            folder = (Directory) FileServiceUtil.getItemFromCreate(disk, parent, name, (byte) 0, true, false, false, true, startDisk, 0);
-            disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
-            parent.addChildren(folder);
-            return folder;
         }
+
+        //创建文件夹
+        String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
+        folder = (Directory) FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 0,true,false,false,true,startDisk,0);
+
+        //修改fat表，父目录添加孩子
+        disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
+        parent.addChildren(folder);
+        return folder;
     }
 
     public void delete(String path, FILE_TYPE type, boolean isDeleteNotEmpty){

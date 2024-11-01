@@ -117,58 +117,12 @@ public class FileController implements Module {
     }
 
     public static void main(String[] args) {//显示根目录
-//        Directory root = getInstance().fileService.findFolder("/");
-//        System.out.println("root:" + root);
-//        System.out.println("root children: " + root.getChildren());
-//
-////        //建立文件
-////        MyFile c= getInstance().fileService.createFile("/a/c.e");
-////        System.out.println("c:"+c);
-////        System.out.println("c parent:"+c.getParent());
-//
-//
-//        //getInstance().writeFile(c);
-//
-//        //System.out.println(getInstance().readFile(c));
-//
-////        //创建目录
-////        Folder k = getInstance().createDirectory("/b/f/g");
-////        System.out.println("k:" + k);
-////        System.out.println("k parent:"+k.getParent());
-//
-//        //查找目录
-//        Directory f = getInstance().fileService.findFolder("/b/f");
-//        System.out.println("f:" + f);
-//        System.out.println("f children: " + f.getChildren());
-//
-//        //查找目录
-//        Directory a = getInstance().fileService.findFolder("/a");
-//        System.out.println("a:" + a);
-//        System.out.println("a children: " + a.getChildren());
-//
-////        //删除目录
-////        getInstance().deleteDirectory("/b");
-////        System.out.println("root children: "+root.getChildren());
-////
-////        //删除文件
-////        getInstance().fileService.deleteFile("/a/c.e");
-////        System.out.println("a children: "+a.getChildren());
-////
-////        MyFile cc= getInstance().fileService.createFile("/a/c.e");
-////        System.out.println("cc:"+cc);
-////        System.out.println("cc parent:"+cc.getParent());
-//
-////        //拷贝文件
-////        getInstance().copyFile("/a/c.e","/b/d.e");
-////        System.out.println("b children:"+getInstance().fileService.findFolder("/b").getChildren());
-//
-//
-//        getInstance().fileService.disk2file();
 
         getInstance().createFile("/a.e");
         //getInstance().createDirectory("/a/");
 
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a.e",FILE_TYPE.EXE));
+
 
 
     }
