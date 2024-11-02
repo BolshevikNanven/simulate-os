@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="656.0" styleClass="detail" stylesheets="@../main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane>
+         <left>
+            <Label prefHeight="38.0" prefWidth="62.0" styleClass="detail-title" text="内存" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label prefHeight="28.0" styleClass="detail-subtitle" text="512B" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="内存使用量" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="512B" BorderPane.alignment="CENTER" />
+         </right>
+         <VBox.margin>
+            <Insets bottom="2.0" />
+         </VBox.margin>
+      </BorderPane>
+      <BorderPane prefWidth="603.0">
+         <center>
+            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+               <xAxis>
+                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+               </yAxis>
+            </LineChart>
+         </center>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="60秒" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="0" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+      <Label styleClass="detail-chart-title" text="内存分布">
+         <VBox.margin>
+            <Insets bottom="2.0" top="12.0" />
+         </VBox.margin>
+      </Label>
+      <HBox maxWidth="1.7976931348623157E308" prefHeight="72.0" styleClass="memory-block-container">
+         <children>
+            <Region prefHeight="70.0" prefWidth="83.0">
+               <styleClass>
+                  <String fx:value="memory-block" />
+                  <String fx:value="active" />
+               </styleClass>
+            </Region>
+            <Region prefHeight="70.0" prefWidth="83.0" styleClass="memory-block" />
+            <Region prefHeight="70.0" prefWidth="44.0">
+               <styleClass>
+                  <String fx:value="memory-block" />
+                  <String fx:value="active" />
+               </styleClass>
+            </Region>
+            <Region maxWidth="1.7976931348623157E308" prefHeight="70.0" prefWidth="416.0" styleClass="memory-block" />
+         </children>
+      </HBox>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="0" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="511" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+      <HBox prefWidth="200.0" styleClass="detail-col-container">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="已使用" />
+                  <Label styleClass="detail-col-content-l" text="64B" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="可用" />
+                  <Label styleClass="detail-col-content-l" text="448B" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="PCB" />
+                  <Label styleClass="detail-col-content-l" text="2" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

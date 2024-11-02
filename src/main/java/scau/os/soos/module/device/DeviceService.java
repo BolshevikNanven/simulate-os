@@ -23,6 +23,8 @@ public class DeviceService {
         devices.add(new Device(DEVICE_TYPE.A));
         devices.add(new Device(DEVICE_TYPE.B));
         devices.add(new Device(DEVICE_TYPE.B));
+        devices.add(new Device(DEVICE_TYPE.B));
+        devices.add(new Device(DEVICE_TYPE.C));
         devices.add(new Device(DEVICE_TYPE.C));
         devices.add(new Device(DEVICE_TYPE.C));
     }
@@ -84,9 +86,9 @@ public class DeviceService {
     public void printDevices() {
         for (Device device : devices) {
             if (device.isBusy()) {
-                System.out.printf("设备%d  忙碌  剩余时间:%d \n", device.getType().ordinal(), device.getTime());
+                System.out.printf("设备%s  忙碌  剩余时间:%d \n", device.getType(), device.getTime());
             } else {
-                System.out.printf("设备%d  空闲  \n", device.getType().ordinal());
+                System.out.printf("设备%s  空闲  \n", device.getType());
             }
         }
     }

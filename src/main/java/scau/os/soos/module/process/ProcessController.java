@@ -2,7 +2,7 @@ package scau.os.soos.module.process;
 
 import scau.os.soos.common.OS;
 import scau.os.soos.module.Module;
-import scau.os.soos.module.file.model.MyFile;
+import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.module.process.model.Process;
 
 public class ProcessController implements Module {
@@ -31,7 +31,7 @@ public class ProcessController implements Module {
      * @param file
      * @return Process
      */
-    public Process create(MyFile file){
+    public Process create(Txt file){
         return processService.create(file);
     }
 

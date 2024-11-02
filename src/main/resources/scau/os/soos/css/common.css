@@ -5,10 +5,71 @@
     -fx-background-repeat: no-repeat;
 }
 
+
+/* ---------------------
+    全局滚动条样式
+------------------------ */
+
+/*轨道样式*/
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: rgb(240, 240, 240);
+    -fx-border-width: 0;
+    -fx-cursor: default;
+}
+
+/*横向滚动条增减按钮样式*/
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+    -fx-padding: 0 0 13px 0;
+}
+
+/*竖向滚动条增减按钮样式*/
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-padding: 0 13px 0 0;
+}
+
+/*增减按钮中图标样式*/
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-padding: 0;
+}
+
+/*滚动条滑块样式*/
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgb(133, 133, 133);
+    -fx-background-insets: 5px;
+    -fx-background-radius: 4px;
+    -fx-cursor: default;
+}
+
+.scroll-bar:horizontal .thumb:pressed,
+.scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: rgb(120, 120, 120);
+    -fx-background-insets: 3px;
+}
+
+.scroll-bar:horizontal:hover .thumb,
+.scroll-bar:vertical:hover .thumb {
+    -fx-background-insets: 3px;
+}
+
+
+/* ---------------------
+    全局按钮样式
+------------------------ */
+
 Button {
     -fx-background-insets: 0;
     -fx-border-insets: 0;
 }
+
+
+/* ---------------------
+    全局popover样式
+------------------------ */
 
 .popover {
     -fx-background-color: rgba(238, 238, 240, 0.956);
@@ -43,12 +104,17 @@ Button {
     -fx-background-color: #dadada;
 }
 
+
+/* ---------------------
+    全局窗口样式
+------------------------ */
+
 .window {
     -fx-background-radius: 7px;
     -fx-border-radius: 6px;
     -fx-border-width: 1px;
     -fx-border-color: #888888;
-    -fx-background-color: rgba(255, 255, 255, 0.98);
+    -fx-background-color: rgba(250, 252, 255, 0.97);
 }
 
 .window.full-screen {
@@ -101,7 +167,7 @@ Button {
 }
 
 .window-control-btn > Region {
-    -fx-background-color: #666666;
+    -fx-background-color: #888888;
 }
 
 .window-control-btn.danger:hover > Region {
@@ -110,4 +176,14 @@ Button {
 
 .window-body {
     -fx-background-radius: 0 0 6px 6px;
+}
+
+
+.window-skeleton {
+    -fx-background-radius: 6px;
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-border-color: #666666;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.48), 16, 0.4, 0, 0);
 }
