@@ -11,7 +11,10 @@ public class MemoryBlock {
     private MemoryBlock() {
 
     }
-
+    public MemoryBlock(int size, boolean isFree) {
+        this.size = size;
+        this.isFree = isFree;
+    }
     public MemoryBlock(int address, int size, boolean isFree) {
         this.address = address;
         this.size = size;

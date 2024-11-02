@@ -46,13 +46,13 @@
                             <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                           </xAxis>
                           <yAxis>
-                            <NumberAxis animated="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+                            <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="10.0" />
                           </yAxis>
                         </AreaChart>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" prefWidth="80.0" styleClass="title" text="CPU" />
-                              <Label styleClass="description" text="忙碌 6个进程" />
+                              <Label fx:id="cpuOverview" styleClass="description" text="忙碌 6个进程" />
                            </children>
                         </VBox>
                      </children>
@@ -74,13 +74,13 @@
                               <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                            </xAxis>
                            <yAxis>
-                              <NumberAxis animated="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+                              <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
                            </yAxis>
                         </AreaChart>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" prefWidth="80.0" styleClass="title" text="内存" />
-                              <Label styleClass="description" text="120/512B (15%)" />
+                              <Label fx:id="memoryOverview" styleClass="description" text="120/512B (15%)" />
                            </children>
                         </VBox>
                      </children>
@@ -98,13 +98,13 @@
                               <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                            </xAxis>
                            <yAxis>
-                              <NumberAxis animated="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+                              <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="8.0" />
                            </yAxis>
                         </AreaChart>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" prefWidth="80.0" styleClass="title" text="设备" />
-                              <Label styleClass="description" text="1/6个 " />
+                              <Label fx:id="deviceOverview" styleClass="description" text="0/8台" />
                            </children>
                         </VBox>
                      </children>

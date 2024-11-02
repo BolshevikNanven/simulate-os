@@ -1,6 +1,7 @@
 package scau.os.soos.module.memory;
 
 import scau.os.soos.module.Module;
+import scau.os.soos.module.memory.view.MemoryReadView;
 import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.Process;
 
@@ -35,15 +36,19 @@ public class MemoryController implements Module {
         return memoryService.write(address, (int) content);
     }
 
+    public MemoryReadView getData() {
+        return memoryService.analise();
+    }
+
     @Override
     public void run() {
 
     }
 
     public static void main(String[] args) {
-        PCB pcb1 = new Process(new PCB(),1).getPCB();
-        PCB pcb2 = new Process(new PCB(),2).getPCB();
-        PCB pcb3 = new Process(new PCB(),3).getPCB();
+        PCB pcb1 = new Process(new PCB(), 1).getPCB();
+        PCB pcb2 = new Process(new PCB(), 2).getPCB();
+        PCB pcb3 = new Process(new PCB(), 3).getPCB();
 
         getInstance().allocate(pcb1, 128);
         getInstance().allocate(pcb2, 44);

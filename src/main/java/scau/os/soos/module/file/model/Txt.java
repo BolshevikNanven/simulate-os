@@ -8,13 +8,11 @@ public class Txt extends Item {
 
     public Txt(Disk disk, byte[] data) {
         super(disk, data);
-        System.out.println(Arrays.toString(data));
         this.context = new StringBuilder();
     }
 
     public Txt(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         super(disk, parent,name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum,size);
-        System.out.println("000t: "+size);
         this.context = new StringBuilder();
     }
 

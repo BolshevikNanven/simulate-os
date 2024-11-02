@@ -1,4 +1,4 @@
-package scau.os.soos.module.file.Util;
+package scau.os.soos.module.file.util;
 
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.model.*;

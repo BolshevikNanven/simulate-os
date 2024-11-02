@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
@@ -32,40 +32,48 @@
       </BorderPane>
       <BorderPane prefWidth="603.0">
          <center>
-            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" prefWidth="240.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+            <AreaChart id="device-A-chart" fx:id="memoryOverviewChart2" alternativeRowFillVisible="false" animated="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="72.0" verticalGridLinesVisible="false" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
                <xAxis>
-                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+                  <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                </xAxis>
                <yAxis>
-                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
                </yAxis>
-            </LineChart>
+            </AreaChart>
          </center>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="60秒" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="0" BorderPane.alignment="CENTER" />
+         </right>
       </BorderPane>
       <HBox styleClass="detail-col-container">
          <children>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="已使用" />
-                  <Label styleClass="detail-col-content-l" text="2" />
+                  <Label id="device-A-usage" styleClass="detail-col-content-l" text="2" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="可用" />
-                  <Label styleClass="detail-col-content-l" text="0" />
+                  <Label id="device-A-available" styleClass="detail-col-content-l" text="0" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="使用中" />
-                  <Label styleClass="detail-col-content-l" text="2;1" />
+                  <Label id="device-A-using" styleClass="detail-col-content-l" text="2;1" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="等待" />
-                  <Label styleClass="detail-col-content-l" />
+                  <Label id="device-A-waiting" styleClass="detail-col-content-l" />
                </children>
             </VBox>
          </children>
@@ -83,40 +91,48 @@
       </BorderPane>
       <BorderPane prefWidth="603.0">
          <center>
-            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" prefWidth="240.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+            <AreaChart id="device-B-chart" fx:id="memoryOverviewChart" alternativeRowFillVisible="false" animated="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="72.0" verticalGridLinesVisible="false" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
                <xAxis>
-                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+                  <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                </xAxis>
                <yAxis>
-                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
                </yAxis>
-            </LineChart>
+            </AreaChart>
          </center>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="60秒" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="0" BorderPane.alignment="CENTER" />
+         </right>
       </BorderPane>
       <HBox styleClass="detail-col-container">
          <children>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="已使用" />
-                  <Label styleClass="detail-col-content-l" text="2" />
+                  <Label id="device-B-usage" styleClass="detail-col-content-l" text="2" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="可用" />
-                  <Label styleClass="detail-col-content-l" text="0" />
+                  <Label id="device-B-available" styleClass="detail-col-content-l" text="0" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="使用中" />
-                  <Label styleClass="detail-col-content-l" text="2;1" />
+                  <Label id="device-B-using" styleClass="detail-col-content-l" text="2;1" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="等待" />
-                  <Label styleClass="detail-col-content-l" />
+                  <Label id="device-B-waiting" styleClass="detail-col-content-l" />
                </children>
             </VBox>
          </children>
@@ -134,40 +150,48 @@
       </BorderPane>
       <BorderPane prefWidth="603.0">
          <center>
-            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="72.0" prefWidth="240.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+            <AreaChart id="device-C-chart" fx:id="memoryOverviewChart1" alternativeRowFillVisible="false" animated="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="72.0" verticalGridLinesVisible="false" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
                <xAxis>
-                  <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+                  <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                </xAxis>
                <yAxis>
-                  <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
                </yAxis>
-            </LineChart>
+            </AreaChart>
          </center>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="60秒" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="0" BorderPane.alignment="CENTER" />
+         </right>
       </BorderPane>
       <HBox styleClass="detail-col-container">
          <children>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="已使用" />
-                  <Label styleClass="detail-col-content-l" text="2" />
+                  <Label id="device-C-usage" styleClass="detail-col-content-l" text="2" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="可用" />
-                  <Label styleClass="detail-col-content-l" text="0" />
+                  <Label id="device-C-available" styleClass="detail-col-content-l" text="0" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="使用中" />
-                  <Label styleClass="detail-col-content-l" text="2;1" />
+                  <Label id="device-C-using" styleClass="detail-col-content-l" text="2;1" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="等待" />
-                  <Label styleClass="detail-col-content-l" />
+                  <Label id="device-C-waiting" styleClass="detail-col-content-l" />
                </children>
             </VBox>
          </children>

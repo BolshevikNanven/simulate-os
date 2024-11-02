@@ -2,12 +2,12 @@ package scau.os.soos.module.file;
 
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.Module;
-import scau.os.soos.module.file.Util.FileServiceUtil;
 import scau.os.soos.module.file.model.Directory;
-import scau.os.soos.module.file.model.Disk;
 import scau.os.soos.module.file.model.Item;
+import scau.os.soos.module.file.util.FileServiceUtil;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileController implements Module {
     private static FileController instance;
@@ -18,10 +18,6 @@ public class FileController implements Module {
             instance = new FileController();
         }
         return instance;
-    }
-
-    public FileService getFileService() {
-        return fileService;
     }
 
     private FileController() {
@@ -88,6 +84,11 @@ public class FileController implements Module {
         return fileService.getSize(file);
     }
 
+    public List<Item> getRoot(){
+        List<Item> roots = new ArrayList<>();
+        roots.add(fileService.getRoots());
+        return roots;
+    }
 
     @Override
     public void run() {
@@ -100,18 +101,14 @@ public class FileController implements Module {
 //        getInstance().createFile("/e.t");
 //        getInstance().copyFile("/e.t","a/b/");
 
-//        Directory root = (Directory) FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
-//        System.out.println(root);
+        Directory root = (Directory) FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
+        System.out.println(root);
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT));
+//        getInstance().writeFile(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT),"12345678901234567890");
 //        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT));
-////        getInstance().writeFile(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT),"12345678901234567890");
-////        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT));
-//
-//        getInstance().copyFile("/e.t", "/a/");
-//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a/e.t", FILE_TYPE.TXT));
-//
-//        Object obj = getInstance().readFile(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a/e.t", FILE_TYPE.TXT));
-//        System.out.println(obj);
-//        System.out.println(((String) obj).length());
+
+        getInstance().copyFile("/e.t", "/a/");
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a/e.t", FILE_TYPE.TXT));
 
 //        getInstance().fileService.getDisk().disk2file();
     }
