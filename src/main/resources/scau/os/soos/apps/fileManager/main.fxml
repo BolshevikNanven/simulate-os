@@ -1,11 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
-
-<ScrollPane fx:id="body" fitToWidth="true" hbarPolicy="NEVER" prefHeight="498.0" prefWidth="731.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <content>
-      <Pane prefHeight="900.0" prefWidth="200.0" />
-   </content>
-</ScrollPane>
+<?import javafx.scene.layout.FlowPane?>
+<BorderPane fx:id="body" prefHeight="522.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <ScrollPane fx:id="selectedArea" fitToWidth="true" hbarPolicy="NEVER">
+         <content>
+            <Pane prefHeight="900.0" prefWidth="200.0" >
+               <FlowPane fx:id="itemContainer" cache="true" hgap="10" vgap="10">
+                  <padding>
+                     <Insets>
+                        <top>10</top>
+                        <left>10</left>
+                     </Insets>
+                  </padding>
+               </FlowPane>
+            </Pane>
+         </content>
+      </ScrollPane>
+   </center>
+   <left>
+      <TreeView fx:id="directoryTree" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
+   <top>
+      <fx:include source="tool-bar.fxml" />
+   </top>
+   <bottom>
+      <BorderPane styleClass="bottom-bar" BorderPane.alignment="CENTER">
+         <left>
+            <HBox alignment="CENTER" prefHeight="20.0" spacing="30.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="itemNumber" styleClass="description" text="Label" />
+                  <Label fx:id="itemSelectedNumber" layoutX="10.0" layoutY="10.0" styleClass="description" text="Label" />
+               </children>
+               <BorderPane.margin>
+                  <Insets left="15.0" />
+               </BorderPane.margin>
+            </HBox>
+         </left>
+      </BorderPane>
+   </bottom>
+   <stylesheets>
+      <URL value="@main.css" />
+      <URL value="@../../css/icon.css" />
+   </stylesheets>
+</BorderPane>

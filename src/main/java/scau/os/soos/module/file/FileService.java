@@ -1,7 +1,7 @@
 package scau.os.soos.module.file;
 
 import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.module.file.Util.FileServiceUtil;
+import scau.os.soos.module.file.util.FileServiceUtil;
 import scau.os.soos.module.file.model.*;
 
 import java.util.ArrayList;
@@ -216,10 +216,9 @@ public class FileService {
 
         int cur = needDiskBlocks.get(0);
         int pre = cur;
-        System.out.println("cur:"+cur);
+
         for (int i = 1; i < needDiskBlocks.size(); i++) {
             cur = needDiskBlocks.get(i);
-            System.out.println("cur:"+cur);
             fat.setNextBlockIndex(pre, cur);
             pre = cur;
         }
@@ -235,5 +234,9 @@ public class FileService {
         FileServiceUtil.updateItemSize(newItem);
         FileServiceUtil.writeItemAndParentsToDisk(newItem);
         return true;
+    }
+
+    public Directory getRoots() {
+        return disk.getRootDirectory();
     }
 }
