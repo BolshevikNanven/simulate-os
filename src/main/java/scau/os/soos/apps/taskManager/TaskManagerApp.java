@@ -18,6 +18,8 @@ import scau.os.soos.common.enums.OS_STATES;
 import scau.os.soos.common.model.Handler;
 import scau.os.soos.ui.components.base.Window;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class TaskManagerApp extends Window {
@@ -37,16 +39,17 @@ public class TaskManagerApp extends Window {
     private HBox deviceCard;
     @FXML
     private AreaChart<String, Integer> cpuOverviewChart;
-    private XYChart.Series<String, Integer> cpuSeries;
+    @FXML
+    private Label cpuOverview;
     @FXML
     private AreaChart<String, Integer> memoryOverviewChart;
-    private XYChart.Series<String, Integer> memorySeries;
+    @FXML
+    private Label memoryOverview;
     @FXML
     private AreaChart<String, Integer> deviceOverviewChart;
-    private XYChart.Series<String, Integer> deviceSeries;
-    private TaskManagerService cpuService;
-    private TaskManagerService memoryService;
-    private TaskManagerService deviceService;
+    @FXML
+    private Label deviceOverview;
+    private Map<String, TaskManagerService> serviceMap;
     private Handler handler;
     private String activeCardName;
 
@@ -63,29 +66,20 @@ public class TaskManagerApp extends Window {
         }
 
         handler = () -> {
-            switch (activeCardName) {
-                case "cpu" -> cpuService.render();
-                case "memory" -> memoryService.render();
-                case "device" -> deviceService.render();
-            }
+            serviceMap.get(activeCardName).render();
             Platform.runLater(() -> {
                 clock.setText(String.valueOf(OS.clock.get()));
-                renderOverview();
+                for (TaskManagerService service : serviceMap.values()) {
+                    service.overview();
+                }
             });
 
         };
 
-        cpuService = new CpuService(detailContainer);
-        memoryService = new MemoryService(detailContainer);
-        deviceService = new DeviceService(detailContainer);
-
-        cpuSeries = new XYChart.Series<>();
-        memorySeries = new XYChart.Series<>();
-        deviceSeries = new XYChart.Series<>();
-
-        cpuOverviewChart.getData().add(cpuSeries);
-        memoryOverviewChart.getData().add(memorySeries);
-        deviceOverviewChart.getData().add(deviceSeries);
+        serviceMap = new HashMap<>();
+        serviceMap.put("cpu", new CpuService(cpuOverviewChart, cpuOverview, detailContainer));
+        serviceMap.put("memory", new MemoryService(memoryOverviewChart, memoryOverview, detailContainer));
+        serviceMap.put("device", new DeviceService(deviceOverviewChart, deviceOverview, detailContainer));
 
         addListener();
 
@@ -118,36 +112,11 @@ public class TaskManagerApp extends Window {
             child.getStyleClass().remove("active");
         }
         switch (card) {
-            case "cpu" -> {
-                cpuCard.getStyleClass().add("active");
-                cpuService.show();
-            }
-            case "memory" -> {
-                memoryCard.getStyleClass().add("active");
-                memoryService.show();
-            }
-            case "device" -> {
-                deviceCard.getStyleClass().add("active");
-                deviceService.show();
-            }
+            case "cpu" -> cpuCard.getStyleClass().add("active");
+            case "memory" -> memoryCard.getStyleClass().add("active");
+            case "device" -> deviceCard.getStyleClass().add("active");
         }
+        serviceMap.get(card).show();
         activeCardName = card;
-    }
-
-    private void renderOverview() {
-        cpuSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), new Random().nextInt(5)));
-        if (cpuSeries.getData().size() > 20) {
-            cpuSeries.getData().removeFirst();
-        }
-
-        memorySeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), new Random().nextInt(5)));
-        if (memorySeries.getData().size() > 20) {
-            memorySeries.getData().removeFirst();
-        }
-
-        deviceSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), new Random().nextInt(5)));
-        if (deviceSeries.getData().size() > 20) {
-            deviceSeries.getData().removeFirst();
-        }
     }
 }

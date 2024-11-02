@@ -22,10 +22,6 @@ public class Device {
         return type;
     }
 
-    public void setType(DEVICE_TYPE type) {
-        this.type = type;
-    }
-
     public boolean isBusy() {
         return isBusy;
     }
