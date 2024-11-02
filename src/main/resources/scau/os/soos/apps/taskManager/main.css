@@ -1,0 +1,241 @@
+#body Button {
+    -fx-background-radius: 6px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #313131;
+    -fx-font-size: 12px;
+    -fx-padding: 0 13px;
+}
+
+#body Button Region {
+    -fx-background-color: #555555;
+}
+
+#body Button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.06);
+}
+
+#body Button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.08);
+}
+
+.chart {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.chart-content {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-color: #aaaaaa;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-area-symbol {
+    -fx-background-color: transparent;
+    -fx-shape: "";
+}
+
+.cpu-chart .chart-series-area-line {
+    -fx-stroke: rgb(96, 165, 187);
+}
+
+.cpu-chart .chart-series-area-fill {
+    -fx-fill: rgb(195, 236, 250);
+}
+
+.memory-chart .chart-series-area-line {
+    -fx-stroke: rgb(9, 91, 222);
+}
+
+.memory-chart .chart-series-area-fill {
+    -fx-fill: rgb(201, 225, 255);
+}
+
+.device-chart .chart-series-area-line {
+    -fx-stroke: rgb(147, 173, 101);
+}
+
+.device-chart .chart-series-area-fill {
+    -fx-fill: rgb(216, 244, 181);
+}
+
+.progress-bar .bar {
+    -fx-background-color: #ffffff;
+}
+
+.progress-bar .track {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 1px;
+    -fx-border-color: #8c8c8c;
+    -fx-border-style: solid;
+}
+
+#cardContainer {
+    -fx-padding: 8px 16px 0 8px;
+}
+
+.main-container {
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-border-width: 1px 1px 0 1px;
+    -fx-border-color: #e3e3e3;
+    -fx-background-color: #ffffff;
+}
+
+.preview-card {
+    -fx-padding: 12px 8px;
+    -fx-background-radius: 4px;
+    -fx-background-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-color: transparent;
+}
+
+.preview-card.active {
+    -fx-background-color: rgba(0, 0, 0, 0.038);
+    -fx-border-color: #8c8c8c;
+}
+
+.preview-card:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.038);
+}
+
+.preview-card .title {
+    -fx-font-size: 16px;
+    -fx-text-fill: #212121;
+}
+
+.preview-card .description {
+    -fx-font-size: 11px;
+    -fx-text-fill: #777777;
+}
+
+.main-header {
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #e3e3e3;
+    -fx-padding: 0 16px;
+}
+
+.main-header .title {
+    -fx-font-size: 15px;
+    -fx-text-fill: #212121;
+}
+
+.main-header #clock {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+}
+
+#detailContainer {
+    -fx-background-color: #ffffff;
+    -fx-effect: null;
+    -fx-padding: 0;
+    -fx-border-insets: null;
+    -fx-background-insets: null;
+    -fx-background-radius: 0 0 6px 0;
+}
+
+#detailContainer .viewport {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0 0 6px 0;
+}
+
+.detail {
+    -fx-padding: 8px 16px;
+    -fx-background-color: #ffffff;
+}
+
+.detail-title {
+    -fx-font-size: 24px;
+    -fx-text-fill: #212121;
+}
+
+.detail-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #212121;
+}
+
+.detail-chart-title {
+    -fx-font-size: 11px;
+    -fx-text-fill: #777777;
+}
+
+.detail-col-container {
+    -fx-spacing: 32px;
+    -fx-padding: 8px 0 0 0;
+}
+
+.detail-col-title {
+    -fx-font-size: 13px;
+    -fx-text-fill: #696969;
+}
+
+.detail-col-content {
+    -fx-font-size: 13px;
+    -fx-text-fill: #212121;
+}
+
+.detail-col-content-l {
+    -fx-font-size: 24px;
+    -fx-text-fill: #212121;
+}
+
+.process-list-container {
+    -fx-border-width: 1px;
+    -fx-border-color: #e3e3e3;
+    -fx-border-radius: 4px;
+}
+
+.process-list-header {
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #e3e3e3;
+}
+
+.process-list-header .label {
+    -fx-padding: 0 8px;
+    -fx-text-fill: #696969;
+}
+
+.running-process-list {
+    -fx-background-color: #e0f2fe;
+}
+
+.ready-process-list {
+
+}
+
+.block-process-list {
+    -fx-background-color: #ffedd5;
+}
+
+.process-item .label {
+    -fx-padding: 0 8px;
+}
+
+.process-item:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.04);
+}
+
+.item-divider {
+    -fx-background-color: #e3e3e3;
+}
+
+.memory-block-container {
+    -fx-border-width: 1px;
+    -fx-border-color: rgb(9, 91, 222);
+}
+
+.memory-block {
+    -fx-border-width: 0 1px 0 1px;
+    -fx-border-color: rgb(9, 91, 222);
+}
+
+.memory-block.active {
+    -fx-background-color: rgb(201, 225, 255);
+    -fx-border-width: 0;
+}

@@ -58,15 +58,18 @@ public class MainApplication extends Application {
         //启动时钟
         ThreadsPool.run(() -> {
             OS.state = OS_STATES.RUNNING;
-            while (OS.state != OS_STATES.STOPPED) {
-                System.out.println("clock:" + OS.clock.get());
-                OS.clock.inc();
-                //测试用延时
+            while (!OS.state.equals(OS_STATES.STOPPED)) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
+                if (OS.state.equals(OS_STATES.PAUSE)) {
+                    continue;
+                }
+                System.out.println("clock:" + OS.clock.get());
+                OS.clock.inc();
             }
         });
     }

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="635.0" styleClass="detail" stylesheets="@../main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane>
+         <left>
+            <Label prefHeight="38.0" prefWidth="62.0" styleClass="detail-title" text="CPU" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label prefHeight="28.0" styleClass="detail-subtitle" text="忙碌中" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="进程数" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="60" BorderPane.alignment="CENTER" />
+         </right>
+         <VBox.margin>
+            <Insets bottom="2.0" />
+         </VBox.margin>
+      </BorderPane>
+      <BorderPane prefWidth="603.0">
+         <center>
+            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="70.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+              <xAxis>
+                <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
+              </yAxis>
+            </LineChart>
+         </center>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <Label styleClass="detail-chart-title" text="60秒" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Label styleClass="detail-chart-title" text="0" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+      <HBox prefWidth="603.0" styleClass="detail-col-container">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="相对时钟" />
+                  <Label styleClass="detail-col-content-l" text="5" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="运行进程" />
+                  <Label styleClass="detail-col-content-l" text="12" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="指令" />
+                  <Label styleClass="detail-col-content-l" text="X++" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="AX" />
+                  <Label styleClass="detail-col-content-l" text="0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label styleClass="detail-col-title" text="结果" />
+                  <Label styleClass="detail-col-content-l" text="5" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <Label styleClass="detail-chart-title" text="进程列表">
+         <VBox.margin>
+            <Insets bottom="2.0" top="12.0" />
+         </VBox.margin>
+      </Label>
+      <VBox styleClass="process-list-container">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="process-list-header">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="PID" />
+                  <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                  <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="状态" />
+                  <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                  <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="占用内存" />
+                  <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                  <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="占用设备" />
+                  <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+               </children>
+            </HBox>
+            <VBox styleClass="running-process-list">
+               <children>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="process-item">
+                     <children>
+                        <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="12" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="运行" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="12B" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox styleClass="ready-process-list">
+               <children>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="process-item">
+                     <children>
+                        <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="6" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="就绪" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="12B" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox styleClass="block-process-list">
+               <children>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="process-item">
+                     <children>
+                        <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="9" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="阻塞" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="12B" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="设备A" />
+                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>

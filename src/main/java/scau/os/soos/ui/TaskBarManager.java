@@ -69,6 +69,8 @@ public class TaskBarManager {
 
     public void selectTask(Window window) {
         window.setState(WINDOW_STATES.ACTIVE);
+        // 指示器始终在当前window之后
+        DesktopManager.getInstance().getIndicator().toFront();
         window.getWindow().toFront();
         window.getWindow().getStyleClass().add("active");
         // 设置其他窗口状态,仅运行一个活动窗口
