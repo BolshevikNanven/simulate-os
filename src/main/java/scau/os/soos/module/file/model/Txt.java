@@ -27,7 +27,8 @@ public class Txt extends Item {
     }
 
     public void initFromString(String content) {
-        this.context = new StringBuilder(context);
+        this.context = new StringBuilder();
+        this.context.append(content);
         setSize(content.length());
     }
 
