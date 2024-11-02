@@ -10,7 +10,9 @@ module scau.os.soos {
     opens scau.os.soos.apps.terminal to javafx.fxml;
     opens scau.os.soos.apps.mindmap to javafx.fxml;
     opens scau.os.soos.apps.taskManager to javafx.fxml;
+    opens scau.os.soos.apps.fileManager to javafx.fxml;
     opens scau.os.soos.apps.diskManager to javafx.fxml, javafx.base;
     exports scau.os.soos;
     opens scau.os.soos.ui.components.base to javafx.fxml;
+    opens scau.os.soos.apps.fileManager.controller to javafx.fxml;
 }

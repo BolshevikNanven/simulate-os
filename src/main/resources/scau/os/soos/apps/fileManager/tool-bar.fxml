@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox styleClass="tool-bar" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scau.os.soos.apps.fileManager.ToolBarController">
+<VBox styleClass="tool-bar" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scau.os.soos.apps.fileManager.controller.ToolBarController">
     <children>
         <BorderPane prefHeight="25.0" />
         <Region prefHeight="1.0">

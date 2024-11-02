@@ -4,17 +4,18 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="body" prefHeight="522.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <ScrollPane fx:id="selectedArea" fitToWidth="true" hbarPolicy="NEVER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
          <content>
-            <Pane prefHeight="900.0" prefWidth="200.0" >
+            <StackPane fx:id="view">
+               <Pane fx:id="selectedArea" prefHeight="522.0" prefWidth="840.0"/>
                <FlowPane fx:id="itemContainer" cache="true" hgap="10" vgap="10">
                   <padding>
                      <Insets>
@@ -23,12 +24,12 @@
                      </Insets>
                   </padding>
                </FlowPane>
-            </Pane>
+            </StackPane>
          </content>
       </ScrollPane>
    </center>
    <left>
-      <TreeView fx:id="directoryTree" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <fx:include source="directory-tree.fxml"/>
    </left>
    <top>
       <fx:include source="tool-bar.fxml" />
