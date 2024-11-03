@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="body" prefHeight="522.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+      <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER">
          <content>
-            <StackPane>
+            <StackPane fx:id="scrollPaneContent">
                <FlowPane fx:id="itemContainer" cache="true" hgap="10" vgap="10">
                   <padding>
                      <Insets>
@@ -23,16 +23,16 @@
                      </Insets>
                   </padding>
                </FlowPane>
-               <Pane fx:id="selectedArea" prefHeight="522.0" prefWidth="840.0"/>
+               <Pane fx:id="selectedArea"/>
             </StackPane>
          </content>
       </ScrollPane>
    </center>
    <left>
-      <fx:include source="directory-tree.fxml"/>
+      <fx:include source="components/directory-tree.fxml"/>
    </left>
    <top>
-      <fx:include source="tool-bar.fxml" />
+      <fx:include source="components/tool-bar.fxml" />
    </top>
    <bottom>
       <BorderPane styleClass="bottom-bar" BorderPane.alignment="CENTER">

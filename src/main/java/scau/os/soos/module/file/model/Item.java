@@ -10,6 +10,7 @@ public abstract class Item {
     private byte attribute;
     private byte startBlockNum;
     private final byte[] size = new byte[2];
+    private String path;
 
     public Item(Disk disk, byte[] data) {
         setDisk(disk);
@@ -28,6 +29,8 @@ public abstract class Item {
         setStartBlockNum(startBlockNum);
         setSize(size);
         setAttribute(readOnly, systemFile, regularFile, isDirectory);
+
+        setPath();
     }
 
     public void setDisk(Disk disk) {
@@ -124,6 +127,28 @@ public abstract class Item {
         s+=size[0];
         s+=size[1] << 8;
         return s;
+    }
+
+    public void setPath() {
+        if(parent == null){
+            path = "/";
+            return;
+        }
+
+        if(this instanceof Directory){
+            path = parent.getPath() +  getName() + "/";
+            return;
+        }
+
+        path = parent.getPath() +   getName() + '.' + (char)getType();
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public byte[] getData() {

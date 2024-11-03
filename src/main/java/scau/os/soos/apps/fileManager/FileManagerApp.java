@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.module.file.model.Directory;
@@ -24,25 +25,20 @@ import java.util.List;
 
 
 public class FileManagerApp extends Window {
-    @FXML
-    public Pane selectedArea;
-    @FXML
-    public FlowPane itemContainer;
-    @FXML
-    public Label itemNumber;
-    @FXML
-    public Label itemSelectedNumber;
+    @FXML public ScrollPane scrollPane;
+    @FXML public StackPane scrollPaneContent;
+    @FXML public Pane selectedArea;
+    @FXML public FlowPane itemContainer;
+    @FXML public Label itemNumber;
+    @FXML public Label itemSelectedNumber;
 
-    // 文件列表
+    private FileMenu fileMenu;
+
     private List<Item> itemList;
-    // 选中文件列表
+    private IntegerProperty itemCount;
     private List<ThumbnailBox> selectedList;
-    // 选中文件数量
     private IntegerProperty selectedCount;
-    // 选中文件大小
     private DoubleProperty selectedSize;
-    // 文件总数
-    private IntegerProperty totalCount;
 
     public FileManagerApp() {
         super("文件管理器", "main.fxml", 900, 600);
@@ -70,15 +66,22 @@ public class FileManagerApp extends Window {
         instance = this;
 
         selectedCount = new SimpleIntegerProperty(0);
-        totalCount = new SimpleIntegerProperty(0);
+        itemCount = new SimpleIntegerProperty(0);
         selectedSize = new SimpleDoubleProperty(0);
         itemList = new ArrayList<>();
         selectedList = new ArrayList<>();
 
+        new FileAreaSelect(selectedArea);
+        fileMenu = new FileMenu();
+
+        initBinding();
         addListener();
         initBottomBar();
+    }
 
-        new FileAreaSelect(selectedArea);
+    private void initBinding() {
+        scrollPaneContent.prefHeightProperty().bind(scrollPane.heightProperty().subtract(3.5));
+        scrollPaneContent.prefWidthProperty().bind(scrollPane.widthProperty());
     }
 
     @Override
@@ -87,10 +90,15 @@ public class FileManagerApp extends Window {
     }
 
     public void addListener() {
+        scrollPane.addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
+            if (e.isSecondaryButtonDown()) {
+                fileMenu.render(e);
+            }
+        });
         itemContainer.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY
                     && mouseEvent.getClickCount() == 1
-                    && !mouseEvent.isControlDown()){
+                    && !mouseEvent.isControlDown()) {
                 Node intersectedNode = mouseEvent.getPickResult().getIntersectedNode();
                 if (itemContainer.equals(intersectedNode)) {
                     clearSelectedList();
@@ -99,24 +107,24 @@ public class FileManagerApp extends Window {
         });
     }
 
-    public void refreshCurrentDirectory(){
+    public void refreshCurrentDirectory() {
         loadDirectory(DirectoryTreeController.getInstance().getCurrentDirectory());
     }
 
     public void loadDirectory(Item directory) {
         if (directory == null)
-            return ;
+            return;
 
-        if(!selectedList.isEmpty())
+        if (!selectedList.isEmpty())
             clearSelectedList();
 
-        itemList = ((Directory)directory).getChildren();
-        totalCount.set(itemList.size());
+        itemList = ((Directory) directory).getChildren();
+        itemCount.set(itemList.size());
 
-        displayThumbnail();
+        displayItem();
     }
 
-    public void displayThumbnail() {
+    public void displayItem() {
         // 清空选择列表
         clearSelectedList();
         // 清空ThumbnailPane中的所有子节点
@@ -135,10 +143,11 @@ public class FileManagerApp extends Window {
     public void selectItem(ThumbnailBox thumbnailBox) {
         // 将选中的文件加入到selectedList中
         if (selectedList.contains(thumbnailBox)) {
-            return ;
+            return;
         } else {
             thumbnailBox.getStyleClass().add("thumbnail-box-selected");
             selectedList.add(thumbnailBox);
+            selectedSize.setValue((selectedSize.getValue() + thumbnailBox.getItem().getSize()));
         }
         selectedCount.set(selectedList.size());
     }
@@ -149,16 +158,30 @@ public class FileManagerApp extends Window {
         }
         selectedList.clear();
         selectedCount.set(0);
+        selectedSize.set(0);
     }
 
     public void showContent(Item item) {
         System.out.println(item);
     }
 
-    private void initBottomBar () {
+    private void initBottomBar() {
         itemNumber.textProperty().bind(Bindings.createStringBinding(() -> String.format("%d 个项目",
-                                totalCount.get()),totalCount));
-        itemSelectedNumber.textProperty().bind(Bindings.createStringBinding(() -> String.format("选中 %d 个项目 ",
-                selectedCount.get()),selectedCount));
+                itemCount.get()), itemCount));
+        itemSelectedNumber.textProperty().bind(Bindings.createStringBinding(() -> String.format("选中 %d 个项目 %s",
+                        selectedCount.get(), getFormatSize(selectedSize.get())),
+                selectedCount, selectedSize));
+    }
+
+    private String getFormatSize(double size) {
+        if (size == 0)
+            return "";
+        if (size < 1024)
+            return String.format("\t\t%.0f Byte", size);
+        else
+            return String.format("\t\t%.0f KB", size / 1024);
+    }
+
+    public void open() {
     }
 }

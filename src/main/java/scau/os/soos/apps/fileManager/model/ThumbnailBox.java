@@ -66,6 +66,10 @@ public class ThumbnailBox extends VBox {
         setTipEvent();
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     private void setSelectEvent() {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             // 按住ctrl键多选

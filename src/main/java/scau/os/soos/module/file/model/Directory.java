@@ -131,6 +131,7 @@ public class Directory extends Item {
                     children.add(item);
                     item.setParent(this);
                     item.setDisk(disk);
+                    item.setPath();
                 }
             }
         }

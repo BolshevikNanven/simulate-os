@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox styleClass="tool-bar" stylesheets="@../../../css/common.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scau.os.soos.apps.fileManager.controller.ToolBarController">
+    <children>
+        <BorderPane prefHeight="38.0">
+         <left>
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                   <Button fx:id="leftBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                       <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="left-icon" />
+                       </graphic>
+                   </Button>
+                   <Button fx:id="rightBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                       <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="right-icon" />
+                       </graphic>
+                   </Button>
+                   <Button fx:id="upBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                       <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="up-icon" />
+                       </graphic>
+                   </Button>
+                   <Button fx:id="refreshBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                       <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="refresh-icon" />
+                       </graphic>
+                   </Button>
+               </children></HBox>
+         </left></BorderPane>
+        <Region prefHeight="1.0"/>
+        <BorderPane prefHeight="38.0">
+         <left>
+            <HBox BorderPane.alignment="CENTER">
+                <Button fx:id="shearBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                    <graphic>
+                        <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="shear-icon" />
+                    </graphic>
+                </Button>
+                <Button fx:id="copyBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                    <graphic>
+                        <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="copy-icon" />
+                    </graphic>
+                </Button>
+                <Button fx:id="pasteBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                    <graphic>
+                        <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="paste-icon" />
+                    </graphic>
+                </Button>
+                <Button fx:id="reNameBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                    <graphic>
+                        <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="rename-icon" />
+                    </graphic>
+                </Button>
+                <Button fx:id="deleteBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+                    <graphic>
+                        <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="delete-icon" />
+                    </graphic>
+                </Button>
+            </HBox>
+         </left></BorderPane>
+    </children>
+</VBox>
