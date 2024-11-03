@@ -1,20 +1,17 @@
 package scau.os.soos.apps.diskManager;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import scau.os.soos.ui.components.base.Window;
 
 import java.util.ArrayList;
@@ -34,8 +31,10 @@ public class DiskManagerApp extends Window {
     private BorderPane detailDisplay;
     @FXML
     private ScrollPane occupation;
+
+    //private Pane occupationGraph;
     @FXML
-    private Pane occupationGraph;
+    private StackPane occupationGraph;
 
     @FXML
     private TableView<DiskBlock> table; // 更新类型为 DiskBlock
@@ -50,9 +49,9 @@ public class DiskManagerApp extends Window {
 
     public class DiskBlock {
         private final Integer blockNumber;
-        private final String state;
+        private final int state;
 
-        public DiskBlock(Integer blockNumber, String state) {
+        public DiskBlock(Integer blockNumber, int state) {
             this.blockNumber = blockNumber;
             this.state = state;
         }
@@ -61,7 +60,7 @@ public class DiskManagerApp extends Window {
             return blockNumber;
         }
 
-        public String getState() {
+        public int getState() {
             return state;
         }
     }
@@ -75,14 +74,6 @@ public class DiskManagerApp extends Window {
     protected void initialize() {
 
 
-//        Rectangle rect = new Rectangle(10, 25, 40, 20);
-//        rect.setArcWidth(10);
-//        rect.setArcHeight(10);
-//        rect.setFill(Color.BLUE);
-//
-//        diskBlocks.getChildren().add(rect);
-//
-//        diskBlocks = new GridPane();
         diskBlocks.setHgap(3); // 水平间隔
         diskBlocks.setVgap(1.5); // 垂直间隔
         for (int i = 0; i < 256; i++) {
@@ -96,6 +87,11 @@ public class DiskManagerApp extends Window {
             diskBlocks.add(diskBlock, i % 16, i / 16); // 将Rectangle添加到GridPane
         }
 
+        occupationGraph.setStyle("-fx-border-color: lightgray; " +
+                "-fx-border-width: 1; " +
+                "-fx-border-style: solid; " +
+                "-fx-padding: 10;");
+
 
         // 设置表格列的数据类型和工厂
         blockNumberColumn.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
@@ -104,11 +100,41 @@ public class DiskManagerApp extends Window {
         // 初始化数据
         ObservableList<DiskBlock> diskBlocksData = FXCollections.observableArrayList();
         for (int i = 0; i < 256; i++) {
-            diskBlocksData.add(new DiskBlock(i, "Free")); // 添加数据
+            diskBlocksData.add(new DiskBlock(i, i%100)); // 添加数据
         }
 
         // 设置数据到TableView
         table.setItems(diskBlocksData);
+
+        // 创建饼图数据
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("空闲:"+30, 30),
+                new PieChart.Data("占用:"+50, 50),
+                new PieChart.Data("系统:"+20, 20)
+        );
+
+        // 创建饼图
+        PieChart pieChart = new PieChart(pieChartData);
+
+
+//        // 格式化饼图数据为百分比
+//        pieChartData.forEach(data -> {
+//            double percentage = (data.getPieValue() / pieChartData.stream().mapToDouble(PieChart.Data::getPieValue).sum()) * 100;
+//            data.setName(String.format("%.1f%%", percentage));
+//        });
+
+
+        // 设置饼图的首选大小
+        pieChart.setPrefSize(occupationGraph.getWidth(), occupationGraph.getHeight()); // 设置为200x200像素
+
+        occupationGraph.getChildren().add(pieChart);
+
+        occupationGraph.setClip(pieChart);
+
+
+
+
+
     }
 
     @Override
