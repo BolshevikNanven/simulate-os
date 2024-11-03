@@ -1,20 +1,19 @@
 package scau.os.soos.apps.fileManager;
 
-import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.concurrent.Task;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Item;
@@ -44,8 +43,6 @@ public class FileManagerApp extends Window {
     private DoubleProperty selectedSize;
     // 文件总数
     private IntegerProperty totalCount;
-    // 文件总大小
-    private DoubleProperty totalSize;
 
     public FileManagerApp() {
         super("文件管理器", "main.fxml", 900, 600);
@@ -60,35 +57,28 @@ public class FileManagerApp extends Window {
         return instance;
     }
 
+    public List<ThumbnailBox> getSelectedList() {
+        return selectedList;
+    }
+
+    public FlowPane getItemContainer() {
+        return itemContainer;
+    }
+
     @Override
     public void initialize() {
-        new FileAreaSelect(selectedArea);
-
-        selectedArea.setVisible(false);
-
-        itemContainer.addEventFilter(MouseEvent.MOUSE_PRESSED,mouseEvent -> {
-            selectedArea.setVisible(true);
-            selectedArea.fireEvent(mouseEvent);
-        });
-        itemContainer.addEventFilter(MouseEvent.MOUSE_DRAGGED,mouseEvent -> {
-            selectedArea.fireEvent(mouseEvent);
-        });
-        itemContainer.addEventFilter(MouseEvent.MOUSE_RELEASED,mouseEvent -> {
-            selectedArea.fireEvent(mouseEvent);
-            selectedArea.setVisible(false);
-        });
+        instance = this;
 
         selectedCount = new SimpleIntegerProperty(0);
         totalCount = new SimpleIntegerProperty(0);
         selectedSize = new SimpleDoubleProperty(0);
-        totalSize = new SimpleDoubleProperty(0);
-
-        // 初始化文件模型列表
         itemList = new ArrayList<>();
-        // 初始化选中文件列表
         selectedList = new ArrayList<>();
 
-        instance = this;
+        addListener();
+        initBottomBar();
+
+        new FileAreaSelect(selectedArea);
     }
 
     @Override
@@ -96,23 +86,34 @@ public class FileManagerApp extends Window {
 
     }
 
+    public void addListener() {
+        itemContainer.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY
+                    && mouseEvent.getClickCount() == 1
+                    && !mouseEvent.isControlDown()){
+                Node intersectedNode = mouseEvent.getPickResult().getIntersectedNode();
+                if (itemContainer.equals(intersectedNode)) {
+                    clearSelectedList();
+                }
+            }
+        });
+    }
+
+    public void refreshCurrentDirectory(){
+        loadDirectory(DirectoryTreeController.getInstance().getCurrentDirectory());
+    }
+
     public void loadDirectory(Item directory) {
         if (directory == null)
             return ;
-        if(!selectedList.isEmpty())clearSelectedList();
-        fileToItemList(directory);
+
+        if(!selectedList.isEmpty())
+            clearSelectedList();
+
+        itemList = ((Directory)directory).getChildren();
+        totalCount.set(itemList.size());
+
         displayThumbnail();
-    }
-    public void fileToItemList(Item directory) {
-        // 接受从目录树控制器传来当前目录
-        // 如果传入的目录为空，则直接返回
-        if (directory == null)
-            return;
-        if (directory.isDirectory()) {
-            // 获取当前目录下所有文件和目录，转换成
-            itemList = ((Directory)directory).getChildren();
-        }
-        // 非法路径，返回false
     }
 
     public void displayThumbnail() {
@@ -131,15 +132,33 @@ public class FileManagerApp extends Window {
         }
     }
 
-    public void clearSelectedList() {
-        if(selectedList.isEmpty())
+    public void selectItem(ThumbnailBox thumbnailBox) {
+        // 将选中的文件加入到selectedList中
+        if (selectedList.contains(thumbnailBox)) {
             return ;
+        } else {
+            thumbnailBox.getStyleClass().add("thumbnail-box-selected");
+            selectedList.add(thumbnailBox);
+        }
+        selectedCount.set(selectedList.size());
+    }
 
+    public void clearSelectedList() {
         for (ThumbnailBox thumbnailBoxModel : selectedList) {
             thumbnailBoxModel.getStyleClass().remove("thumbnail-box-selected");
         }
         selectedList.clear();
         selectedCount.set(0);
-        //System.out.println("clear");
+    }
+
+    public void showContent(Item item) {
+        System.out.println(item);
+    }
+
+    private void initBottomBar () {
+        itemNumber.textProperty().bind(Bindings.createStringBinding(() -> String.format("%d 个项目",
+                                totalCount.get()),totalCount));
+        itemSelectedNumber.textProperty().bind(Bindings.createStringBinding(() -> String.format("选中 %d 个项目 ",
+                selectedCount.get()),selectedCount));
     }
 }

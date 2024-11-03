@@ -14,8 +14,7 @@
    <center>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
          <content>
-            <StackPane fx:id="view">
-               <Pane fx:id="selectedArea" prefHeight="522.0" prefWidth="840.0"/>
+            <StackPane>
                <FlowPane fx:id="itemContainer" cache="true" hgap="10" vgap="10">
                   <padding>
                      <Insets>
@@ -24,6 +23,7 @@
                      </Insets>
                   </padding>
                </FlowPane>
+               <Pane fx:id="selectedArea" prefHeight="522.0" prefWidth="840.0"/>
             </StackPane>
          </content>
       </ScrollPane>

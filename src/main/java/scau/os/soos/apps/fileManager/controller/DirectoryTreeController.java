@@ -38,14 +38,19 @@ public class DirectoryTreeController implements Initializable {
         return instance;
     }
 
+    public Item getCurrentDirectory() {
+        return currentDirectory;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        instance = this;
+
         pathPointer = -1;
         pathList = new ArrayList<>();
         itemMap = new HashMap<>();
 
         init();
-        instance = this;
     }
 
     private void init() {
@@ -120,7 +125,6 @@ public class DirectoryTreeController implements Initializable {
         }
     }
 
-
     private void addListener() {
         //点击事件
         directoryTree.setOnMouseClicked(mouseEvent -> {
@@ -143,7 +147,6 @@ public class DirectoryTreeController implements Initializable {
 //            ToolBarController.showCurrentDirectory(newValue.getValue().getAbsolutePath());
             // 重新设置imageModelList 并展示image
             FileManagerApp.getInstance().loadDirectory(newValue.getValue());
-                    System.out.println(FileManagerApp.getInstance());
                 });
         // 展开事件
         directoryTree.getRoot().addEventHandler(TreeItem.<Item>branchExpandedEvent(),
@@ -184,75 +187,11 @@ public class DirectoryTreeController implements Initializable {
                             imageView.setImage(new Image(resource.toExternalForm()));
                         }
                         setGraphic(hbox);
-//                        // 拖拽copy
-//                        hbox.setOnDragEntered(event -> {
-//                            imageView.setImage(new Image(String.valueOf(getClass().getResource("/com/od/imageview/image/directoryTree/folderOpenforCopy.png"))));
-//                        });
-//                        hbox.setOnDragExited(event -> {
-//                            if (this.getTreeItem().isExpanded()) {
-//                                imageView.setImage(new Image(String.valueOf(getClass().getResource("/com/od/imageview/image/directoryTree/openFolder.png"))));
-//                            } else if (!this.getTreeItem().isExpanded()) {
-//                                imageView.setImage(new Image(String.valueOf(getClass().getResource("/com/od/imageview/image/directoryTree/closeFolder.png"))));
-//                            }
-//                        });
-//                        hbox.setOnDragOver(event -> {
-//                            Dragboard db = event.getDragboard();
-//                            if (db.hasFiles()) {
-//                                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-//                            } else {
-//                                event.consume();
-//                            }
-//                        });
-//                        hbox.setOnDragDropped(event -> {
-//                            // 将拖拽的文件复制进当前目录
-//                            Dragboard db = event.getDragboard();
-//                            db.getFiles().forEach(file -> {
-//                                String name = file.getName();
-//                                // 复制文件到当前目录
-//                                File newFile = new File(item, name);
-//                                if (newFile.exists()) newFile = FileUtil.unConflictFile(newFile);
-//                                try {
-//                                    Files.copy(file.toPath(), newFile.toPath());
-//                                } catch (IOException e) {
-//                                    throw new RuntimeException(e);
-//                                }
-//                            });
-//                            if (currentDirectory == item)
-//                                ControllerManager.thumbnailPaneController.loadDirectory(item);
-//                        });
-//                        this.setGraphic(hbox);
                     }
                 };
             }
         });
     }
-
-//    public void displayItem() {
-////        // 清空选择列表
-////        clearSelectedList();
-//        // 清空ThumbnailPane中的所有子节点
-//        itemContainer.getChildren().clear();
-//        // 如果imageModelList为空，则直接返回
-//        if (itemList.isEmpty())
-//            return;
-//        // 遍历imageModelList列表，为每个ImageModel创建一个ThumbnailBox，并将其添加到ThumbnailPane中
-//        // 自适应调整大小，显示图片和标签
-//        for (int i = 0; i < itemList.size(); i++) {
-//            ImageModel imageModel = itemList.get(i);
-//            // 将ThumbnailBox添加到ThumbnailPane中
-//            thumbnailPane.getChildren().add(new ThumbnailBoxModel(imageModel,ControllerManager.toolBarController.getThumbnailBoxSlider().valueProperty()));
-//        }
-//        if (task != null && task.isRunning()) {
-//            task.cancel();
-//        }
-//        newLoadImageTask(thumbnailPane);
-//        executor.execute(task);
-//    }
-
-    public Item getCurrentDirectory() {
-        return currentDirectory;
-    }
-
 
     public void goToDirectory(Item directory) {
         if (directory == null || !directory.isDirectory() || directory == currentDirectory) {
@@ -328,5 +267,4 @@ public class DirectoryTreeController implements Initializable {
         }
         return false;
     }
-
 }

@@ -7,3 +7,35 @@
     -fx-font-size: 11px;
     -fx-text-fill: #777777;
 }
+
+
+.thumbnail-box {
+    -text-color:#515151;
+}
+.thumbnail-box:hover{
+    -fx-background-color: rgb(138, 138, 138, 0.2);
+}
+
+.thumbnail-box{
+    -fx-pref-width: 100px; /* 设置Label的首选宽度为150像素 */
+    -fx-pref-height: 100px; /* 设置Label的首选高度为30像素 */
+}
+
+.thumbnail-box-selected{
+    -fx-background-color: rgb(138, 138, 138, 0.2);
+}
+
+.thumbnail-box StackPane{
+    -fx-pref-width: 100px; /* 设置Label的首选宽度为150像素 */
+    -fx-pref-height: 100px; /* 设置Label的首选高度为30像素 */
+}
+
+
+.thumbnail-box Label{
+    -fx-alignment: center; /* 设置Label内容在中心对齐 */
+    -fx-text-alignment: center; /* 设置文本在Label中心水平对齐 */
+    -fx-pref-width: 100px; /* 设置Label的首选宽度为150像素 */
+    -fx-pref-height: 20px; /* 设置Label的首选高度为30像素 */
+    -fx-text-fill: -text-color;
+}
+
