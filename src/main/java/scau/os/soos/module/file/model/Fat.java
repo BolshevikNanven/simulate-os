@@ -46,7 +46,7 @@ public class Fat {
      * 设置指定磁盘块的下一个磁盘块索引
      */
     public void setNextBlockIndex(int diskNum, int nextDisk) {
-        fat[diskNum] = (byte) nextDisk;
+        fat[diskNum] = (byte) ( nextDisk & 0xFF);
     }
 
     /**

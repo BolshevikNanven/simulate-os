@@ -137,18 +137,13 @@ public class FileService {
 
     public void writeFile(Item item, String content) {
         //获取需要写入的字符串长度，计算需要多少个磁盘块
-        List<Integer> list = new ArrayList<>();
         Disk disk = item.getDisk();
         Fat fat = item.getDisk().getFat();
         //需要的块数=文件总大小需要的磁盘块数-已占有的块数
         int needDiskNum = (int) Math.ceil((double) content.length() / disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
-        int num = 0;
-        for (int i = 3; i < disk.BLOCKS_PER_DISK && num < needDiskNum; i++) {
-            if (fat.isFreeBlock(i)) {
-                list.add(i);
-                num++;
-            }
-        }
+        List<Integer> list = disk.findFreeDiskBlock(needDiskNum);
+        int num = list.size();
+
 
         //如果磁盘块不足，则无法写入文件
         if (num < needDiskNum) {
