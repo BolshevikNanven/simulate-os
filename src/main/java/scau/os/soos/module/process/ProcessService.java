@@ -65,7 +65,7 @@ public class ProcessService {
 
         // 5.将文件装入内存用户区
         // 获取文件数据
-        Object content = FileController.getInstance().readFile(file);
+        byte[] content = FileController.getInstance().readFile(file);
         // 写入内存用户区
         MemoryController.getInstance().write(newPCB.getPC(), content);
 

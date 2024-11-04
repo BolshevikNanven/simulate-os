@@ -50,7 +50,7 @@ public class FileController implements Module {
     /**
      * 读文件
      */
-    public Object readFile(Item file) {
+    public byte[] readFile(Item file) {
         return fileService.readFile(file);
     }
 

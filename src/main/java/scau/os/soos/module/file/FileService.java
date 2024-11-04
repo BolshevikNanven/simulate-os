@@ -125,12 +125,18 @@ public class FileService {
         return item.getSize();
     }
 
-    public Object readFile(Item file) {
+    public byte[] readFile(Item file) {
         if (file == null) {
             System.out.println("没有该文件");
+            return null;
         }
-        if (file != null) {
-            return ((Exe) file).getInstructions();
+        if (file instanceof Exe exe) {
+            List<Byte> instructions = exe.getInstructions();
+            byte[] instructionsArray = new byte[instructions.size()];
+            for (int i = 0; i < instructions.size(); i++) {
+                instructionsArray[i] = instructions.get(i);
+            }
+            return instructionsArray;
         }
         return null;
     }
