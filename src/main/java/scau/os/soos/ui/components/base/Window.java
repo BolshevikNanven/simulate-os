@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -466,6 +467,12 @@ public abstract class Window implements Initializable {
         return imageView;
     }
 
+
+    public double[] getWindowArea(){
+        Bounds pos = window.localToScreen(window.getBoundsInLocal());
+        return new double[]{pos.getMinX(), pos.getMinY(), pos.getWidth(), pos.getHeight()};
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         body.getStyleClass().add("window-body");
@@ -483,4 +490,5 @@ public abstract class Window implements Initializable {
     protected abstract void initialize();
 
     protected abstract void close();
+
 }
