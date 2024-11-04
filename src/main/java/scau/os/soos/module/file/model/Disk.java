@@ -19,9 +19,9 @@ public class Disk {
 //        this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
 //        disk2file();
         this.file2disk();
-//        for (byte[]bytes:getDisk()){
-//            System.out.println(Arrays.toString(bytes));
-//        }
+        for (byte[]bytes:getDisk()){
+            System.out.println(Arrays.toString(bytes));
+        }
         this.fat = new Fat(this);
         this.rootDirectory = new Directory(
                 this,

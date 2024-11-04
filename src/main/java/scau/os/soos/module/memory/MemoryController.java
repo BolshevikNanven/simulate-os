@@ -37,7 +37,7 @@ public class MemoryController implements Module {
     }
 
     public MemoryReadView getData() {
-        return memoryService.analise();
+        return memoryService.analyse();
     }
 
     @Override

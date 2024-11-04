@@ -42,7 +42,7 @@ public class DeviceController implements Module {
     }
 
     public Map<DEVICE_TYPE, DeviceReadView> getData() {
-        return deviceService.analise();
+        return deviceService.analyse();
     }
 
     @Override

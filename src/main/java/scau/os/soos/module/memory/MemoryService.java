@@ -71,7 +71,7 @@ public class MemoryService {
         return memory.getUserArea(address);
     }
 
-    public MemoryReadView analise() {
+    public MemoryReadView analyse() {
         int availablePCB = 0;
         for (int i = 0; i < 10; i++) {
             if (memory.getSystemArea(i) != null) {

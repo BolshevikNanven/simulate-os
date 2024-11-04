@@ -194,10 +194,10 @@ public abstract class Item {
         int cur = getStartBlockNum();
         int pre = cur;
         for (byte[] bytes : content) {
-            if (cur == -1) {
+            if (cur == Fat.TERMINATED) {
                 cur = disk.findFreeDiskBlock();
                 System.out.println("分配新磁盘块");
-                if (cur == -1) {
+                if (cur == Fat.TERMINATED) {
                     System.out.println("磁盘已满");
                     disk.formatFatTable(getStartBlockNum());
                     return false;
@@ -209,6 +209,7 @@ public abstract class Item {
             pre = cur;
             cur = fat.getNextBlockIndex(cur);
         }
+        fat.writeFatToDisk();
         return true;
     }
 

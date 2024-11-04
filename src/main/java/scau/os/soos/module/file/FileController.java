@@ -3,10 +3,12 @@ package scau.os.soos.module.file;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.util.FileServiceUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileController implements Module {
@@ -90,6 +92,10 @@ public class FileController implements Module {
         return roots;
     }
 
+    public Fat getFat() {
+        return fileService.getDisk().getFat();
+    }
+
     @Override
     public void run() {
 
@@ -101,16 +107,50 @@ public class FileController implements Module {
 //        getInstance().createFile("/e.t");
 //        getInstance().copyFile("/e.t","a/b/");
 
-        Directory root = (Directory) FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
-        System.out.println(root.getPath());
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT).getPath());
+//        Directory root = (Directory) FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
+//        System.out.println(root.getPath());
+//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT).getPath());
 //        getInstance().writeFile(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT),"12345678901234567890");
 //        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT));
 
-        getInstance().copyFile("/e.t", "/a/");
-        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a/e.t", FILE_TYPE.TXT).getPath());
+//        getInstance().copyFile("/e.t", "/a/");
+//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a/e.t", FILE_TYPE.TXT).getPath());
 
 //        getInstance().fileService.getDisk().disk2file();
 
+////
+        getInstance().createDirectory("/a");
+        getInstance().createDirectory("/a/b");
+        getInstance().createDirectory("/a/c");
+        getInstance().createDirectory("/a/d");
+        getInstance().createDirectory("/a/e");
+        getInstance().createFile("/a/f.t");
+        getInstance().createFile("/a/g.t");
+        getInstance().createFile("/a/h.e");
+        getInstance().createFile("/a/i.e");
+        getInstance().createFile("/a/j.e");
+        getInstance().createFile("/a/k.e");
+        getInstance().createFile("/a/l.e");
+        getInstance().createFile("/a/m.e");
+        getInstance().createFile("/a/n.e");
+        getInstance().createFile("/a/o.e");
+        getInstance().createFile("/a/p.e");
+        getInstance().createFile("/a/q.e");
+        getInstance().createFile("/a/r.e");
+
+
+
+
+
+
+
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a", FILE_TYPE.DIRECTORY));
+
+
+
+        getInstance().fileService.getDisk().disk2file();
+        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
+            System.out.println(Arrays.toString(bytes));
+        }
     }
 }
