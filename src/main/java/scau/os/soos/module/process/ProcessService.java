@@ -5,6 +5,7 @@ import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
 import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.model.BlockingQueue;
@@ -37,8 +38,8 @@ public class ProcessService {
 
     // 新建 -> 就绪
     public synchronized Process create(Item file) {
-        if (file == null) {
-            System.out.println("-------Process-------文件为空");
+        if (!(file instanceof Exe)) {
+            System.out.println("-------Process-------文件为空 或 非可执行程序");
             return null;
         }
 
@@ -65,9 +66,14 @@ public class ProcessService {
 
         // 5.将文件装入内存用户区
         // 获取文件数据
-        byte[] content = FileController.getInstance().readFile(file);
+        byte[] instructions = FileController.getInstance().readFile(file);
+        int address = newPCB.getPC();
         // 写入内存用户区
-        MemoryController.getInstance().write(newPCB.getPC(), content);
+        for (byte instruction :instructions){
+            MemoryController.getInstance().write(address, instruction);
+            address++;
+        }
+
 
         // 6.将进程放入就绪队列
         // 设置进程为就绪态度
