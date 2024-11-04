@@ -129,7 +129,15 @@ public class ThumbnailBox extends VBox {
 
             // 双击打开
             if (event.getClickCount() == 2) {
-                FileManagerApp.getInstance().showContent(item);
+                FileManagerApp.getInstance().open(item);
+
+                /***
+                 *
+                 * 本应在 FileAreaSelect 类中执行的鼠标释放事件，被不知名原因被吞掉，
+                 * 不加这一行，selectedArea就无法隐藏
+                 *
+                 */
+                FileManagerApp.getInstance().getSelectedArea().setVisible(false);
             }
         });
     }

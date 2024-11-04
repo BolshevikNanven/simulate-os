@@ -53,6 +53,10 @@ public class FileManagerApp extends Window {
         return instance;
     }
 
+    public Pane getSelectedArea(){
+        return selectedArea;
+    }
+
     public List<ThumbnailBox> getSelectedList() {
         return selectedList;
     }
@@ -182,6 +186,11 @@ public class FileManagerApp extends Window {
             return String.format("\t\t%.0f KB", size / 1024);
     }
 
-    public void open() {
+    public void open(Item item) {
+        if(item instanceof Directory){
+            DirectoryTreeController.getInstance().goToDirectory(item);
+        }else{
+            showContent(item);
+        }
     }
 }

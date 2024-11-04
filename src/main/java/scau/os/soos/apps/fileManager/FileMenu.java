@@ -41,7 +41,8 @@ public class FileMenu extends Popover {
 
     private void addListener() {
         openBtn.setOnAction((e) -> {
-            FileManagerApp.getInstance().open();
+            Item item = FileManagerApp.getInstance().getSelectedList().get(0).getItem();
+            FileManagerApp.getInstance().open(item);
             hide();
         });
         copyBtn.setOnAction(actionEvent -> {
