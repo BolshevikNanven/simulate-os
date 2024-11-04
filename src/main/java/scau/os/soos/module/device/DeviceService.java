@@ -67,44 +67,36 @@ public class DeviceService {
         return new DeviceOverviewReadView(usage);
     }
 
-    public Map<DEVICE_TYPE, DeviceReadView> analise() {
-        int AUsage = 0, BUsage = 0, CUsage = 0;
-        int AAvailable = 0, BAvailable = 0, CAvailable = 0;
-        List<Integer> AUsing = new ArrayList<>(), BUsing = new ArrayList<>(), CUsing = new ArrayList<>();
-        List<Integer> AWaiting, BWaiting, CWaiting;
+    public Map<DEVICE_TYPE, DeviceReadView> analyse() {
+        Map<DEVICE_TYPE, DeviceReadView> map = new HashMap<>();
+
+        map.put(DEVICE_TYPE.A, analyseDeviceType(DEVICE_TYPE.A, 2));
+        map.put(DEVICE_TYPE.B, analyseDeviceType(DEVICE_TYPE.B, 3));
+        map.put(DEVICE_TYPE.C, analyseDeviceType(DEVICE_TYPE.C, 3));
+
+        return map;
+    }
+
+    private DeviceReadView analyseDeviceType(DEVICE_TYPE type, int maxLimit) {
+        int usage = 0, available = 0;
+        List<String> using = new ArrayList<>();
 
         for (Device device : devices) {
-            switch (device.getType()) {
-                case A -> {
-                    if (device.isBusy()) {
-                        AUsage++;
-                        AUsing.add(device.getProcess().getPCB().getPid());
-                    } else AAvailable++;
-                }
-                case B -> {
-                    if (device.isBusy()) {
-                        BUsage++;
-                        BUsing.add(device.getProcess().getPCB().getPid());
-                    } else BAvailable++;
-                }
-                case C -> {
-                    if (device.isBusy()) {
-                        CUsage++;
-                        CUsing.add(device.getProcess().getPCB().getPid());
-                    } else CAvailable++;
+            if (device.getType() == type) {
+                if (device.isBusy()) {
+                    usage++;
+                    using.add(String.valueOf(device.getProcess().getPCB().getPid()));
+                } else {
+                    available++;
                 }
             }
         }
-        AWaiting = deviceQueue.getItemList(DEVICE_TYPE.A).stream().map(task -> task.getProcess().getPCB().getPid()).toList();
-        BWaiting = deviceQueue.getItemList(DEVICE_TYPE.B).stream().map(task -> task.getProcess().getPCB().getPid()).toList();
-        CWaiting = deviceQueue.getItemList(DEVICE_TYPE.C).stream().map(task -> task.getProcess().getPCB().getPid()).toList();
 
-        Map<DEVICE_TYPE, DeviceReadView> map = new HashMap<>();
-        map.put(DEVICE_TYPE.A, new DeviceReadView(AUsage, AAvailable, 2, AUsing, AWaiting));
-        map.put(DEVICE_TYPE.B, new DeviceReadView(BUsage, BAvailable, 3, BUsing, BWaiting));
-        map.put(DEVICE_TYPE.C, new DeviceReadView(CUsage, CAvailable, 3, CUsing, CWaiting));
+        List<String> waiting = deviceQueue.getItemList(type).stream()
+                .map(task -> String.valueOf(task.getProcess().getPCB().getPid()))
+                .toList();
 
-        return map;
+        return new DeviceReadView(usage, available, maxLimit, using, waiting);
     }
 
     private void releaseDevice(Device device) {

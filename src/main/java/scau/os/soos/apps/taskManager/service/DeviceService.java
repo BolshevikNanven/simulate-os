@@ -1,5 +1,6 @@
 package scau.os.soos.apps.taskManager.service;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
@@ -92,6 +93,11 @@ public class DeviceService implements TaskManagerService {
     public void render() {
         Map<DEVICE_TYPE, DeviceReadView> deviceDataMap = DeviceController.getInstance().getData();
 
+        Platform.runLater(() -> {
+            setDeviceData(deviceDataMap.get(DEVICE_TYPE.A), AUsage, AAvailable, AWaiting, AUsing, ASeries);
+            setDeviceData(deviceDataMap.get(DEVICE_TYPE.B), BUsage, BAvailable, BWaiting, BUsing, BSeries);
+            setDeviceData(deviceDataMap.get(DEVICE_TYPE.C), CUsage, CAvailable, CWaiting, CUsing, CSeries);
+        });
     }
 
     @Override
@@ -102,5 +108,17 @@ public class DeviceService implements TaskManagerService {
             overviewSeries.getData().removeFirst();
         }
         overview.setText(String.format("%d/8台", overviewReadView.usage()));
+    }
+
+    private void setDeviceData(DeviceReadView data, Label usage, Label available,
+                               Label waiting, Label using, XYChart.Series<String, Integer> series) {
+        usage.setText(data.usage().toString());
+        available.setText(data.available().toString());
+        waiting.setText(String.join(";", data.waiting()));
+        using.setText(String.join(";", data.using()));
+        series.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), data.usage()));
+        if (overviewSeries.getData().size() > 60) {
+            overviewSeries.getData().removeFirst();
+        }
     }
 }
