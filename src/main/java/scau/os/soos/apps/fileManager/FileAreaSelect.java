@@ -55,10 +55,13 @@ public class FileAreaSelect extends AreaSelect {
 
     private void setOnMouseDragged(MouseEvent mouseEvent){
         double mouseY = mouseEvent.getSceneY();
-        double viewportMaxY = scrollPane.getBoundsInParent().getMaxY();
-        double viewportMinY = scrollPane.getBoundsInParent().getMinY();
+
+        double[] viewport = FileManagerApp.getInstance().getWindowArea();
+        double toolBarHeight = 76;
+        double viewportMinY = viewport[1] + toolBarHeight;
+        double viewportMaxY = viewport[1] + viewport[3];
         double speed = 1 / (itemContainer.getHeight() / 10);
-        System.out.println(scrollPane.getBoundsInParent());
+
         if (mouseY <= viewportMinY) { // 接近顶部时向上滚动
             scrollPane.setVvalue(Math.max(scrollPane.getVvalue() - speed, 0));
         } else if (mouseY >= viewportMaxY) { // 接近底部时向下滚动
