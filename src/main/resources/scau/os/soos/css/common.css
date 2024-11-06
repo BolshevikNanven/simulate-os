@@ -114,7 +114,7 @@ Button {
     -fx-border-radius: 6px;
     -fx-border-width: 1px;
     -fx-border-color: #888888;
-    -fx-background-color: rgba(250, 252, 255, 0.97);
+    -fx-background-color: rgba(250, 252, 252, 1);
 }
 
 .window.full-screen {
@@ -125,6 +125,7 @@ Button {
 
 .window.active {
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.28), 24, 0.4, 0, 8);
+    -fx-background-color: rgba(250, 252, 255, 0.97);
 }
 
 .window.active.full-screen {

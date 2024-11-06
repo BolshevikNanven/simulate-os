@@ -41,6 +41,8 @@ public class MemoryService implements TaskManagerService {
         this.overview = overview;
         this.overviewSeries = new XYChart.Series<>();
         this.detailSeries = new XYChart.Series<>();
+        // series不可重复绑定chart,因此用series绑定series
+        detailSeries.setData(overviewSeries.getData());
 
         try {
             memoryDetail = FXMLLoader.load(TaskManagerApp.class.getResource("memory/memory.fxml"));
@@ -59,7 +61,6 @@ public class MemoryService implements TaskManagerService {
 
     @Override
     public void show() {
-        detailSeries.setData(overviewSeries.getData());
         detailContainer.setContent(memoryDetail);
     }
 

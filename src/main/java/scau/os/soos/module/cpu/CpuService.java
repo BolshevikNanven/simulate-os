@@ -5,6 +5,7 @@ import scau.os.soos.common.enums.CPU_STATES;
 import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.cpu.model.Register;
+import scau.os.soos.module.cpu.view.CpuReadView;
 import scau.os.soos.module.device.DeviceController;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.ProcessController;
@@ -19,7 +20,7 @@ public class CpuService {
 
     private Process runningProcess;                                         // 运行进程
 
-
+    private String currentInstruction;
 
     public CpuService() {
         reg = new Register();
@@ -30,12 +31,13 @@ public class CpuService {
 
     /**
      * 中断请求
+     *
      * @param interruptType 中断类型
-     * @param process 中断源
+     * @param process       中断源
      * @return 是否成功请求中断
      */
-    public boolean requestInterrupt(INTERRUPT interruptType, Process process){
-        if((reg.getPSW() & (1 << interruptType.ordinal())) > 0 || process == null){
+    public boolean requestInterrupt(INTERRUPT interruptType, Process process) {
+        if ((reg.getPSW() & (1 << interruptType.ordinal())) > 0 || process == null) {
             System.out.println("CPU: 拒绝中断请求");
             return false;
         }
@@ -55,7 +57,7 @@ public class CpuService {
         if (runningProcess == null) {
             // 空转 -> 调度进程
             ProcessController.getInstance().schedule();
-            if(runningProcess == null){
+            if (runningProcess == null) {
                 System.out.println("CPU: 空闲");
                 return;
             }
@@ -72,10 +74,11 @@ public class CpuService {
 
     /**
      * 处理进程
+     *
      * @param process
      */
     public boolean handleProcess(Process process) {
-        if(runningProcess != null || process == null){
+        if (runningProcess != null || process == null) {
             return false;
         }
         runningProcess = process;
@@ -94,11 +97,9 @@ public class CpuService {
     public void detectInterrupt() {
         if ((reg.getPSW() & 0b001) > 0) {
             handleProgramEndInterrupt();
-        }
-        else if ((reg.getPSW() & 0b010) > 0) {
+        } else if ((reg.getPSW() & 0b010) > 0) {
             handleTimeSliceEndInterrupt();
-        }
-        else if ((reg.getPSW() & 0b100) > 0) {
+        } else if ((reg.getPSW() & 0b100) > 0) {
             handleIOInterrupt();
         }
     }
@@ -112,7 +113,7 @@ public class CpuService {
         unload();
 
         Process process = interruptSource[0];
-        if(process != null){
+        if (process != null) {
             ProcessController.getInstance().destroy(interruptSource[0]);
         }
         ProcessController.getInstance().schedule();
@@ -132,7 +133,7 @@ public class CpuService {
 
         unload();
 
-        if(runningProcess != null){
+        if (runningProcess != null) {
             ProcessController.getInstance().handoff(runningProcess);
         }
         ProcessController.getInstance().schedule();
@@ -147,7 +148,7 @@ public class CpuService {
         System.out.println("CPU: 中断-IO中断");
 
         Process process = interruptSource[2];
-        if(process != null){
+        if (process != null) {
             ProcessController.getInstance().wake(interruptSource[2]);
         }
 
@@ -157,6 +158,7 @@ public class CpuService {
 
     /**
      * 设置PSW中的中断标志
+     *
      * @param interruptType 中断类型
      */
     public void setInterrupt(INTERRUPT interruptType) {
@@ -165,6 +167,7 @@ public class CpuService {
 
     /**
      * 清除PSW中的中断标志
+     *
      * @param interruptType 中断类型
      */
     public void clearInterrupt(INTERRUPT interruptType) {
@@ -188,55 +191,67 @@ public class CpuService {
     public void decodeInstruction() {
         int instruction = reg.getIR();
         System.out.println("CPU: 执行指令" + Integer.toBinaryString(instruction));
+
         int op = instruction >> 4;
         int tmp = instruction & 0b00001111;
         switch (op) {
             case 0b0001 -> {
-                System.out.println("x = " + tmp);
+                currentInstruction = "x = " + tmp;
                 reg.setAX(tmp);
             }
             case 0b0010 -> {
-                System.out.println("x ++");
+                currentInstruction = "x ++";
                 reg.incAX();
             }
             case 0b0011 -> {
-                System.out.println("x --");
+                currentInstruction = "x --";
                 reg.decAX();
             }
             case 0b0100 -> {
                 int time = tmp >> 2;
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
-                System.out.println("!"+time+","+deviceType);
+                currentInstruction = "!" + time + "," + deviceType;
 
                 unload();
 
                 ProcessController.getInstance().block(runningProcess);
-                DeviceController.getInstance().assign(deviceType,time, runningProcess);
+                DeviceController.getInstance().assign(deviceType, time, runningProcess);
                 ProcessController.getInstance().schedule();
             }
             case 0b0101 -> {
-                System.out.println("end");
+                currentInstruction = "end";
                 requestInterrupt(INTERRUPT.ProgramEnd, runningProcess);
             }
             default -> {
-                System.out.println("指令错误");
+                currentInstruction = "指令错误";
             }
         }
-        System.out.println("x = " + reg.getAX());
-    }
 
+        System.out.println(currentInstruction);
+
+        System.out.println("x = " + reg.getAX());
+
+    }
 
 
     /**
      * 进程下处理机
      */
-    public void unload(){
+    public void unload() {
         runningProcess = null;
         cpuState = CPU_STATES.IDLE;
     }
 
     public Process getCurrentProcess() {
         return this.runningProcess;
+    }
+
+    public CpuReadView analyse() {
+        int pid = -1;
+        if (runningProcess != null) {
+            pid = runningProcess.getPCB().getPid();
+        }
+        return new CpuReadView(pid, currentInstruction, reg.getAX());
     }
 }

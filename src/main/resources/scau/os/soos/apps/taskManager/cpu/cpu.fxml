@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,7 +17,7 @@
             <Label prefHeight="38.0" prefWidth="62.0" styleClass="detail-title" text="CPU" BorderPane.alignment="CENTER" />
          </left>
          <right>
-            <Label prefHeight="28.0" styleClass="detail-subtitle" text="忙碌中" BorderPane.alignment="CENTER" />
+            <Label id="cpu-state" prefHeight="28.0" styleClass="detail-subtitle" text="忙碌中" BorderPane.alignment="CENTER" />
          </right>
       </BorderPane>
       <BorderPane>
@@ -33,14 +33,14 @@
       </BorderPane>
       <BorderPane prefWidth="603.0">
          <center>
-            <LineChart horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="70.0" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
-              <xAxis>
-                <CategoryAxis gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
-              </yAxis>
-            </LineChart>
+            <AreaChart id="process-chart" fx:id="memoryOverviewChart" alternativeRowFillVisible="false" animated="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="72.0" styleClass="cpu-chart" verticalGridLinesVisible="false" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
+               <xAxis>
+                  <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
+               </yAxis>
+            </AreaChart>
          </center>
       </BorderPane>
       <BorderPane>
@@ -56,31 +56,25 @@
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="相对时钟" />
-                  <Label styleClass="detail-col-content-l" text="5" />
+                  <Label id="cpu-time-slice" styleClass="detail-col-content-l" text="5" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="运行进程" />
-                  <Label styleClass="detail-col-content-l" text="12" />
+                  <Label id="cpu-pid" styleClass="detail-col-content-l" text="12" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="指令" />
-                  <Label styleClass="detail-col-content-l" text="X++" />
+                  <Label id="cpu-instruction" styleClass="detail-col-content-l" text="X++" />
                </children>
             </VBox>
             <VBox>
                <children>
                   <Label styleClass="detail-col-title" text="AX" />
-                  <Label styleClass="detail-col-content-l" text="0" />
-               </children>
-            </VBox>
-            <VBox>
-               <children>
-                  <Label styleClass="detail-col-title" text="结果" />
-                  <Label styleClass="detail-col-content-l" text="5" />
+                  <Label id="cpu-AX" styleClass="detail-col-content-l" text="0" />
                </children>
             </VBox>
          </children>
@@ -103,7 +97,7 @@
                   <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
                   <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="占用内存" />
                   <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                  <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="占用设备" />
+                  <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="等待设备" />
                   <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
                </children>
             </HBox>

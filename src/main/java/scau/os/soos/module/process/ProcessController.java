@@ -4,6 +4,7 @@ import scau.os.soos.common.OS;
 import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.module.process.model.Process;
+import scau.os.soos.module.process.view.ProcessOverviewReadView;
 
 public class ProcessController implements Module {
     private static ProcessController instance;
@@ -64,6 +65,9 @@ public class ProcessController implements Module {
         return processService.handoff(process);
     }
 
+    public ProcessOverviewReadView getOverview(){
+        return processService.overview();
+    }
     @Override
     public void run() {
         OS.clock.bind(processService::clockSchedule);

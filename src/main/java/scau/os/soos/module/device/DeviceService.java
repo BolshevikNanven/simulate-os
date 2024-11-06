@@ -79,22 +79,20 @@ public class DeviceService {
 
     private DeviceReadView analyseDeviceType(DEVICE_TYPE type, int maxLimit) {
         int usage = 0, available = 0;
-        List<String> using = new ArrayList<>();
+        List<Integer> using = new ArrayList<>();
 
         for (Device device : devices) {
             if (device.getType() == type) {
                 if (device.isBusy()) {
                     usage++;
-                    using.add(String.valueOf(device.getProcess().getPCB().getPid()));
+                    using.add(device.getProcess().getPCB().getPid());
                 } else {
                     available++;
                 }
             }
         }
 
-        List<String> waiting = deviceQueue.getItemList(type).stream()
-                .map(task -> String.valueOf(task.getProcess().getPCB().getPid()))
-                .toList();
+        List<Integer> waiting = deviceQueue.getItemList(type).stream().map(task -> task.getProcess().getPCB().getPid()).toList();
 
         return new DeviceReadView(usage, available, maxLimit, using, waiting);
     }

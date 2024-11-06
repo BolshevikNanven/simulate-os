@@ -13,6 +13,7 @@ import scau.os.soos.module.process.model.EmptyPCBQueue;
 import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.ReadyQueue;
 import scau.os.soos.module.process.model.Process;
+import scau.os.soos.module.process.view.ProcessOverviewReadView;
 
 public class ProcessService {
     // 进程最大数量
@@ -69,7 +70,7 @@ public class ProcessService {
         byte[] instructions = FileController.getInstance().readFile(file);
         int address = newPCB.getPC();
         // 写入内存用户区
-        for (byte instruction :instructions){
+        for (byte instruction : instructions) {
             MemoryController.getInstance().write(address, instruction);
             address++;
         }
@@ -96,7 +97,7 @@ public class ProcessService {
 
         // 2.从就绪队列中选择一个新进程
         PCB pcb = readyQueue.pollPCB();
-        if(pcb==null){
+        if (pcb == null) {
             System.out.println("-------Process-------就绪队列为空");
             return false;
         }
@@ -222,6 +223,19 @@ public class ProcessService {
                 resetTimeSlice();
             }
         }
+    }
+
+    public ProcessOverviewReadView overview() {
+        int total = readyQueue.size() + blockingQueue.size();
+        boolean busy = false;
+        Process runningProcess = CpuController.getInstance().getCurrentProcess();
+
+        if (runningProcess != null) {
+            total++;
+            busy = true;
+        }
+
+        return new ProcessOverviewReadView(total, busy, currentProcessTimeSlice);
     }
 
     private void resetTimeSlice() {

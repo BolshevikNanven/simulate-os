@@ -66,7 +66,10 @@ public class TaskManagerApp extends Window {
         }
 
         handler = () -> {
+            // detail渲染
             serviceMap.get(activeCardName).render();
+
+            // overview渲染
             Platform.runLater(() -> {
                 clock.setText(String.valueOf(OS.clock.get()));
                 for (TaskManagerService service : serviceMap.values()) {

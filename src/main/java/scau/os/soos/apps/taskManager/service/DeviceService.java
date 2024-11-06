@@ -114,8 +114,8 @@ public class DeviceService implements TaskManagerService {
                                Label waiting, Label using, XYChart.Series<String, Integer> series) {
         usage.setText(data.usage().toString());
         available.setText(data.available().toString());
-        waiting.setText(String.join(";", data.waiting()));
-        using.setText(String.join(";", data.using()));
+        waiting.setText(String.join(";", data.waiting().stream().map(String::valueOf).toList()));
+        using.setText(String.join(";", data.waiting().stream().map(String::valueOf).toList()));
         series.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), data.usage()));
         if (overviewSeries.getData().size() > 60) {
             overviewSeries.getData().removeFirst();

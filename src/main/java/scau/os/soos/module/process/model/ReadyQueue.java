@@ -18,6 +18,9 @@ public class ReadyQueue {
         return this.readyQueue.poll();
     }
 
+    public int size() {
+        return readyQueue.size();
+    }
 }
 
 

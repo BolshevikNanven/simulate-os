@@ -21,5 +21,7 @@ public class BlockingQueue {
     public boolean removePCB(PCB pcb) {
         return this.blockingQueue.remove(pcb);
     }
-
+    public int size(){
+        return blockingQueue.size();
+    }
 }
