@@ -60,6 +60,7 @@ public class FileMenu extends Popover {
                 } else {
                     FileController.getInstance().deleteFile(item.getPath());
                 }
+                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
             }
             FileManagerApp.getInstance().refreshCurrentDirectory();
             hide();
@@ -82,6 +83,7 @@ public class FileMenu extends Popover {
         createDirectoryBtn.setOnAction(actionEvent -> {
             Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
             FileController.getInstance().createDirectory(cur.getPath() + "new");
+            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
             hide();
         });

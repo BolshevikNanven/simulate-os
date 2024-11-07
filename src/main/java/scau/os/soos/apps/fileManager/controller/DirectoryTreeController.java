@@ -27,7 +27,6 @@ public class DirectoryTreeController implements Initializable {
     private Item currentDirectory;
     // 文件与节点映射
     private HashMap<Item, TreeItem<Item>> itemMap;
-    private ArrayList<Item> itemList;
 
     private static DirectoryTreeController instance;
 
@@ -78,21 +77,8 @@ public class DirectoryTreeController implements Initializable {
                 TreeItem<Item> driveItem = new TreeItem<>(drive);
                 itemMap.put(drive, driveItem);
 
-                // 加载磁盘下一级内容
-                List<Item> items = ((Directory) drive).getChildren();
-                for (Item item : items) {
-                    if (!item.isDirectory()) {
-                        continue;
-                    }
-                    // 为每个磁盘下一级内容创建一个新的TreeItem
-                    TreeItem<Item> childrenItems = new TreeItem<>(item);
-
-                    // 将新的TreeItem添加到磁盘节点中
-                    driveItem.getChildren().add(childrenItems);
-
-                    // 将文件与新的TreeItem关联，添加到文件与节点映射中
-                    itemMap.put(item, childrenItems);
-                }
+                // 加载当前驱动器的子目录
+                loadDirectory(driveItem);
 
                 // 将磁盘节点添加到顶级TreeItem中
                 root.getChildren().add(driveItem);
@@ -100,29 +86,76 @@ public class DirectoryTreeController implements Initializable {
         }
     }
 
-    private void loadChildren(TreeItem<Item> directoryItem) {
-        for (TreeItem<Item> item : directoryItem.getChildren()) {
-            // 加载指定目录下的所有子目录作为子节点
-            Item currentItem = item.getValue();
-            // 跳过空项或非目录项
-            if (currentItem == null || !currentItem.isDirectory()) {
+    public void refreshCurrentDirectory() {
+        loadDirectory(itemMap.get(currentDirectory));
+    }
+
+    public void refreshCurrentDirectory(Item item) {
+        deleteDirectory(item);
+    }
+
+    private void loadDirectory(TreeItem<Item> directoryItem) {
+        // 加载当前目录项的直接子项
+        loadImmediateChildren(directoryItem);
+
+        // 递归地展开当前目录项的所有子项
+        expandChildrenRecursively(directoryItem);
+    }
+
+    private void loadImmediateChildren(TreeItem<Item> directoryItem) {
+        // 加载指定目录下的所有子目录作为子节点
+        Item curItem = directoryItem.getValue();
+        // 跳过空项或非目录项
+        if (curItem == null || !curItem.isDirectory()) {
+            return;
+        }
+
+        // 将当前项转换为Directory类型
+        Directory dir = (Directory) curItem;
+        // 获取当前目录下的所有子项
+        List<Item> childItems = dir.getChildren();
+
+        // 遍历所有子项
+        for (Item childItem : childItems) {
+            // 跳过已经存在的项或非目录项
+            if (itemMap.containsKey(childItem) || !childItem.isDirectory()) {
                 continue;
             }
-
-            Directory directory = (Directory) currentItem;
-            List<Item> childrenItems = directory.getChildren();
-            for (Item childItem : childrenItems) {
-                // 跳过已经存在的项
-                if (itemMap.containsKey(childItem) || !childItem.isDirectory()) {
-                    continue;
-                }
-                TreeItem<Item> childTreeItem = new TreeItem<>(childItem);
-                // 将子项添加到当前项的子节点列表中
-                item.getChildren().add(childTreeItem);
-                // 将项与树形视图节点关联起来，存入映射中
-                itemMap.put(childItem, childTreeItem);
-            }
+            // 为每个子项创建一个新的TreeItem
+            TreeItem<Item> childTreeItem = new TreeItem<>(childItem);
+            // 将子项添加到当前项的子节点列表中
+            directoryItem.getChildren().add(childTreeItem);
+            // 将项与树形视图节点关联起来，存入映射中
+            itemMap.put(childItem, childTreeItem);
         }
+    }
+
+    private void expandChildrenRecursively(TreeItem<Item> parentItem) {
+        // 遍历父项的所有子项
+        for (TreeItem<Item> item : parentItem.getChildren()) {
+            // 为每个子项加载其直接子项
+            loadImmediateChildren(item);
+        }
+    }
+
+    private void deleteDirectory(Item directory) {
+        // 从文件与节点映射中获取要删除的目录对应的TreeItem
+        TreeItem<Item> treeItem = itemMap.get(directory);
+        // 如果未找到对应的TreeItem，则直接返回
+        if (treeItem == null) {
+            return;
+        }
+        // 获取要删除的TreeItem的父节点
+        TreeItem<Item> parentItem = treeItem.getParent();
+        // 如果要删除的目录是根目录（即没有父节点），则打印提示信息并返回
+        if (parentItem == null) {
+            System.out.println("Cannot delete root directory.");
+            return;
+        }
+        // 从父节点的子节点列表中移除要删除的TreeItem
+        parentItem.getChildren().remove(treeItem);
+        // 从文件与节点映射中移除对应的条目
+        itemMap.remove(directory);
     }
 
     private void addListener() {
@@ -150,7 +183,7 @@ public class DirectoryTreeController implements Initializable {
                 });
         // 展开事件
         directoryTree.getRoot().addEventHandler(TreeItem.<Item>branchExpandedEvent(),
-                event -> loadChildren(event.getSource()));
+                event -> loadDirectory(event.getSource()));
     }
 
     private void setCell() {
