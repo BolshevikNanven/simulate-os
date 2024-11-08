@@ -29,8 +29,6 @@ public abstract class Item {
         setStartBlockNum(startBlockNum);
         setSize(size);
         setAttribute(readOnly, systemFile, regularFile, isDirectory);
-
-        setPath();
     }
 
     public void setDisk(Disk disk) {
@@ -124,8 +122,8 @@ public abstract class Item {
 
     public int getSize() {
         int s = 0;
-        s+=size[0];
-        s+=size[1] << 8;
+        s+=size[0] & 0xFF;
+        s+=(size[1] << 8) & 0xFFFF;
         return s;
     }
 

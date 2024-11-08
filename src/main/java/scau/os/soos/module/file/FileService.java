@@ -230,7 +230,6 @@ public class FileService {
         newItem.setDisk(disk);
         newItem.setParent(parent);
         newItem.setStartBlockNum(needDiskBlocks.get(0));
-        newItem.setPath();
 
         parent.addChildren(newItem);
         FileServiceUtil.updateItemSize(newItem);
