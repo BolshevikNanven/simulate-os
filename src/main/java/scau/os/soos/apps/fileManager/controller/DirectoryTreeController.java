@@ -1,5 +1,10 @@
 package scau.os.soos.apps.fileManager.controller;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -26,9 +31,9 @@ public class DirectoryTreeController implements Initializable {
     @FXML
     public TreeView<Item> directoryTree;
     // 路径指针，用于前进和后退
-    private int pathPointer;
+    private IntegerProperty pathPointer;
     // 路径列表，用于前进和后退
-    private ArrayList<TreeItem<Item>> pathList;
+    private ListProperty<TreeItem<Item>> pathList;
     // 当前目录
     private Item currentDirectory;
     // 文件与节点映射
@@ -47,12 +52,20 @@ public class DirectoryTreeController implements Initializable {
         return currentDirectory;
     }
 
+    public IntegerProperty getPathPointerProperty() {
+        return pathPointer;
+    }
+
+    public ListProperty<TreeItem<Item>> getPathListProperty() {
+        return pathList;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         instance = this;
 
-        pathPointer = -1;
-        pathList = new ArrayList<>();
+        pathPointer = new SimpleIntegerProperty(-1);
+        pathList = new SimpleListProperty<>(FXCollections.observableArrayList());
         itemMap = new HashMap<>();
 
         init();
@@ -171,10 +184,10 @@ public class DirectoryTreeController implements Initializable {
         //点击事件
         directoryTree.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() > 0 &&
-                    (pathPointer == -1 || pathList.get(pathPointer)
+                    (pathPointer.get()==-1 || pathList.get(pathPointer.get())
                             != directoryTree.getSelectionModel().getSelectedItem())) {
                 // path进list
-                pathPointer++;
+                pathPointer.set(pathPointer.get() +1);
                 pathList.add(directoryTree.getSelectionModel().getSelectedItem());
             }
         });
@@ -247,7 +260,7 @@ public class DirectoryTreeController implements Initializable {
         if (itemMap.containsKey(directory)) {
             TreeItem<Item> directoryItem = itemMap.get(directory);
             directoryTree.getSelectionModel().select(directoryItem);
-            pathPointer++;
+            pathPointer.set(pathPointer.get()+1);
             pathList.add(directoryItem);
             return;
         }
@@ -269,7 +282,7 @@ public class DirectoryTreeController implements Initializable {
         if (itemMap.containsKey(directory)) {
             TreeItem<Item> directoryItem = itemMap.get(directory);
             directoryTree.getSelectionModel().select(directoryItem);
-            pathPointer++;
+            pathPointer.set(pathPointer.get()+1);
             pathList.add(directoryItem);
         }
     }
@@ -280,20 +293,19 @@ public class DirectoryTreeController implements Initializable {
         TreeItem<Item> item = directoryTree.getSelectionModel().getSelectedItem();
         if (item == null || item.getParent() == null || item.getParent().getParent() == null) {
             return;
-        } else {
-            Item file = item.getParent().getValue();
-            directoryTree.getSelectionModel().select(item.getParent());
-            pathPointer++;
-            pathList.add(item.getParent());
         }
+
+        directoryTree.getSelectionModel().select(item.getParent());
+        pathPointer.set(pathPointer.get()+1);
+        pathList.add(item.getParent());
     }
 
     public boolean stepBackward() {
-        if (pathPointer > 0) {
+        if (pathPointer.get() > 0) {
             // 路径指针--
-            pathPointer--;
+            pathPointer.set(pathPointer.get()-1);
             // 重新设置imageModelList
-            TreeItem<Item> item = pathList.get(pathPointer);
+            TreeItem<Item> item = pathList.get(pathPointer.get());
             // 重新设置TreeView
             directoryTree.getSelectionModel().select(item);
             return true;
@@ -302,11 +314,11 @@ public class DirectoryTreeController implements Initializable {
     }
 
     public boolean stepForward() {
-        if (pathPointer < pathList.size() - 1) {
+        if (pathPointer.get() < pathList.size() - 1) {
             // 路径指针++
-            pathPointer++;
+            pathPointer.set(pathPointer.get()+1);
             // 重新设置imageModelList
-            TreeItem<Item> item = pathList.get(pathPointer);
+            TreeItem<Item> item = pathList.get(pathPointer.get());
             // 重新设置TreeView
             directoryTree.getSelectionModel().select(item);
             System.out.println(pathPointer);

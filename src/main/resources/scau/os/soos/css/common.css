@@ -188,3 +188,21 @@ Button {
     -fx-border-color: #666666;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.48), 16, 0.4, 0, 0);
 }
+
+
+/* ---------------------
+    全局对话框样式
+------------------------ */
+
+.dialog{
+    -fx-background-color: #ffffff;
+}
+
+.dialog Label{
+    -fx-font-size: 14px;
+}
+
+.dialog .bottom{
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 0 0 6px 6px;
+}

@@ -60,6 +60,9 @@ public class Directory extends Item {
     }
 
     private Item find(String path, boolean isDirectory, byte type) {
+        if (path == null) {
+            return null;
+        }
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
         List<String> pathParts = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {

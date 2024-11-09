@@ -90,6 +90,10 @@ public class FileController implements Module {
         return fileService.reAttribute(item,readOnly,systemFile,regularFile,isDirectory);
     }
 
+    public Item findItem(String path, FILE_TYPE type) {
+        return fileService.findItem(path,type);
+    }
+
     public int getFileSize(Item file) {
         return fileService.getSize(file);
     }

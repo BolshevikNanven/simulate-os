@@ -253,4 +253,8 @@ public class FileService {
         FileServiceUtil.writeItemAndParentsToDisk(item);
         return true;
     }
+
+    public Item findItem(String path, FILE_TYPE type) {
+        return FileServiceUtil.find(disk, path, type);
+    }
 }
