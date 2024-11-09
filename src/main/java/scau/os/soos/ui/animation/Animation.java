@@ -2,7 +2,10 @@ package scau.os.soos.ui.animation;
 
 import javafx.animation.*;
 import javafx.scene.Node;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class Animation {
