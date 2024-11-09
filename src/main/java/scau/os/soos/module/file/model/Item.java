@@ -52,6 +52,10 @@ public abstract class Item {
             System.out.println("Name is null");
             return;
         }
+        if(name.getBytes().length > 3) {
+            System.out.println("Name is too long");
+            return;
+        }
         this.name = Arrays.copyOf(name.getBytes(), 3);
     }
 

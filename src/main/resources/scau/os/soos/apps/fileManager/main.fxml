@@ -23,16 +23,16 @@
                      </Insets>
                   </padding>
                </FlowPane>
-               <Pane fx:id="selectedArea"/>
+               <Pane fx:id="selectedArea" style="-fx-background-color: #000"/>
             </StackPane>
          </content>
       </ScrollPane>
    </center>
    <left>
-      <fx:include source="components/directory-tree.fxml"/>
+      <fx:include source="components/directory_tree.fxml"/>
    </left>
    <top>
-      <fx:include source="components/tool-bar.fxml" />
+      <fx:include source="components/tool_bar.fxml" />
    </top>
    <bottom>
       <BorderPane styleClass="bottom-bar" BorderPane.alignment="CENTER">

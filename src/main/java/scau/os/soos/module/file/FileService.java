@@ -243,7 +243,14 @@ public class FileService {
     }
 
     public boolean reName(Item item, String newName) {
-//
+        item.setName(newName);
+        FileServiceUtil.writeItemAndParentsToDisk(item);
+        return true;
+    }
+
+    public boolean reAttribute(Item item, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
+        item.setAttribute(readOnly,systemFile,regularFile,isDirectory);
+        FileServiceUtil.writeItemAndParentsToDisk(item);
         return true;
     }
 }

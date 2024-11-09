@@ -86,6 +86,10 @@ public class FileController implements Module {
         return fileService.reName(item,newName);
     }
 
+    public boolean reAttribute(Item item,boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory){
+        return fileService.reAttribute(item,readOnly,systemFile,regularFile,isDirectory);
+    }
+
     public int getFileSize(Item file) {
         return fileService.getSize(file);
     }

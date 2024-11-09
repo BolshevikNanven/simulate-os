@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
+import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
@@ -202,6 +203,13 @@ public class ThumbnailBox extends VBox {
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // 失去焦点
                 completeRenaming();
+                /***
+                 *
+                 * 本应在 FileAreaSelect 类中执行的鼠标释放事件，被不知名原因被吞掉，
+                 * 不加这一行，selectedArea就无法隐藏
+                 *
+                 */
+                FileManagerApp.getInstance().getSelectedArea().setVisible(false);
             }
         });
     }
@@ -254,7 +262,7 @@ public class ThumbnailBox extends VBox {
                     }
                 }
             }
-            item.setName(newName);
+            FileController.getInstance().reName(item, newName);
             DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         }

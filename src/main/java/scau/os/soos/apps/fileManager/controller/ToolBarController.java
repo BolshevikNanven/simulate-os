@@ -20,6 +20,9 @@ public class ToolBarController implements Initializable {
     @FXML public Button reNameBtn;
     @FXML public Button deleteBtn;
     @FXML public TextField currentDirectory;
+    @FXML public Button goToBtn;
+    @FXML public TextField searchTextField;
+    @FXML public Button searchBtn;
 
     private static ToolBarController instance;
 
@@ -38,35 +41,38 @@ public class ToolBarController implements Initializable {
     }
 
     private void addListener() {
-        leftBtn.setOnAction((e)->
+        leftBtn.setOnAction((e) ->
                 DirectoryTreeController.getInstance().stepBackward());
 
-        rightBtn.setOnAction((e)->
+        rightBtn.setOnAction((e) ->
                 DirectoryTreeController.getInstance().stepForward());
 
-        upBtn.setOnAction((e)->
+        upBtn.setOnAction((e) ->
                 DirectoryTreeController.getInstance().upDirectory());
 
-        refreshBtn.setOnAction((e)->
-                FileManagerApp.getInstance().refreshCurrentDirectory());
+        refreshBtn.setOnAction((e) -> {
+                    DirectoryTreeController.getInstance().refreshCurrentDirectory();
+                    FileManagerApp.getInstance().refreshCurrentDirectory();
+                }
+        );
 
-        shearBtn.setOnAction((e)->{
-
-        });
-
-        copyBtn.setOnAction((e)->{
-
-        });
-
-        pasteBtn.setOnAction((e)->{
+        shearBtn.setOnAction((e) -> {
 
         });
 
-        reNameBtn.setOnAction((e)->{
+        copyBtn.setOnAction((e) -> {
 
         });
 
-        deleteBtn.setOnAction((e)->{
+        pasteBtn.setOnAction((e) -> {
+
+        });
+
+        reNameBtn.setOnAction((e) -> {
+
+        });
+
+        deleteBtn.setOnAction((e) -> {
 
         });
     }

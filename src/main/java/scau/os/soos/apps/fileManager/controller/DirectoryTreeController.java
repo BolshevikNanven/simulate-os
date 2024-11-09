@@ -5,15 +5,21 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.FileService;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Item;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 public class DirectoryTreeController implements Initializable {
@@ -87,7 +93,8 @@ public class DirectoryTreeController implements Initializable {
     }
 
     public void refreshCurrentDirectory() {
-        loadDirectory(itemMap.get(currentDirectory));
+//        loadDirectory(itemMap.get(currentDirectory));
+        directoryTree.refresh();
     }
 
     public void refreshCurrentDirectory(Item item) {
@@ -95,6 +102,7 @@ public class DirectoryTreeController implements Initializable {
     }
 
     private void loadDirectory(TreeItem<Item> directoryItem) {
+        System.out.println(directoryItem);
         // 加载当前目录项的直接子项
         loadImmediateChildren(directoryItem);
 
@@ -178,9 +186,9 @@ public class DirectoryTreeController implements Initializable {
                     }
                     currentDirectory = newValue.getValue();
                     //更新当前目录显示
-            ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
-            //重新设置imageModelList 并展示image
-            FileManagerApp.getInstance().loadDirectory(newValue.getValue());
+                    ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
+                    //重新设置imageModelList 并展示image
+                    FileManagerApp.getInstance().loadDirectory(newValue.getValue());
                 });
         // 展开事件
         directoryTree.getRoot().addEventHandler(TreeItem.<Item>branchExpandedEvent(),
@@ -200,12 +208,17 @@ public class DirectoryTreeController implements Initializable {
                     private final HBox hbox = new HBox();
                     private final Label label = new Label();
                     private final ImageView imageView = new ImageView();
+                    private static final String FOLDER_OPEN_FOR_COPY_PATH = String.valueOf(FileManagerApp.class.getResource("image/directoryTree/folder-open-for-copy.png"));
+                    private static final String OPEN_FOLDER_PATH = String.valueOf(FileManagerApp.class.getResource("image/directoryTree/open-folder.png"));
+                    private static final String CLOSE_FOLDER_PATH = String.valueOf(FileManagerApp.class.getResource("image/directoryTree/close-folder.png"));
+
                     {
                         imageView.setPreserveRatio(true);
                         imageView.setFitHeight(16);
                         hbox.getChildren().add(imageView);
                         hbox.getChildren().add(label);
                     }
+
                     @Override
                     protected void updateItem(Item item, boolean empty) {
                         super.updateItem(item, empty);
@@ -216,7 +229,7 @@ public class DirectoryTreeController implements Initializable {
                         // 设置图片和文本
                         label.setText(item.getName());
                         URL resource = FileManagerApp.class.getResource("image/directoryTree/" +
-                                (getTreeItem().isExpanded() ? "openFolder.png" : "closeFolder.png"));
+                                (getTreeItem().isExpanded() ? "open-folder.png" : "close-folder.png"));
                         if (resource != null) {
                             imageView.setImage(new Image(resource.toExternalForm()));
                         }
