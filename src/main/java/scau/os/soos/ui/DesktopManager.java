@@ -37,7 +37,7 @@ public class DesktopManager {
         desktopMenu = new DesktopMenu();
         areaSelect = new DesktopAreaSelect(desktop);
         try {
-            windowIndicator = FXMLLoader.load(MainApplication.class.getResource("components/window_indicator.fxml"));
+            windowIndicator = FXMLLoader.load(MainApplication.class.getResource("ui/components/window_indicator.fxml"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

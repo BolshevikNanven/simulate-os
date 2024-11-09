@@ -34,7 +34,7 @@ public class TaskMenu extends Popover {
 
     @Override
     protected Pane setup() {
-        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("components/task_menu.fxml"));
+        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("ui/components/task_menu.fxml"));
         try {
             return loader.load();
         } catch (IOException e) {

@@ -60,7 +60,7 @@
       <AnchorPane id="window-body" prefHeight="436.0" prefWidth="725.0" BorderPane.alignment="CENTER" />
    </center>
    <stylesheets>
-      <URL value="@../css/common.css" />
-      <URL value="@../css/icon.css" />
+      <URL value="@../../css/common.css" />
+      <URL value="@../../css/icon.css" />
    </stylesheets>
 </BorderPane>

@@ -15,7 +15,7 @@ public class DesktopMenu extends Popover {
 
     @Override
     protected Pane setup() {
-        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("components/desktop_menu.fxml"));
+        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("ui/components/desktop_menu.fxml"));
         try {
             return loader.load();
         } catch (IOException e) {

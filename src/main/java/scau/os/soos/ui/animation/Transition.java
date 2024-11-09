@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class Transition {
@@ -40,5 +41,17 @@ public class Transition {
         zoomIn.setToY(1);
 
         zoomIn.play();
+    }
+    public static void playShake(Pane node){
+        TranslateTransition translateTransition = new TranslateTransition();
+        translateTransition.setNode(node);
+        translateTransition.setFromX(0);
+        translateTransition.setToX(12);
+        translateTransition.setCycleCount(5);
+        translateTransition.setAutoReverse(true);
+        translateTransition.setInterpolator(javafx.animation.Interpolator.EASE_BOTH);
+        translateTransition.setRate(6);
+
+        translateTransition.play();
     }
 }

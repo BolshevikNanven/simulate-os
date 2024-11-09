@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 public abstract class Window implements Initializable {
     private static final int EDGE_SIZE = 5; // 可拖动边缘的宽度
     protected SimpleStringProperty title = new SimpleStringProperty();
+    private boolean dialog;
     @FXML
     protected Node body;
     private BorderPane window;
@@ -61,9 +62,9 @@ public abstract class Window implements Initializable {
     private Window() {
     }
 
-    protected Window(String title, String fxmlName, double width, double height) {
+    protected Window(String title, String fxmlName, double width, double height, boolean... dialog) {
         try {
-            window = FXMLLoader.load(MainApplication.class.getResource("components/window.fxml"));
+            window = FXMLLoader.load(MainApplication.class.getResource("ui/components/window.fxml"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,15 +86,27 @@ public abstract class Window implements Initializable {
         icon.setFitHeight(18);
         iconPane.getChildren().add(icon);
 
+        // 设置窗口bounds
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        window.setLayoutX(screenBounds.getWidth() / 2 - width / 2);
+        window.setLayoutY(screenBounds.getHeight() / 2 - height / 2);
         window.setPrefWidth(width);
         window.setPrefHeight(height);
 
         // 初始化为隐藏
         setState(WINDOW_STATES.HIDE);
 
+        // 对话窗口不可缩放
+        if (dialog.length == 0) {
+            this.dialog = false;
+            addResizeListener();
+        } else {
+            this.dialog = true;
+            ((Pane) scaleButton.getParent()).getChildren().remove(scaleButton);
+        }
+
         addListener();
         addDragListener();
-        addResizeListener();
 
         loadAndLinkFXML(this, fxmlName);
     }
@@ -104,27 +117,28 @@ public abstract class Window implements Initializable {
             setState(WINDOW_STATES.HIDE);
         });
 
-        //双击标题栏窗口化
-        topBar.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            if (mouseEvent.getClickCount() == 2) {
+        if (!dialog) {
+            //双击标题栏窗口化
+            topBar.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+                if (mouseEvent.getClickCount() == 2) {
+                    if (isFull) {
+                        zoomOutWindow(-1, -1);
+                    } else {
+                        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+                        zoomInWindow(0, 0, screenBounds.getWidth(), screenBounds.getHeight() - 52);
+                    }
+                }
+            });
+            //按钮控制窗口化
+            scaleButton.setOnAction(actionEvent -> {
                 if (isFull) {
                     zoomOutWindow(-1, -1);
                 } else {
                     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
                     zoomInWindow(0, 0, screenBounds.getWidth(), screenBounds.getHeight() - 52);
                 }
-            }
-        });
-
-        //按钮控制窗口化
-        scaleButton.setOnAction(actionEvent -> {
-            if (isFull) {
-                zoomOutWindow(-1, -1);
-            } else {
-                Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-                zoomInWindow(0, 0, screenBounds.getWidth(), screenBounds.getHeight() - 52);
-            }
-        });
+            });
+        }
 
         // 关闭窗口
         closeButton.setOnAction(actionEvent -> {
@@ -470,12 +484,12 @@ public abstract class Window implements Initializable {
     }
 
 
-    public double[] getWindowArea(){
+    public double[] getWindowArea() {
         Bounds pos = window.localToScreen(window.getBoundsInLocal());
         return new double[]{pos.getMinX(), pos.getMinY(), pos.getWidth(), pos.getHeight()};
     }
 
-    protected void simulateCloseButtonClick(){
+    protected void simulateCloseButtonClick() {
         closeButton.fire();
     }
 

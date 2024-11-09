@@ -17,12 +17,12 @@ public class TerminalApp extends Window {
 
     @Override
     protected void initialize() {
-        handler = () -> input.setText("时钟：" + OS.clock.get());
-        OS.clock.bind(handler);
+//        handler = () -> input.setText("时钟：" + OS.clock.get());
+//        OS.clock.bind(handler);
     }
 
     @Override
     protected void close() {
-        OS.clock.unBind(handler);
+//        OS.clock.unBind(handler);
     }
 }
