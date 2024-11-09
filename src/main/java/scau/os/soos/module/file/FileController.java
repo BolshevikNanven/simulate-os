@@ -119,38 +119,36 @@ public class FileController implements Module {
 //        getInstance().fileService.getDisk().disk2file();
 
 ////
-        getInstance().createDirectory("/a");
-        getInstance().createDirectory("/a/b");
-        getInstance().createDirectory("/a/c");
-        getInstance().createDirectory("/a/d");
-        getInstance().createDirectory("/a/e");
-        getInstance().createFile("/a/f.t");
-        getInstance().createFile("/a/g.t");
-        getInstance().createFile("/a/h.e");
-        getInstance().createFile("/a/i.e");
-        getInstance().createFile("/a/j.e");
-        getInstance().createFile("/a/k.e");
-        getInstance().createFile("/a/l.e");
-        getInstance().createFile("/a/m.e");
-        getInstance().createFile("/a/n.e");
-        getInstance().createFile("/a/o.e");
-        getInstance().createFile("/a/p.e");
-        getInstance().createFile("/a/q.e");
-        getInstance().createFile("/a/r.e");
+//        getInstance().createDirectory("/a");
+//        getInstance().createDirectory("/a/b");
+//        getInstance().createDirectory("/a/c");
+//        getInstance().createDirectory("/a/d");
+//        getInstance().createDirectory("/a/e");
+//        getInstance().createFile("/a/f.t");
+//        getInstance().createFile("/a/g.t");
+//        getInstance().createFile("/a/h.e");
+//        getInstance().createFile("/a/i.e");
+//        getInstance().createFile("/a/j.e");
+//        getInstance().createFile("/a/k.e");
+//        getInstance().createFile("/a/l.e");
+//        getInstance().createFile("/a/m.e");
+//        getInstance().createFile("/a/n.e");
+//        getInstance().createFile("/a/o.e");
+//        getInstance().createFile("/a/p.e");
+//        getInstance().createFile("/a/q.e");
+//        getInstance().createFile("/a/r.e");
 
 
-
-
-
+        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(),"/a/m.e",FILE_TYPE.EXE).getPath());
 
 
         System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a", FILE_TYPE.DIRECTORY));
 
 
 
-        getInstance().fileService.getDisk().disk2file();
-        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
-            System.out.println(Arrays.toString(bytes));
-        }
+//        getInstance().fileService.getDisk().disk2file();
+//        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
+//            System.out.println(Arrays.toString(bytes));
+//        }
     }
 }

@@ -3,6 +3,7 @@ package scau.os.soos.apps.fileManager.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 
 import java.net.URL;
@@ -18,6 +19,7 @@ public class ToolBarController implements Initializable {
     @FXML public Button pasteBtn;
     @FXML public Button reNameBtn;
     @FXML public Button deleteBtn;
+    @FXML public TextField currentDirectory;
 
     private static ToolBarController instance;
 
@@ -67,5 +69,11 @@ public class ToolBarController implements Initializable {
         deleteBtn.setOnAction((e)->{
 
         });
+    }
+
+    public void showCurrentDirectory(String directory) {
+        // 目录树调用
+        // 显示当前目录
+        currentDirectory.setText(directory); // 绝对路径
     }
 }

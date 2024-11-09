@@ -121,6 +121,7 @@ public class DirectoryTreeController implements Initializable {
             if (itemMap.containsKey(childItem) || !childItem.isDirectory()) {
                 continue;
             }
+
             // 为每个子项创建一个新的TreeItem
             TreeItem<Item> childTreeItem = new TreeItem<>(childItem);
             // 将子项添加到当前项的子节点列表中
@@ -176,9 +177,9 @@ public class DirectoryTreeController implements Initializable {
                         return;
                     }
                     currentDirectory = newValue.getValue();
-            // 更新当前目录显示
-//            ToolBarController.showCurrentDirectory(newValue.getValue().getAbsolutePath());
-            // 重新设置imageModelList 并展示image
+                    //更新当前目录显示
+            ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
+            //重新设置imageModelList 并展示image
             FileManagerApp.getInstance().loadDirectory(newValue.getValue());
                 });
         // 展开事件

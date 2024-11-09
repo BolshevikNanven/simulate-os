@@ -1,7 +1,9 @@
 package scau.os.soos.apps.fileManager.model;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,6 +12,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
+import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
@@ -24,50 +27,100 @@ public class ThumbnailBox extends VBox {
     private static final String EMPTY_DIRECTORY_IMAGE_PATH = String.valueOf(FileManagerApp.class.getResource("image/thumbnailBox/empty_directory.png"));
 
     private final Item item;
+    private TextField textField;
 
+    private EventHandler<KeyEvent> f2RenameHandler;
+
+    /**
+     * 构造函数，用于创建 ThumbnailBox 实例。
+     *
+     * @param item 要展示的项目
+     */
     public ThumbnailBox(Item item) {
         this.item = item;
+        initializeImageView();
+        initializeTextContainer();
+        setupStyleAndLayout();
+        initializeEventListeners();
+    }
 
-        StackPane stackPane = new StackPane();
+    public Item getItem() {
+        return item;
+    }
+
+    /**
+     * 初始化 ImageView 及其容器。
+     */
+    private void initializeImageView() {
+        StackPane imageViewContainer = new StackPane();
 
         ImageView imageView = new ImageView();
-        imageView.fitWidthProperty().bind(stackPane.prefWidthProperty());
-        imageView.fitHeightProperty().bind(stackPane.prefHeightProperty());
+        imageView.fitWidthProperty().bind(imageViewContainer.prefWidthProperty());
+        imageView.fitHeightProperty().bind(imageViewContainer.prefHeightProperty());
         imageView.setPreserveRatio(true);
         imageView.setPickOnBounds(true);
 
-        String imagePath = switch (item) {
-            case Exe exe -> EXE_IMAGE_PATH;
-            case Txt txt -> TXT_IMAGE_PATH;
-            case Directory directoryItem ->
-                    directoryItem.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
-            case null, default -> null;
-        };
-
+        String imagePath = determineImagePath();
         if (imagePath != null) {
             imageView.setImage(new Image(imagePath));
         } else {
             imageView.setImage(null);
         }
 
-        stackPane.getChildren().add(imageView);
+        imageViewContainer.getChildren().add(imageView);
+        this.getChildren().add(imageViewContainer);
+    }
+
+    /**
+     * 根据项目类型确定图片路径。
+     *
+     * @return 图片路径，如果不需要图片则返回 null
+     */
+    private String determineImagePath() {
+        return switch (item) {
+            case Exe exe -> EXE_IMAGE_PATH;
+            case Txt txt -> TXT_IMAGE_PATH;
+            case Directory directoryItem ->
+                    directoryItem.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
+            case null, default -> null;
+        };
+    }
+
+    /**
+     * 初始化文本容器，包括 Label 和 TextField。
+     */
+    private void initializeTextContainer() {
+        StackPane textContainer = new StackPane();
+        textField = new TextField(item != null ? item.getName() : "");
+        textField.setAlignment(Pos.CENTER);
+        textField.setEditable(false);
+        textField.setVisible(false);
 
         Label label = new Label();
         if (item != null) {
             label.setText(item.getName());
         }
 
+        textContainer.getChildren().addAll(label, textField);
+        this.getChildren().add(textContainer);
+    }
+
+    /**
+     * 设置样式和布局。
+     */
+    private void setupStyleAndLayout() {
         this.getStylesheets().add(String.valueOf(FileManagerApp.class.getResource("main.css")));
         this.getStyleClass().add("thumbnail-box");
         this.setAlignment(Pos.CENTER);
-        this.getChildren().addAll(stackPane, label);
-
-        setSelectEvent();
-        setTipEvent();
     }
 
-    public Item getItem() {
-        return item;
+    /**
+     * 初始化事件监听器。
+     */
+    private void initializeEventListeners() {
+        setSelectEvent();
+        setRenameEvent();
+        setTipEvent();
     }
 
     private void setSelectEvent() {
@@ -78,7 +131,6 @@ public class ThumbnailBox extends VBox {
                     && !event.isShiftDown()
                     && !event.isAltDown()) {
                 FileManagerApp.getInstance().selectItem(this);
-
                 return;
             }
 
@@ -142,14 +194,77 @@ public class ThumbnailBox extends VBox {
         });
     }
 
+    private void setRenameEvent() {
+        // 监听文本字段的按键事件以完成重命名
+        textField.setOnKeyPressed(this::handleRenameKeyPress);
+
+        // 添加焦点监听器，当失去焦点时触发重命名逻辑
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // 失去焦点
+                completeRenaming();
+            }
+        });
+    }
+
     private void setTipEvent() {
         this.setOnMouseEntered(event -> {
             Tooltip tooltip = new Tooltip();
             tooltip.setStyle("-fx-font-size:12;" +
-                            "-fx-background-color:#fafafa;" +
-                            "-fx-text-fill:#585959;");
+                    "-fx-background-color:#fafafa;" +
+                    "-fx-text-fill:#585959;");
             tooltip.setText("类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
             Tooltip.install(this, tooltip);
         });
+    }
+
+
+    public void startRenaming() {
+        textField.setEditable(true);
+        textField.setVisible(true);
+        textField.positionCaret(textField.getText().length());
+        textField.requestFocus();
+    }
+
+    private void handleRenameKeyPress(KeyEvent event) {
+        // 如果按下的键是回车键
+        if (event.getCode() == KeyCode.ENTER) {
+            // 调用完成重命名的方法
+            completeRenaming();
+        }
+        // 否则，如果按下的键是ESCAPE键
+        else if (event.getCode() == KeyCode.ESCAPE) {
+            // 调用取消重命名的方法
+            cancelRenaming();
+        }
+    }
+
+    private void completeRenaming() {
+        String newName = textField.getText().trim();
+
+        if (!newName.isEmpty() && !newName.equals(item.getName())) {
+            Directory directory = (Directory) DirectoryTreeController.getInstance().getCurrentDirectory();
+
+            byte currentItemType = this.getItem().getType();
+
+            for (Item childItem : directory.getChildren()) {
+                if (childItem != item && childItem.getName().equals(newName)) {
+                    if (childItem.getType() == currentItemType) {
+                        cancelRenaming();
+                        return;
+                    }
+                }
+            }
+            item.setName(newName);
+            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().refreshCurrentDirectory();
+        }
+        cancelRenaming();
+    }
+
+
+    private void cancelRenaming() {
+        textField.setEditable(false);
+        textField.setVisible(false);
+        this.requestFocus();
     }
 }

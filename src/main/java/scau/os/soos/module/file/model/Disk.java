@@ -35,6 +35,7 @@ public class Disk {
                 ROOT_BLOCK_NUM,
                 0);
         fat.setNextBlockIndex(ROOT_BLOCK_NUM, Fat.TERMINATED);
+        rootDirectory.setPath();
         rootDirectory.initFromDisk();
     }
 

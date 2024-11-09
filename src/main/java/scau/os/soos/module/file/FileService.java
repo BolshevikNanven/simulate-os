@@ -88,6 +88,7 @@ public class FileService {
         //创建文件夹
         String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
         folder = (Directory) FileServiceUtil.getItemFromCreate(disk, parent,name, (byte) 0,true,false,false,true,startDisk,0);
+        folder.setPath();
 
         //修改fat表，父目录添加孩子
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);

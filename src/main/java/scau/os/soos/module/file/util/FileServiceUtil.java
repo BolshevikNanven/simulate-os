@@ -15,7 +15,7 @@ public class FileServiceUtil {
         if ((attribute & 0x08) != 0) {
             // 是目录类型，返回目录实例
             Directory directory = new Directory(disk, data);
-            directory.initFromDisk();
+//            directory.initFromDisk();
             return directory;
         } else {
             // 如果不是目录，继续判断类型字节
@@ -23,13 +23,13 @@ public class FileServiceUtil {
                 // 类型字节为'e'，返回exe实例
                 if (type == 'e') {
                     Exe exe = new Exe(disk, data);
-                    exe.initFromDisk();
+//                    exe.initFromDisk();
                     return exe;
                 }
                 if (type == 't') {
                     // 类型字节为't'，返回txt实例
                     Txt txt = new Txt(disk, data);
-                    txt.initFromDisk();
+//                    txt.initFromDisk();
                     return txt;
                 }
             }

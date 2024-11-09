@@ -88,6 +88,8 @@ public class FileMenu extends Popover {
             hide();
         });
         reNameBtn.setOnAction(actionEvent -> {
+            ThumbnailBox tb = FileManagerApp.getInstance().getSelectedList().get(0);
+            tb.startRenaming();
             hide();
         });
         reAttributeBtn.setOnAction(actionEvent -> {
