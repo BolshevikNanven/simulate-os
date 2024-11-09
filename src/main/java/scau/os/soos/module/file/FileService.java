@@ -241,4 +241,9 @@ public class FileService {
     public Directory getRoots() {
         return disk.getRootDirectory();
     }
+
+    public boolean reName(Item item, String newName) {
+//
+        return true;
+    }
 }

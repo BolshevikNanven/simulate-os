@@ -15,4 +15,5 @@ module scau.os.soos {
     exports scau.os.soos;
     opens scau.os.soos.ui.components.base to javafx.fxml;
     opens scau.os.soos.apps.fileManager.controller to javafx.fxml;
+    opens scau.os.soos.ui.dialog to javafx.fxml;
 }

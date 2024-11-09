@@ -7,6 +7,7 @@ import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Item;
+import scau.os.soos.ui.dialog.Dialog;
 import scau.os.soos.ui.components.base.Popover;
 
 import java.io.IOException;
@@ -93,6 +94,11 @@ public class FileMenu extends Popover {
             hide();
         });
         reAttributeBtn.setOnAction(actionEvent -> {
+            Dialog dialog = Dialog.getDialog(FileManagerApp.getInstance(),"属性",
+                    null,
+                    null,
+                    new Button("确定"));
+            dialog.show();
             hide();
         });
     }

@@ -82,6 +82,10 @@ public class FileController implements Module {
         fileService.delete(path,true,true);
     }
 
+    public boolean reName(Item item,String newName){
+        return fileService.reName(item,newName);
+    }
+
     public int getFileSize(Item file) {
         return fileService.getSize(file);
     }

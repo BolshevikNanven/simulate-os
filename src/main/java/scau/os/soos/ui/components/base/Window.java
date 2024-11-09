@@ -2,6 +2,8 @@ package scau.os.soos.ui.components.base;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -473,6 +475,10 @@ public abstract class Window implements Initializable {
         return new double[]{pos.getMinX(), pos.getMinY(), pos.getWidth(), pos.getHeight()};
     }
 
+    protected void simulateCloseButtonClick(){
+        closeButton.fire();
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         body.getStyleClass().add("window-body");
@@ -490,5 +496,4 @@ public abstract class Window implements Initializable {
     protected abstract void initialize();
 
     protected abstract void close();
-
 }
