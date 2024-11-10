@@ -1,9 +1,14 @@
-.tool-bar > Region {
+.tool-bar .h-region {
     -fx-pref-height: 1px;
     -fx-background-color: #dadada;
 }
 
-.tool-bar .text-field{
+.tool-bar .v-region {
+    -fx-pref-width: 1px;
+    -fx-background-color: #dadada;
+}
+
+.tool-bar .text-field {
     -fx-background-color: #fbfbfb; /* 淡白色背景 */
     -fx-text-fill: #000000; /* 普通黑色文本 */
     -fx-padding: 5 10 5 10; /* 文本框内边距 */
@@ -14,7 +19,7 @@
     -fx-box-shadow: none; /* 无阴影 */
 }
 
-.tool-bar .text-field:focused{
+.tool-bar .text-field:focused {
     -fx-background-color: #ffffff; /* 纯白色背景 */
     -fx-border-color: transparent transparent #0000ff transparent; /* 底部蓝色边框，其他方向透明 */
     -fx-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3), inset 0 0 0 1px #ffffff; /* 高亮阴影及内阴影 */
@@ -22,35 +27,36 @@
 }
 
 
-.bottom-bar .description{
+.bottom-bar .description {
     -fx-font-size: 11px;
     -fx-text-fill: #777777;
 }
 
 
 .thumbnail-box {
-    -text-color:#515151;
+    -text-color: #515151;
 }
-.thumbnail-box:hover{
+
+.thumbnail-box:hover {
     -fx-background-color: rgb(138, 138, 138, 0.2);
 }
 
-.thumbnail-box{
+.thumbnail-box {
     -fx-pref-width: 100px; /* 设置Label的首选宽度为150像素 */
     -fx-pref-height: 100px; /* 设置Label的首选高度为30像素 */
 }
 
-.thumbnail-box-selected{
+.thumbnail-box-selected {
     -fx-background-color: rgb(138, 138, 138, 0.2);
 }
 
-.thumbnail-box StackPane{
+.thumbnail-box StackPane {
     -fx-pref-width: 100px; /* 设置Label的首选宽度为150像素 */
     -fx-pref-height: 100px; /* 设置Label的首选高度为30像素 */
 }
 
 
-.thumbnail-box Label{
+.thumbnail-box Label {
     -fx-alignment: center; /* 设置Label内容在中心对齐 */
     -fx-text-alignment: center; /* 设置文本在Label中心水平对齐 */
     -fx-pref-width: 100px; /* 设置Label的首选宽度为150像素 */

@@ -115,7 +115,6 @@ public class DirectoryTreeController implements Initializable {
     }
 
     private void loadDirectory(TreeItem<Item> directoryItem) {
-        System.out.println(directoryItem);
         // 加载当前目录项的直接子项
         loadImmediateChildren(directoryItem);
 
@@ -200,6 +199,9 @@ public class DirectoryTreeController implements Initializable {
                     currentDirectory = newValue.getValue();
                     //更新当前目录显示
                     ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
+                    ToolBarController.getInstance().resetSearchButton();
+                    ToolBarController.getInstance().resetSelectMenu();
+
                     //重新设置imageModelList 并展示image
                     FileManagerApp.getInstance().loadDirectory(newValue.getValue());
                 });
@@ -321,7 +323,6 @@ public class DirectoryTreeController implements Initializable {
             TreeItem<Item> item = pathList.get(pathPointer.get());
             // 重新设置TreeView
             directoryTree.getSelectionModel().select(item);
-            System.out.println(pathPointer);
             return true;
         }
         return false;

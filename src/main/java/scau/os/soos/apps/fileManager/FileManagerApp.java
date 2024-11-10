@@ -16,9 +16,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import scau.os.soos.apps.editor.EditorApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
+import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
+import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
+import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.components.base.Window;
 

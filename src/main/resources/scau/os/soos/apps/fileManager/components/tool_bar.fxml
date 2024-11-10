@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -38,7 +40,7 @@
                         </Button>
                   <HBox alignment="CENTER">
                      <children>
-                              <TextField fx:id="currentDirectory" focusTraversable="false" prefWidth="300.0" styleClass="text-field" />
+                              <TextField fx:id="currentDirectory" focusTraversable="false" prefWidth="200.0" styleClass="text-field" />
                               <Button fx:id="goToBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
                                   <graphic>
                                       <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="goto-icon" />
@@ -68,7 +70,7 @@
                 <Insets />
             </VBox.margin>
         </BorderPane>
-        <Region prefHeight="1.0" />
+        <Region prefHeight="1.0" styleClass="h-region" />
         <BorderPane prefHeight="38.0">
             <left>
                 <HBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
@@ -94,6 +96,7 @@
                      <Insets left="5.0" />
                   </padding>
                     </MenuButton>
+                    <Region prefWidth="1.0" styleClass="v-region" />
                     <Button fx:id="shearBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
                         <graphic>
                             <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="shear-icon" />
@@ -119,6 +122,28 @@
                             <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="delete-icon" />
                         </graphic>
                     </Button>
+                    <Region prefWidth="1.0" styleClass="v-region" />
+               <MenuButton mnemonicParsing="false" prefHeight="38.0" prefWidth="72.0" styleClass="window-control-btn" text="排序">
+                  <items>
+                     <RadioMenuItem fx:id="sortByNameItem" mnemonicParsing="false" styleClass="window-control-btn" text="名称" />
+                     <RadioMenuItem fx:id="sortByTypeItem" mnemonicParsing="false" styleClass="window-control-btn" text="类型" />
+                     <RadioMenuItem fx:id="sortBySizeItem" mnemonicParsing="false" styleClass="window-control-btn" text="大小" />
+                     <SeparatorMenuItem mnemonicParsing="false">
+                        <content>
+                           <Region prefWidth="1.0" styleClass="h-region" />
+                        </content></SeparatorMenuItem>
+                     <RadioMenuItem fx:id="sortAscendingItem" mnemonicParsing="false" styleClass="window-control-btn" text="递增" />
+                     <RadioMenuItem fx:id="sortDescendingItem" mnemonicParsing="false" styleClass="window-control-btn" text="递减" />
+                  </items>
+               </MenuButton>
+               <MenuButton mnemonicParsing="false" prefHeight="38.0" prefWidth="72.0" styleClass="window-control-btn" text="筛选器">
+                  <items>
+                     <RadioMenuItem fx:id="selectAllItem" mnemonicParsing="false" styleClass="window-control-btn" text="所有文件类型" />
+                     <RadioMenuItem fx:id="selectTxtItem" mnemonicParsing="false" styleClass="window-control-btn" text="文本文件" />
+                     <RadioMenuItem fx:id="selectExeItem" mnemonicParsing="false" styleClass="window-control-btn" text="可执行程序" />
+                     <RadioMenuItem fx:id="selectDirectoryItem" mnemonicParsing="false" styleClass="window-control-btn" text="文件夹" />
+                  </items>
+               </MenuButton>
                 </HBox>
             </left>
         </BorderPane>

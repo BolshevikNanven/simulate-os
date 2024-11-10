@@ -4,17 +4,18 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.util.matchUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
+import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.ui.dialog.Dialog;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -60,6 +61,33 @@ public class ToolBarController implements Initializable {
     public Button reNameBtn;
     @FXML
     public Button deleteBtn;
+
+    @FXML
+    public RadioMenuItem sortByNameItem;
+    @FXML
+    public RadioMenuItem sortByTypeItem;
+    @FXML
+    public RadioMenuItem sortBySizeItem;
+
+    ToggleGroup sortRuleGroup = new ToggleGroup();
+
+    @FXML
+    public RadioMenuItem sortAscendingItem;
+    @FXML
+    public RadioMenuItem sortDescendingItem;
+
+    ToggleGroup sortOrderGroup = new ToggleGroup();
+
+    @FXML
+    public RadioMenuItem selectAllItem;
+    @FXML
+    public RadioMenuItem selectTxtItem;
+    @FXML
+    public RadioMenuItem selectExeItem;
+    @FXML
+    public RadioMenuItem selectDirectoryItem;
+
+    ToggleGroup selectItemGroup = new ToggleGroup();
 
     private static ToolBarController instance;
 
@@ -114,6 +142,10 @@ public class ToolBarController implements Initializable {
         addListenerForRenameButton();
         // 为删除按钮添加监听器
         addListenerForDeleteButton();
+
+
+        addListenerForSortMenu();
+        addListenerForSelectMenu();
     }
 
 
@@ -180,15 +212,15 @@ public class ToolBarController implements Initializable {
     private void addListenerForCurrentDirectoryTextField() {
         currentDirectory.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // 如果currentDirectory失去了焦点，并且goToBtn也没有获得焦点
-            if (!newValue && !goToBtn.isFocused()){
+            if (!newValue && !goToBtn.isFocused()) {
                 // 根据当前目录项更新currentDirectory的文本内容
                 Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
                 currentDirectory.setText(directory == null ? null : directory.getPath());
             }
         });
         // 回车跳转到指定目录
-        currentDirectory.setOnKeyPressed(event->{
-            if(event.getCode().equals(KeyCode.ENTER)){
+        currentDirectory.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
                 handleGoToButtonClick();
             }
         });
@@ -198,9 +230,7 @@ public class ToolBarController implements Initializable {
      * 为跳转到指定目录按钮添加事件监听器。
      */
     private void addListenerForGoToButton() {
-        goToBtn.setOnAction(e -> {
-            handleGoToButtonClick();
-        });
+        goToBtn.setOnAction(e -> handleGoToButtonClick());
     }
 
     private void handleGoToButtonClick() {
@@ -235,14 +265,14 @@ public class ToolBarController implements Initializable {
     private void addListenerForSearchTextField() {
         searchTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // 如果searchTextField失去了焦点，并且searchBtn也没有获得焦点
-            if (!newValue && !searchBtn.isFocused()){
+            if (!newValue && !searchBtn.isFocused()) {
                 // 搜索结束
-                unSearch();
+                unSearch(true);
             }
         });
         // 回车搜索
-        searchTextField.setOnKeyPressed(event->{
-            if(event.getCode().equals(KeyCode.ENTER)){
+        searchTextField.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
                 handleSearchButtonClick();
             }
         });
@@ -252,15 +282,19 @@ public class ToolBarController implements Initializable {
      * 为搜索按钮添加事件监听器。
      */
     private void addListenerForSearchButton() {
-        searchBtn.setOnAction(e->handleSearchButtonClick());
+        searchBtn.setOnAction(e -> handleSearchButtonClick());
     }
 
-    private void handleSearchButtonClick(){
+    public void resetSearchButton(){
+        unSearch(false);
+    }
+
+    private void handleSearchButtonClick() {
         // 判断是否处于搜索状态 true 正在搜索态 false 非搜索态
         if (!searchState) {
             search();
         } else {
-            unSearch();
+            unSearch(true);
         }
     }
 
@@ -270,27 +304,24 @@ public class ToolBarController implements Initializable {
         // 搜索--遍历当前图片列表 计算编辑距离 重置imageModelList 并重新调用displayThumbnail
         List<Item> itemList = FileManagerApp.getInstance().getItemList();
         List<Item> searchResult = new ArrayList<>();
-        Map<Item,Double> matchLevelMap = new HashMap<>();
-        boolean perfectMatch = false;
+        Map<Item, Double> matchLevelMap = new HashMap<>();
         boolean heightMatch = false;
         for (Item item : itemList) {
             // 获取图片名称(不算后缀)
             String name = item.getName();
             int lastDotIndex = name.lastIndexOf(".");
-            if(lastDotIndex != -1) {
+            if (lastDotIndex != -1) {
                 name = name.substring(0, lastDotIndex);
             }
-            // 计算编辑距离
-            int distance = matchUtil.levenshteinDistance(name, searchName);
             int maxCommonSubstring = matchUtil.longestCommonSubstring(name, searchName);
             // 计算匹配水平
-            double level = matchUtil.matchLevel(name, searchName,1,4,50);
-            // 判断是否完全匹配
-            if(distance == 0) {perfectMatch = true;}
+            double level = matchUtil.matchLevel(name, searchName, 1, 4, 50);
             // 判断高度相似
-            if(maxCommonSubstring > searchName.length()/2) {heightMatch = true;}
+            if (maxCommonSubstring > searchName.length() / 2) {
+                heightMatch = true;
+            }
             // 判断相关度
-            if(maxCommonSubstring > 0 && (!heightMatch || maxCommonSubstring > searchName.length()/2)) {
+            if (maxCommonSubstring > 0 && (!heightMatch || maxCommonSubstring > searchName.length() / 2)) {
                 // 做imageModel和level映射
                 matchLevelMap.put(item, level);
                 // 添加到搜索结果列表
@@ -299,7 +330,7 @@ public class ToolBarController implements Initializable {
         }
         // 按编辑距离升序排序搜索结果列表
         searchResult.sort((o1, o2) -> {
-            double l1= matchLevelMap.get(o1);
+            double l1 = matchLevelMap.get(o1);
             double l2 = matchLevelMap.get(o2);
             return Double.compare(l1, l2);
         });
@@ -315,9 +346,12 @@ public class ToolBarController implements Initializable {
         searchIcon.getStyleClass().remove("search-icon");
         searchIcon.getStyleClass().add("cancel-icon");
     }
-    private void unSearch() {
-        // 取消搜索--重新加载当前目录
-        FileManagerApp.getInstance().refreshCurrentDirectory();
+
+    public void unSearch(boolean isRefresh) {
+        if (isRefresh) {
+            // 取消搜索--重新加载当前目录
+            FileManagerApp.getInstance().refreshCurrentDirectory();
+        }
         // 按钮变成搜索（图标）图标后续更改 2024/3/25 css
         searchState = false;
 
@@ -402,5 +436,119 @@ public class ToolBarController implements Initializable {
         deleteBtn.setOnAction(e -> {
             // TODO: 实现删除功能
         });
+    }
+
+
+    /**
+     * 为排序菜单项添加事件监听器。
+     */
+    private void addListenerForSortMenu() {
+        sortByNameItem.setToggleGroup(sortRuleGroup);
+        sortByTypeItem.setToggleGroup(sortRuleGroup);
+        sortBySizeItem.setToggleGroup(sortRuleGroup);
+
+        sortAscendingItem.setToggleGroup(sortOrderGroup);
+        sortDescendingItem.setToggleGroup(sortOrderGroup);
+
+        // 添加一个监听器到ToggleGroup，以便在用户更改排序规则或顺序时应用排序
+        sortRuleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> applySort());
+        sortOrderGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> applySort());
+    }
+
+    private void applySort() {
+        RadioMenuItem selectedSortRule = (RadioMenuItem) sortRuleGroup.getSelectedToggle();
+        boolean ascending = sortAscendingItem.isSelected();
+
+        // 根据选中的排序规则和顺序来排序文件列表
+        // 假设有一个方法FileManagerApp.getInstance().sortItems(...)可以进行排序
+        // 并且它接受排序规则和升序/降序作为参数
+        if (selectedSortRule != null) {
+            String sortRule = "";
+            if (selectedSortRule == sortByNameItem) {
+                sortRule = "name";
+            } else if (selectedSortRule == sortByTypeItem) {
+                sortRule = "type";
+            } else if (selectedSortRule == sortBySizeItem) {
+                sortRule = "size";
+            }
+
+//            FileManagerApp.getInstance().sortItems(sortRule, ascending);
+            // 刷新显示
+            FileManagerApp.getInstance().displayItem();
+        }
+    }
+
+    /**
+     * 为选择菜单项添加事件监听器。
+     */
+    private void addListenerForSelectMenu() {
+        selectAllItem.setToggleGroup(selectItemGroup);
+        selectTxtItem.setToggleGroup(selectItemGroup);
+        selectExeItem.setToggleGroup(selectItemGroup);
+        selectDirectoryItem.setToggleGroup(selectItemGroup);
+
+        selectAllItem.setSelected(true);
+
+        // 添加一个监听器到ToggleGroup，以便在用户更改选择时过滤文件列表
+        selectItemGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+                applySelectionFilter());
+    }
+
+    public void resetSelectMenu() {
+        selectAllItem.setSelected(true);
+    }
+
+    private void applySelectionFilter() {
+        RadioMenuItem selectedItem = (RadioMenuItem) selectItemGroup.getSelectedToggle();
+        FILE_TYPE filterType = null;
+        if (selectedItem != null) {
+            if (selectedItem == selectAllItem) {
+                FileManagerApp.getInstance().refreshCurrentDirectory();
+                return;
+            }
+            if (selectedItem == selectTxtItem) {
+                filterType = FILE_TYPE.TXT;
+            } else if (selectedItem == selectExeItem) {
+                filterType = FILE_TYPE.EXE;
+            } else if (selectedItem == selectDirectoryItem) {
+                filterType = FILE_TYPE.DIRECTORY;
+            }
+
+            if (filterType != null) {
+                filterItemList(filterType);
+            }
+        }
+    }
+
+    private void filterItemList(FILE_TYPE filterType) {
+        // 临时列表来存储过滤后的项目
+        List<Item> itemList = FileManagerApp.getInstance().getItemList();
+        List<Item> filteredItemList = new ArrayList<>();
+        switch (filterType) {
+            case FILE_TYPE.TXT:
+                for (Item item : itemList) {
+                    if (item instanceof Txt) {
+                        filteredItemList.add(item);
+                    }
+                }
+                break;
+            case FILE_TYPE.EXE:
+                for (Item item : itemList) {
+                    if (item instanceof Exe) {
+                        filteredItemList.add(item);
+                    }
+                }
+                break;
+            case FILE_TYPE.DIRECTORY:
+                for (Item item : itemList) {
+                    if (item instanceof Directory) {
+                        filteredItemList.add(item);
+                    }
+                }
+                break;
+        }
+        // 加载搜索结果列表
+        FileManagerApp.getInstance().setItemList(filteredItemList);
+        FileManagerApp.getInstance().displayItem();
     }
 }
