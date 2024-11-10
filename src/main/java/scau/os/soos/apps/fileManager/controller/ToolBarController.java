@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import scau.os.soos.apps.fileManager.FileManagerApp;
+import scau.os.soos.apps.fileManager.enums.SORT_TYPE;
 import scau.os.soos.apps.fileManager.util.matchUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.FileController;
@@ -61,6 +62,11 @@ public class ToolBarController implements Initializable {
     public Button reNameBtn;
     @FXML
     public Button deleteBtn;
+
+    // 映射RadioMenuItem到SORT_TYPE
+    private final Map<RadioMenuItem, SORT_TYPE> sortRuleMap = new HashMap<>();
+    private final Map<RadioMenuItem, Boolean> sortOrderMap = new HashMap<>();
+    private final Map<RadioMenuItem, FILE_TYPE> selectItemMap = new HashMap<>();
 
     @FXML
     public RadioMenuItem sortByNameItem;
@@ -143,8 +149,11 @@ public class ToolBarController implements Initializable {
         // 为删除按钮添加监听器
         addListenerForDeleteButton();
 
-
+        // 初始化映射
+        initializeMaps();
+        // 添加排序菜单的监听器
         addListenerForSortMenu();
+        // 添加选择菜单的监听器
         addListenerForSelectMenu();
     }
 
@@ -205,6 +214,7 @@ public class ToolBarController implements Initializable {
             FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
+
 
     /**
      * 为当前目录文本框添加事件监听器。
@@ -285,7 +295,7 @@ public class ToolBarController implements Initializable {
         searchBtn.setOnAction(e -> handleSearchButtonClick());
     }
 
-    public void resetSearchButton(){
+    public void resetSearchButton() {
         unSearch(false);
     }
 
@@ -451,31 +461,72 @@ public class ToolBarController implements Initializable {
         sortDescendingItem.setToggleGroup(sortOrderGroup);
 
         // 添加一个监听器到ToggleGroup，以便在用户更改排序规则或顺序时应用排序
-        sortRuleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> applySort());
-        sortOrderGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> applySort());
+        sortRuleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+                applySort());
+        sortOrderGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+                applySort());
+    }
+
+    // 初始化映射
+    private void initializeMaps() {
+        sortRuleMap.put(sortByNameItem, SORT_TYPE.SORT_BY_NAME);
+        sortRuleMap.put(sortByTypeItem, SORT_TYPE.SORT_BY_TYPE);
+        sortRuleMap.put(sortBySizeItem, SORT_TYPE.SORT_BY_SIZE);
+
+        sortOrderMap.put(sortAscendingItem, true);
+        sortOrderMap.put(sortDescendingItem, false);
+
+        selectItemMap.put(selectAllItem, null);
+        selectItemMap.put(selectTxtItem, FILE_TYPE.TXT);
+        selectItemMap.put(selectExeItem, FILE_TYPE.EXE);
+        selectItemMap.put(selectDirectoryItem, FILE_TYPE.DIRECTORY);
+    }
+
+    public void resetSortMenu() {
+        sortByNameItem.setSelected(true);
+        sortByTypeItem.setSelected(false);
+        sortBySizeItem.setSelected(false);
+        sortAscendingItem.setSelected(true);
+        sortDescendingItem.setSelected(false);
     }
 
     private void applySort() {
         RadioMenuItem selectedSortRule = (RadioMenuItem) sortRuleGroup.getSelectedToggle();
-        boolean ascending = sortAscendingItem.isSelected();
+        RadioMenuItem selectedSortOrder = (RadioMenuItem) sortOrderGroup.getSelectedToggle();
+        if (selectedSortRule == null || selectedSortOrder == null) {
+            return;
+        }
+        SORT_TYPE sortType = sortRuleMap.get(selectedSortRule);
+        boolean ascending = sortOrderMap.get(selectedSortOrder);
 
-        // 根据选中的排序规则和顺序来排序文件列表
-        // 假设有一个方法FileManagerApp.getInstance().sortItems(...)可以进行排序
-        // 并且它接受排序规则和升序/降序作为参数
-        if (selectedSortRule != null) {
-            String sortRule = "";
-            if (selectedSortRule == sortByNameItem) {
-                sortRule = "name";
-            } else if (selectedSortRule == sortByTypeItem) {
-                sortRule = "type";
-            } else if (selectedSortRule == sortBySizeItem) {
-                sortRule = "size";
-            }
+        if (sortType != null) {
+            sortItemList(sortType, ascending);
+        }
+    }
 
-//            FileManagerApp.getInstance().sortItems(sortRule, ascending);
-            // 刷新显示
+    private void sortItemList(SORT_TYPE filterType, boolean ascending) {
+        List<Item> itemList = FileManagerApp.getInstance().getItemList();
+        Comparator<Item> comparator = switch (filterType) {
+            case SORT_BY_NAME -> Comparator.comparing(Item::getName);
+            case SORT_BY_TYPE -> Comparator.comparing(this::getTypeComparatorKey);
+            case SORT_BY_SIZE -> Comparator.comparingLong(Item::getSize);
+        };
+        if (comparator != null) {
+            itemList.sort(ascending ? comparator : comparator.reversed());
             FileManagerApp.getInstance().displayItem();
         }
+    }
+
+    // 辅助方法，用于类型排序的比较键
+    private int getTypeComparatorKey(Item item) {
+        if (item instanceof Txt) {
+            return FILE_TYPE.valueOf("TXT").ordinal();
+        } else if (item instanceof Exe) {
+            return FILE_TYPE.valueOf("EXE").ordinal();
+        } else if (item instanceof Directory) {
+            return FILE_TYPE.valueOf("DIRECTORY").ordinal();
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -500,23 +551,18 @@ public class ToolBarController implements Initializable {
 
     private void applySelectionFilter() {
         RadioMenuItem selectedItem = (RadioMenuItem) selectItemGroup.getSelectedToggle();
-        FILE_TYPE filterType = null;
-        if (selectedItem != null) {
-            if (selectedItem == selectAllItem) {
-                FileManagerApp.getInstance().refreshCurrentDirectory();
-                return;
-            }
-            if (selectedItem == selectTxtItem) {
-                filterType = FILE_TYPE.TXT;
-            } else if (selectedItem == selectExeItem) {
-                filterType = FILE_TYPE.EXE;
-            } else if (selectedItem == selectDirectoryItem) {
-                filterType = FILE_TYPE.DIRECTORY;
-            }
+        if (selectedItem == null)
+            return;
+        if (selectedItem == selectAllItem) {
+            FileManagerApp.getInstance().refreshCurrentDirectory();
+            return;
+        }
 
-            if (filterType != null) {
-                filterItemList(filterType);
-            }
+        FILE_TYPE filterType = selectItemMap.get(selectedItem);
+
+        if (filterType != null) {
+            FileManagerApp.getInstance().refreshCurrentDirectory();
+            filterItemList(filterType);
         }
     }
 

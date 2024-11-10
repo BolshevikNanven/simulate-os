@@ -106,7 +106,7 @@ public class DirectoryTreeController implements Initializable {
     }
 
     public void refreshCurrentDirectory() {
-//        loadDirectory(itemMap.get(currentDirectory));
+        loadDirectory(itemMap.get(currentDirectory));
         directoryTree.refresh();
     }
 
@@ -200,6 +200,7 @@ public class DirectoryTreeController implements Initializable {
                     //更新当前目录显示
                     ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
                     ToolBarController.getInstance().resetSearchButton();
+                    ToolBarController.getInstance().resetSortMenu();
                     ToolBarController.getInstance().resetSelectMenu();
 
                     //重新设置imageModelList 并展示image
