@@ -71,13 +71,28 @@
         <Region prefHeight="1.0" />
         <BorderPane prefHeight="38.0">
             <left>
-                <HBox spacing="10.0" BorderPane.alignment="CENTER">
-                    <MenuButton fx:id="createBtn" mnemonicParsing="false">
+                <HBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+                    <MenuButton fx:id="createBtn" mnemonicParsing="false" prefHeight="38.0" prefWidth="106.0" styleClass="window-control-btn" text="新建">
+                        <graphic>
+                            <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="create-icon" />
+                        </graphic>
                         <items>
-                            <MenuItem fx:id="createTxtBtn" mnemonicParsing="false" text="Action 1" />
-                            <MenuItem fx:id="createExeBtn" mnemonicParsing="false" text="Action 2" />
-                            <MenuItem fx:id="createDirectoryBtn" mnemonicParsing="false" text="Action 1" />
+                            <MenuItem fx:id="createTxtBtn" mnemonicParsing="false" styleClass="window-control-btn" text="文本文件">
+                        <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="create-txt-icon" />
+                        </graphic></MenuItem>
+                            <MenuItem fx:id="createExeBtn" mnemonicParsing="false" styleClass="window-control-btn" text="可执行程序">
+                        <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="create-exe-icon" />
+                        </graphic></MenuItem>
+                            <MenuItem fx:id="createDirectoryBtn" mnemonicParsing="false" styleClass="window-control-btn" text="文件夹">
+                        <graphic>
+                           <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="create-directory-icon" />
+                        </graphic></MenuItem>
                         </items>
+                  <padding>
+                     <Insets left="5.0" />
+                  </padding>
                     </MenuButton>
                     <Button fx:id="shearBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
                         <graphic>

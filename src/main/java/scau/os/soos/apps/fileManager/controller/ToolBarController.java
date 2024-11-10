@@ -96,6 +96,13 @@ public class ToolBarController implements Initializable {
         // 为搜索按钮添加监听器
         addListenerForSearchButton();
 
+        // 为创建文本文件按钮添加监听器
+        addListenerForCreateTxtButton();
+        // 为创建可执行文件按钮添加监听器
+        addListenerForCreateExeButton();
+        // 为创建目录按钮添加监听器
+        addListenerForCreateDirectoryButton();
+
 
         // 为剪切按钮添加监听器
         addListenerForShearButton();
@@ -319,6 +326,36 @@ public class ToolBarController implements Initializable {
 
         searchIcon.getStyleClass().remove("cancel-icon");
         searchIcon.getStyleClass().add("search-icon");
+    }
+
+
+    /**
+     * 为创建txt文件按钮添加事件监听器。
+     */
+    private void addListenerForCreateTxtButton() {
+        createTxtBtn.setOnAction(e -> {
+            // TODO: 实现创建txt文件功能
+        });
+    }
+
+
+    /**
+     * 为创建exe文件按钮添加事件监听器。
+     */
+    private void addListenerForCreateExeButton() {
+        createExeBtn.setOnAction(e -> {
+            // TODO: 实现创建exe文件功能
+        });
+    }
+
+
+    /**
+     * 为创建目录按钮添加事件监听器。
+     */
+    private void addListenerForCreateDirectoryButton() {
+        createDirectoryBtn.setOnAction(e -> {
+            // TODO: 实现创建目录功能
+        });
     }
 
 
