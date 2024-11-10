@@ -58,7 +58,7 @@
                         <TextField fx:id="searchTextField" focusTraversable="false" prefWidth="200.0" styleClass="text-field" />
                         <Button fx:id="searchBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
                             <graphic>
-                                <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="search-icon" />
+                                <Region fx:id="searchIcon" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="search-icon" />
                             </graphic>
                         </Button>
                     </children>

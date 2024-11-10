@@ -67,6 +67,15 @@ public class FileManagerApp extends Window {
         return itemContainer;
     }
 
+    public List<Item> getItemList(){
+        return itemList;
+    }
+
+    public void setItemList(List<Item> itemList) {
+        this.itemList = itemList;
+        itemCount.set(itemList.size());
+    }
+
     @Override
     public void initialize() {
         instance = this;
