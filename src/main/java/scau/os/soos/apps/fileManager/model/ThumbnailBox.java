@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
+import scau.os.soos.apps.fileManager.util.tipUtil;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
@@ -216,12 +217,8 @@ public class ThumbnailBox extends VBox {
 
     private void setTipEvent() {
         this.setOnMouseEntered(event -> {
-            Tooltip tooltip = new Tooltip();
-            tooltip.setStyle("-fx-font-size:12;" +
-                    "-fx-background-color:#fafafa;" +
-                    "-fx-text-fill:#585959;");
-            tooltip.setText("类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
-            Tooltip.install(this, tooltip);
+            tipUtil.setTooltip(this,
+                    "类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
         });
     }
 

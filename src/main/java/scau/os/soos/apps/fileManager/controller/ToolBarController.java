@@ -3,12 +3,14 @@ package scau.os.soos.apps.fileManager.controller;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.enums.SORT_TYPE;
 import scau.os.soos.apps.fileManager.util.matchUtil;
+import scau.os.soos.apps.fileManager.util.tipUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
@@ -95,6 +97,8 @@ public class ToolBarController implements Initializable {
 
     ToggleGroup selectItemGroup = new ToggleGroup();
 
+    HashMap<Button, String> buttonToTooltipMap = new HashMap<>();
+
     private static ToolBarController instance;
 
     public static ToolBarController getInstance() {
@@ -155,6 +159,9 @@ public class ToolBarController implements Initializable {
         addListenerForSortMenu();
         // 添加选择菜单的监听器
         addListenerForSelectMenu();
+
+        // 初始化提示
+        initTooltip();
     }
 
 
@@ -355,6 +362,8 @@ public class ToolBarController implements Initializable {
 
         searchIcon.getStyleClass().remove("search-icon");
         searchIcon.getStyleClass().add("cancel-icon");
+
+        tipUtil.setTooltip(searchBtn, "cancel");
     }
 
     public void unSearch(boolean isRefresh) {
@@ -370,6 +379,8 @@ public class ToolBarController implements Initializable {
 
         searchIcon.getStyleClass().remove("cancel-icon");
         searchIcon.getStyleClass().add("search-icon");
+
+        tipUtil.setTooltip(searchBtn, "search");
     }
 
 
@@ -596,5 +607,24 @@ public class ToolBarController implements Initializable {
         // 加载搜索结果列表
         FileManagerApp.getInstance().setItemList(filteredItemList);
         FileManagerApp.getInstance().displayItem();
+    }
+
+    // 初始化提示框
+    private void initTooltip(){
+        buttonToTooltipMap.put(leftBtn,"StepBackward");
+        buttonToTooltipMap.put(rightBtn,"StepForward");
+        buttonToTooltipMap.put(upBtn,"UpDirectory");
+        buttonToTooltipMap.put(refreshBtn,"Refresh");
+        buttonToTooltipMap.put(goToBtn,"GoToDirectory");
+        buttonToTooltipMap.put(searchBtn,"Search");
+        buttonToTooltipMap.put(shearBtn,"Shear");
+        buttonToTooltipMap.put(copyBtn,"Copy");
+        buttonToTooltipMap.put(pasteBtn,"Paste");
+        buttonToTooltipMap.put(reNameBtn,"ReName");
+        buttonToTooltipMap.put(deleteBtn,"Delete");
+
+        for (HashMap.Entry<Button, String> entry : buttonToTooltipMap.entrySet()) {
+            tipUtil.setTooltip(entry.getKey(), entry.getValue());
+        }
     }
 }
