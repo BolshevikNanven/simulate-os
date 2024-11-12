@@ -3,10 +3,13 @@ package scau.os.soos.apps.fileManager.controller;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -16,6 +19,7 @@ import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.apps.fileManager.util.matchUtil;
 import scau.os.soos.apps.fileManager.util.tipUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
+import scau.os.soos.common.exception.DirectoryNoEmptyException;
 import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
@@ -277,9 +281,11 @@ public class ToolBarController implements Initializable {
             // 显示对话框, 将文本框内容设置为当前目录的路径
             Dialog.getDialog(FileManagerApp.getInstance(),
                     "文件管理器",
-                    close -> currentDirectory.setText(
-                            directory == null ? null : directory.getPath()),
+                    true,
+                    false,
                     confirm -> currentDirectory.setText(
+                            directory == null ? null : directory.getPath()),
+                    cancelOrClose -> currentDirectory.setText(
                             directory == null ? null : directory.getPath()),
                     label).show();
         }
@@ -496,33 +502,97 @@ public class ToolBarController implements Initializable {
      */
     private void addListenerForDeleteButton() {
         deleteBtn.disableProperty().bind(FileManagerApp.getInstance().getSelectedCountProperty().lessThanOrEqualTo(0));
-//        deleteBtn.setOnAction(e -> {
-//            List<ThumbnailBox> selectedItems = FileManagerApp.getInstance().getSelectedList();
-//            if(selectedItems.isEmpty()){
-//                return;
-//            }
-//            if(selectedItems.size() > 1){
-//                String message = "确定要永久性地删除这 "+ selectedItems.size() +" 项吗？";
-//                Label label = new Label(message);
-//
-//                // 显示对话框, 将文本框内容设置为当前目录的路径
-//                Dialog.getDialog(FileManagerApp.getInstance(),
-//                        "删除多个项目",
-//                        aBoolean -> {
-//                            for (ThumbnailBox itemBox : selectedItems){
-//                                Item item = itemBox.getItem();
-//                                if(item == null){
-//                                    continue;
-//                                }
-//                                if(item instanceof Directory){
-//                                    FileController.getInstance().deleteDirectory(item.getPath());
-//                                }else if(item instanceof Txt || item instanceof Exe){
-//                                    FileController.getInstance().deleteFile(item.getPath());
-//                                }
-//                            }
-//                        },label).show();
-//            }
-//        });
+        deleteBtn.setOnAction(e -> {
+            List<ThumbnailBox> selectedItems = FileManagerApp.getInstance().getSelectedList();
+            if (selectedItems.isEmpty()) {
+                return;
+            }
+            if (selectedItems.size() == 1) {
+                handleDeleteItem(selectedItems.getFirst());
+            } else {
+                handleDeleteItems(selectedItems);
+            }
+        });
+    }
+
+    private void handleDeleteItem(ThumbnailBox selectItemBox) {
+        Item item = selectItemBox.getItem();
+        BorderPane borderPane = createDeleteConfirmationPane(item,selectItemBox);
+
+        // 显示对话框, 将文本框内容设置为当前目录的路径
+        Dialog.getDialog(FileManagerApp.getInstance(),
+                "删除文件"+ (item.getType() == 0 ? "夹" : ""),
+                true,
+                true,
+                confirm -> {
+                    deleteSpecificItem(item);
+                    FileManagerApp.getInstance().refreshCurrentDirectory();
+                },
+                null,
+                borderPane).show();
+    }
+
+    private BorderPane createDeleteConfirmationPane(Item item,ThumbnailBox box) {
+        String message = "确定要永久性地删除此文件" + (item.getType() == 0 ? "夹" : "") + "吗？";
+        Label label = new Label(message);
+        HBox hbox = new HBox();
+        ImageView imageView = new ImageView(box.getImagePath());
+        imageView.setFitHeight(60);
+        imageView.setPreserveRatio(true);
+
+        StringBuilder itemInfo = new StringBuilder();
+        itemInfo.append("名称:\t").append(item.getFullName()).append("\n");
+        if (item.getType() != 0) {
+            itemInfo.append("类型:\t").append((char) item.getType()).append("\n");
+        }
+        itemInfo.append("大小:\t").append(item.getSize()).append(" byte\n");
+        Label label1 = new Label(itemInfo.toString());
+
+        hbox.getChildren().addAll(imageView, label1);
+        hbox.setPadding(new Insets(10, 0, 0, 0));
+        hbox.setSpacing(10);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setPadding(new Insets(10, 10, 10, 30));
+        borderPane.setTop(label);
+        borderPane.setCenter(hbox);
+        return borderPane;
+    }
+
+    private void handleDeleteItems(List<ThumbnailBox> selectedItems) {
+        String message = "确定要永久性地删除这 " + selectedItems.size() + " 项吗？";
+        Label label = new Label(message);
+
+        // 显示对话框, 将文本框内容设置为当前目录的路径
+        Dialog.getDialog(FileManagerApp.getInstance(),
+                "删除多个项目",
+                true,
+                true,
+                confirm -> {
+                    for (ThumbnailBox itemBox : selectedItems) {
+                        Item item = itemBox.getItem();
+                        if (item == null) {
+                            continue;
+                        }
+                        deleteSpecificItem(item);
+                    }
+                    FileManagerApp.getInstance().refreshCurrentDirectory();
+                },
+                null,
+                label).show();
+    }
+
+    private void deleteSpecificItem(Item item) {
+        try {
+            if (item instanceof Directory) {
+                FileController.getInstance().deleteDirectory(item.getPath());
+                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
+            } else if (item instanceof Txt || item instanceof Exe) {
+                FileController.getInstance().deleteFile(item.getPath());
+            }
+        } catch (ItemNotFoundException e) {
+            Dialog.getEmptyDialog(FileManagerApp.getInstance()).show();
+        }
     }
 
 

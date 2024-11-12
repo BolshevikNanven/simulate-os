@@ -31,7 +31,7 @@ public class ThumbnailBox extends VBox {
 
     private final Item item;
     private TextField textField;
-    private ImageView imageView;
+    private String imagePath;
 
     private EventHandler<KeyEvent> f2RenameHandler;
 
@@ -52,8 +52,8 @@ public class ThumbnailBox extends VBox {
         return item;
     }
 
-    public ImageView getImage() {
-        return imageView;
+    public String getImagePath() {
+        return imagePath;
     }
 
     /**
@@ -62,13 +62,13 @@ public class ThumbnailBox extends VBox {
     private void initializeImageView() {
         StackPane imageViewContainer = new StackPane();
 
-        imageView = new ImageView();
+        ImageView imageView = new ImageView();
         imageView.fitWidthProperty().bind(imageViewContainer.prefWidthProperty());
         imageView.fitHeightProperty().bind(imageViewContainer.prefHeightProperty());
         imageView.setPreserveRatio(true);
         imageView.setPickOnBounds(true);
 
-        String imagePath = determineImagePath();
+        imagePath = determineImagePath();
         if (imagePath != null) {
             imageView.setImage(new Image(imagePath));
         } else {
@@ -273,8 +273,10 @@ public class ThumbnailBox extends VBox {
         // 显示对话框, 将文本框内容设置为当前目录的路径
         Dialog.getDialog(FileManagerApp.getInstance(),
                 "重命名文件",
-                close -> cancelRenaming(),
+                true,
+                false,
                 confirm -> cancelRenaming(),
+                cancelOrClose -> cancelRenaming(),
                 label).show();
     }
 

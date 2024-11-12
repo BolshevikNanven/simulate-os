@@ -17,9 +17,10 @@ public class Dialog extends Window {
     private Window source;
     private Button confirmBtn;
     private Button cancelBtn;
+    private boolean isConfirmBtnDown = false;
     private Consumer<Boolean> confirmAction;
-    private Consumer<Boolean> cancelAction;
-    private Consumer<Boolean> closeAction;
+    private Consumer<Boolean> cancelAndCloseAction;
+
     // 拦截窗口点击事件
     private final EventHandler<MouseEvent> sourceMouseEventHandler = event -> {
         event.consume();
@@ -62,52 +63,41 @@ public class Dialog extends Window {
 
     @Override
     protected void close() {
-        onClose();
+        if (!isConfirmBtnDown && cancelAndCloseAction != null) {
+            cancelAndCloseAction.accept(true); // 传入true表示确认操作
+        }
         source.getWindow().removeEventFilter(MouseEvent.ANY, sourceMouseEventHandler);
         source.getWindow().removeEventFilter(KeyEvent.ANY, sourceKeyEventHandler);
     }
 
-    public static Dialog getDialog(Window source, String title, Consumer<Boolean> closeAction, Node content) {
-        Dialog dialog = getDialog(source, title, closeAction, null, null, content);
-        dialog.confirmBtn.setVisible(false);
-        return dialog;
-    }
-
-    public static Dialog getDialog(Window source, String title, Consumer<Boolean> closeAction, Consumer<Boolean> confirmAction, Node content) {
-        Dialog dialog = getDialog(source, title, closeAction, confirmAction, null, content);
-        dialog.cancelBtn.setVisible(false);
-        return dialog;
-    }
-
-    public static Dialog getDialog(Window source, String title, Consumer<Boolean> closeAction, Consumer<Boolean> confirmAction, Consumer<Boolean> cancelAction, Node content) {
+    public static Dialog getDialog(Window source, String title, boolean showConfirm, boolean showCancel, Consumer<Boolean> confirmAction, Consumer<Boolean> cancelAndCloseAction, Node content) {
         Dialog dialog = new Dialog(source, title);
         dialog.setContent(content);
-        dialog.closeAction = closeAction;
+        dialog.confirmBtn.setVisible(showConfirm);
+        dialog.cancelBtn.setVisible(showCancel);
         dialog.confirmAction = confirmAction;
-        dialog.cancelAction = cancelAction;
+        dialog.cancelAndCloseAction = cancelAndCloseAction;
         return dialog;
+    }
+
+    // 调试窗口
+    public static Dialog getEmptyDialog(Window source) {
+        return getDialog(source, "", true, false, null, null, null);
     }
 
     private void onConfirm() {
         if (confirmAction != null) {
             confirmAction.accept(true); // 传入true表示确认操作
+            isConfirmBtnDown = true;
         }
         simulateCloseButtonClick();
-        close();
     }
 
     private void onCancel() {
-        if (cancelAction != null) {
-            cancelAction.accept(true); // 传入true表示确认操作
+        if (cancelAndCloseAction != null) {
+            cancelAndCloseAction.accept(true); // 传入true表示确认操作
         }
         simulateCloseButtonClick();
-        close();
-    }
-
-    private void onClose() {
-        if (closeAction != null) {
-            closeAction.accept(true); // 传入true表示确认操作
-        }
     }
 
     private void setContent(Node pane) {

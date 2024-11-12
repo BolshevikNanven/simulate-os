@@ -35,8 +35,12 @@ public class FileController implements Module {
     /**
      * 删除文件
      */
-    public void deleteFile(String path) throws ItemNotFoundException, DirectoryNoEmptyException {
-        fileService.delete(path,false,true);
+    public void deleteFile(String path) throws ItemNotFoundException {
+        try {
+            fileService.delete(path,false,true);
+        } catch (DirectoryNoEmptyException ignored) {
+
+        }
     }
 
     /**
@@ -77,8 +81,12 @@ public class FileController implements Module {
     /**
      * 删除目录
      */
-    public void deleteDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException {
-        fileService.delete(path,true,true);
+    public void deleteDirectory(String path) throws ItemNotFoundException {
+        try {
+            fileService.delete(path,true,true);
+        } catch (DirectoryNoEmptyException ignored) {
+
+        }
     }
 
     public void reName(Item item, String newName) throws ItemAlreadyExistsException {
