@@ -19,6 +19,7 @@ public class Dialog extends Window {
     private Button cancelBtn;
     private Consumer<Boolean> confirmAction;
     private Consumer<Boolean> cancelAction;
+    private Consumer<Boolean> closeAction;
     // 拦截窗口点击事件
     private final EventHandler<MouseEvent> sourceMouseEventHandler = event -> {
         event.consume();
@@ -61,23 +62,29 @@ public class Dialog extends Window {
 
     @Override
     protected void close() {
+        onClose();
         source.getWindow().removeEventFilter(MouseEvent.ANY, sourceMouseEventHandler);
         source.getWindow().removeEventFilter(KeyEvent.ANY, sourceKeyEventHandler);
     }
 
-    public static Dialog getDialog(Window source, String title, Consumer<Boolean> confirmAction, Consumer<Boolean> cancelAction, Node content) {
-        Dialog dialog = new Dialog(source, title);
-        dialog.setContent(content);
-        dialog.confirmAction = confirmAction;
-        dialog.cancelAction = cancelAction;
+    public static Dialog getDialog(Window source, String title, Consumer<Boolean> closeAction, Node content) {
+        Dialog dialog = getDialog(source, title, closeAction, null, null, content);
+        dialog.confirmBtn.setVisible(false);
         return dialog;
     }
 
-    public static Dialog getDialog(Window source, String title, Consumer<Boolean> confirmAction, Node content) {
+    public static Dialog getDialog(Window source, String title, Consumer<Boolean> closeAction, Consumer<Boolean> confirmAction, Node content) {
+        Dialog dialog = getDialog(source, title, closeAction, confirmAction, null, content);
+        dialog.cancelBtn.setVisible(false);
+        return dialog;
+    }
+
+    public static Dialog getDialog(Window source, String title, Consumer<Boolean> closeAction, Consumer<Boolean> confirmAction, Consumer<Boolean> cancelAction, Node content) {
         Dialog dialog = new Dialog(source, title);
         dialog.setContent(content);
+        dialog.closeAction = closeAction;
         dialog.confirmAction = confirmAction;
-        dialog.cancelBtn.setVisible(false);
+        dialog.cancelAction = cancelAction;
         return dialog;
     }
 
@@ -95,6 +102,12 @@ public class Dialog extends Window {
         }
         simulateCloseButtonClick();
         close();
+    }
+
+    private void onClose() {
+        if (closeAction != null) {
+            closeAction.accept(true); // 传入true表示确认操作
+        }
     }
 
     private void setContent(Node pane) {

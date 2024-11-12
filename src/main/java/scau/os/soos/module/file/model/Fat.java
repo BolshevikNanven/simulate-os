@@ -1,7 +1,5 @@
 package scau.os.soos.module.file.model;
 
-import java.util.List;
-
 public class Fat {
     private final Disk disk;
     public static final int FREE = 0;

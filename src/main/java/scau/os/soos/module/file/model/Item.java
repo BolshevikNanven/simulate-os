@@ -52,7 +52,7 @@ public abstract class Item {
             System.out.println("Name is null");
             return;
         }
-        if(name.getBytes().length > 3) {
+        if (name.getBytes().length > 3) {
             System.out.println("Name is too long");
             return;
         }
@@ -126,23 +126,23 @@ public abstract class Item {
 
     public int getSize() {
         int s = 0;
-        s+=size[0] & 0xFF;
-        s+=(size[1] << 8) & 0xFFFF;
+        s += size[0] & 0xFF;
+        s += (size[1] << 8) & 0xFFFF;
         return s;
     }
 
     public void setPath() {
-        if(parent == null){
+        if (parent == null) {
             path = "/";
             return;
         }
 
-        if(this instanceof Directory){
-            path = parent.getPath() +  getName() + "/";
+        if (this instanceof Directory) {
+            path = parent.getPath() + getName() + "/";
             return;
         }
 
-        path = parent.getPath() +   getName() + '.' + (char)getType();
+        path = parent.getPath() + getName() + '.' + (char) getType();
     }
 
     public void setPath(String path) {
@@ -151,6 +151,10 @@ public abstract class Item {
 
     public String getPath() {
         return path;
+    }
+
+    public String getFullName() {
+        return getName() + (getType() == 0 ? "" : "." + (char) getType());
     }
 
     public byte[] getData() {
@@ -247,7 +251,7 @@ public abstract class Item {
 
     public String toString() {
         return "name: " + getName() +
-                " type: " + (char)getType() +
+                " type: " + (char) getType() +
                 " attribute: " + attribute +
                 " startBlockNum: " + getStartBlockNum() +
                 " size: " + getSize();

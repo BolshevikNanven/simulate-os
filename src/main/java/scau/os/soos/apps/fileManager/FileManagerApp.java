@@ -18,11 +18,8 @@ import scau.os.soos.apps.editor.EditorApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
-import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.model.Directory;
-import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
-import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.components.base.Window;
 
@@ -57,6 +54,10 @@ public class FileManagerApp extends Window {
             throw new RuntimeException("FileManagerApp未初始化");
         }
         return instance;
+    }
+
+    public IntegerProperty getSelectedCountProperty() {
+        return selectedCount;
     }
 
     public Pane getSelectedArea(){
@@ -96,6 +97,8 @@ public class FileManagerApp extends Window {
         initBinding();
         addListener();
         initBottomBar();
+
+        ToolBarController.getInstance().init();
     }
 
     private void initBinding() {
