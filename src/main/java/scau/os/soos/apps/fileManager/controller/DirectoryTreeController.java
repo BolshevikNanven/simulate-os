@@ -1,9 +1,6 @@
 package scau.os.soos.apps.fileManager.controller;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,7 +32,7 @@ public class DirectoryTreeController implements Initializable {
     // 路径列表，用于前进和后退
     private ListProperty<TreeItem<Item>> pathList;
     // 当前目录
-    private Item currentDirectory;
+    private ObjectProperty<Item> currentDirectory;
     // 文件与节点映射
     private HashMap<Item, TreeItem<Item>> itemMap;
 
@@ -49,7 +46,7 @@ public class DirectoryTreeController implements Initializable {
     }
 
     public Item getCurrentDirectory() {
-        return currentDirectory;
+        return currentDirectory.get();
     }
 
     public IntegerProperty getPathPointerProperty() {
@@ -60,12 +57,17 @@ public class DirectoryTreeController implements Initializable {
         return pathList;
     }
 
+    public ObjectProperty<Item> getCurrentDirectoryProperty() {
+        return currentDirectory;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         instance = this;
 
         pathPointer = new SimpleIntegerProperty(-1);
         pathList = new SimpleListProperty<>(FXCollections.observableArrayList());
+        currentDirectory = new SimpleObjectProperty<>(null);
         itemMap = new HashMap<>();
 
         init();
@@ -106,7 +108,9 @@ public class DirectoryTreeController implements Initializable {
     }
 
     public void refreshCurrentDirectory() {
-        loadDirectory(itemMap.get(currentDirectory));
+        if (currentDirectory.get() != null) {
+            loadDirectory(itemMap.get(currentDirectory.get()));
+        }
         directoryTree.refresh();
     }
 
@@ -183,10 +187,10 @@ public class DirectoryTreeController implements Initializable {
         //点击事件
         directoryTree.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() > 0 &&
-                    (pathPointer.get()==-1 || pathList.get(pathPointer.get())
+                    (pathPointer.get() == -1 || pathList.get(pathPointer.get())
                             != directoryTree.getSelectionModel().getSelectedItem())) {
                 // path进list
-                pathPointer.set(pathPointer.get() +1);
+                pathPointer.set(pathPointer.get() + 1);
                 pathList.add(directoryTree.getSelectionModel().getSelectedItem());
             }
         });
@@ -196,7 +200,7 @@ public class DirectoryTreeController implements Initializable {
                     if (newValue == null || newValue.getValue() == null) {
                         return;
                     }
-                    currentDirectory = newValue.getValue();
+                    currentDirectory.set(newValue.getValue());
                     //更新当前目录显示
                     ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
                     ToolBarController.getInstance().resetSearchButton();
@@ -257,13 +261,13 @@ public class DirectoryTreeController implements Initializable {
     }
 
     public void goToDirectory(Item directory) {
-        if (directory == null || !directory.isDirectory() || directory == currentDirectory) {
+        if (directory == null || !directory.isDirectory() || directory == currentDirectory.get()) {
             return;
         }
         if (itemMap.containsKey(directory)) {
             TreeItem<Item> directoryItem = itemMap.get(directory);
             directoryTree.getSelectionModel().select(directoryItem);
-            pathPointer.set(pathPointer.get()+1);
+            pathPointer.set(pathPointer.get() + 1);
             pathList.add(directoryItem);
             return;
         }
@@ -285,7 +289,7 @@ public class DirectoryTreeController implements Initializable {
         if (itemMap.containsKey(directory)) {
             TreeItem<Item> directoryItem = itemMap.get(directory);
             directoryTree.getSelectionModel().select(directoryItem);
-            pathPointer.set(pathPointer.get()+1);
+            pathPointer.set(pathPointer.get() + 1);
             pathList.add(directoryItem);
         }
     }
@@ -299,14 +303,14 @@ public class DirectoryTreeController implements Initializable {
         }
 
         directoryTree.getSelectionModel().select(item.getParent());
-        pathPointer.set(pathPointer.get()+1);
+        pathPointer.set(pathPointer.get() + 1);
         pathList.add(item.getParent());
     }
 
     public boolean stepBackward() {
         if (pathPointer.get() > 0) {
             // 路径指针--
-            pathPointer.set(pathPointer.get()-1);
+            pathPointer.set(pathPointer.get() - 1);
             // 重新设置imageModelList
             TreeItem<Item> item = pathList.get(pathPointer.get());
             // 重新设置TreeView
@@ -319,7 +323,7 @@ public class DirectoryTreeController implements Initializable {
     public boolean stepForward() {
         if (pathPointer.get() < pathList.size() - 1) {
             // 路径指针++
-            pathPointer.set(pathPointer.get()+1);
+            pathPointer.set(pathPointer.get() + 1);
             // 重新设置imageModelList
             TreeItem<Item> item = pathList.get(pathPointer.get());
             // 重新设置TreeView

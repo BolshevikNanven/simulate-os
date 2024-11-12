@@ -4,7 +4,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -13,11 +12,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
+import scau.os.soos.apps.fileManager.util.tipUtil;
+import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.model.Txt;
+import scau.os.soos.ui.dialog.Dialog;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class ThumbnailBox extends VBox {
 
     private final Item item;
     private TextField textField;
+    private String imagePath;
 
     private EventHandler<KeyEvent> f2RenameHandler;
 
@@ -49,6 +52,10 @@ public class ThumbnailBox extends VBox {
         return item;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
     /**
      * 初始化 ImageView 及其容器。
      */
@@ -61,7 +68,7 @@ public class ThumbnailBox extends VBox {
         imageView.setPreserveRatio(true);
         imageView.setPickOnBounds(true);
 
-        String imagePath = determineImagePath();
+        imagePath = determineImagePath();
         if (imagePath != null) {
             imageView.setImage(new Image(imagePath));
         } else {
@@ -216,12 +223,8 @@ public class ThumbnailBox extends VBox {
 
     private void setTipEvent() {
         this.setOnMouseEntered(event -> {
-            Tooltip tooltip = new Tooltip();
-            tooltip.setStyle("-fx-font-size:12;" +
-                    "-fx-background-color:#fafafa;" +
-                    "-fx-text-fill:#585959;");
-            tooltip.setText("类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
-            Tooltip.install(this, tooltip);
+            tipUtil.setTooltip(this,
+                    "类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
         });
     }
 
@@ -236,8 +239,8 @@ public class ThumbnailBox extends VBox {
     private void handleRenameKeyPress(KeyEvent event) {
         // 如果按下的键是回车键
         if (event.getCode() == KeyCode.ENTER) {
-            // 调用完成重命名的方法
-            completeRenaming();
+            // 转移焦点触发重命名事件
+            requestFocus();
         }
         // 否则，如果按下的键是ESCAPE键
         else if (event.getCode() == KeyCode.ESCAPE) {
@@ -249,30 +252,37 @@ public class ThumbnailBox extends VBox {
     private void completeRenaming() {
         String newName = textField.getText().trim();
 
-        if (!newName.isEmpty() && !newName.equals(item.getName())) {
-            Directory directory = (Directory) DirectoryTreeController.getInstance().getCurrentDirectory();
+        if(newName.isEmpty() || newName.equals(item.getName())){
+            cancelRenaming();
+        }
 
-            byte currentItemType = this.getItem().getType();
-
-            for (Item childItem : directory.getChildren()) {
-                if (childItem != item && childItem.getName().equals(newName)) {
-                    if (childItem.getType() == currentItemType) {
-                        cancelRenaming();
-                        return;
-                    }
-                }
-            }
+        try {
             FileController.getInstance().reName(item, newName);
+            cancelRenaming();
             DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
+        } catch (ItemAlreadyExistsException e) {
+            handleFileAlreadyExistsException(e);
         }
-        cancelRenaming();
     }
 
+    private void handleFileAlreadyExistsException(Exception e) {
+        String errorMessage = "文件名 "+ e.getMessage() +" 已存在";
+        Label label = new Label(errorMessage);
+
+        // 显示对话框, 将文本框内容设置为当前目录的路径
+        Dialog.getDialog(FileManagerApp.getInstance(),
+                "重命名文件",
+                true,
+                false,
+                confirm -> cancelRenaming(),
+                cancelOrClose -> cancelRenaming(),
+                label).show();
+    }
 
     private void cancelRenaming() {
         textField.setEditable(false);
         textField.setVisible(false);
-        this.requestFocus();
+        textField.requestFocus();
     }
 }

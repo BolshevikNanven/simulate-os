@@ -52,55 +52,55 @@ public class FileMenu extends Popover {
         pasteBtn.setOnAction(actionEvent -> {
             hide();
         });
-        deleteBtn.setOnAction(actionEvent -> {
-            List<ThumbnailBox> items = FileManagerApp.getInstance().getSelectedList();
-            for (ThumbnailBox thumbnailBox : items) {
-                Item item = thumbnailBox.getItem();
-                if (item.isDirectory()) {
-                    FileController.getInstance().deleteDirectory(item.getPath());
-                } else {
-                    FileController.getInstance().deleteFile(item.getPath());
-                }
-                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
-            }
-            FileManagerApp.getInstance().refreshCurrentDirectory();
-            hide();
-        });
-        createTxtBtn.setOnAction(actionEvent -> {
-            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
-            if (cur == null) {
-                return;
-            }
-            FileController.getInstance().createFile(cur.getPath() + "new.t");
-            FileManagerApp.getInstance().refreshCurrentDirectory();
-            hide();
-        });
-        createExeBtn.setOnAction(actionEvent -> {
-            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
-            FileController.getInstance().createFile(cur.getPath() + "new.e");
-            FileManagerApp.getInstance().refreshCurrentDirectory();
-            hide();
-        });
-        createDirectoryBtn.setOnAction(actionEvent -> {
-            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
-            FileController.getInstance().createDirectory(cur.getPath() + "new");
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
-            FileManagerApp.getInstance().refreshCurrentDirectory();
-            hide();
-        });
+//        deleteBtn.setOnAction(actionEvent -> {
+//            List<ThumbnailBox> items = FileManagerApp.getInstance().getSelectedList();
+//            for (ThumbnailBox thumbnailBox : items) {
+//                Item item = thumbnailBox.getItem();
+//                if (item.isDirectory()) {
+//                    FileController.getInstance().deleteDirectory(item.getPath());
+//                } else {
+//                    FileController.getInstance().deleteFile(item.getPath());
+//                }
+//                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
+//            }
+//            FileManagerApp.getInstance().refreshCurrentDirectory();
+//            hide();
+//        });
+//        createTxtBtn.setOnAction(actionEvent -> {
+//            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
+//            if (cur == null) {
+//                return;
+//            }
+//            FileController.getInstance().createFile(cur.getPath() + "new.t");
+//            FileManagerApp.getInstance().refreshCurrentDirectory();
+//            hide();
+//        });
+//        createExeBtn.setOnAction(actionEvent -> {
+//            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
+//            FileController.getInstance().createFile(cur.getPath() + "new.e");
+//            FileManagerApp.getInstance().refreshCurrentDirectory();
+//            hide();
+//        });
+//        createDirectoryBtn.setOnAction(actionEvent -> {
+//            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
+//            FileController.getInstance().createDirectory(cur.getPath() + "new");
+//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+//            FileManagerApp.getInstance().refreshCurrentDirectory();
+//            hide();
+//        });
         reNameBtn.setOnAction(actionEvent -> {
             ThumbnailBox tb = FileManagerApp.getInstance().getSelectedList().get(0);
             tb.startRenaming();
             hide();
         });
-        reAttributeBtn.setOnAction(actionEvent -> {
-            Dialog dialog = Dialog.getDialog(FileManagerApp.getInstance(),"属性",
-                    null,
-                    null,
-                    new Button("确定"));
-            dialog.show();
-            hide();
-        });
+//        reAttributeBtn.setOnAction(actionEvent -> {
+//            Dialog dialog = Dialog.getDialog(FileManagerApp.getInstance(),"属性",
+//                    null,
+//                    null,
+//                    new Button("确定"));
+//            dialog.show();
+//            hide();
+//        });
     }
 
     @Override

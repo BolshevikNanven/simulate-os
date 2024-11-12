@@ -198,7 +198,7 @@ Button {
     -fx-background-color: #ffffff;
 }
 
-.dialog Label{
+.dialog > Label{
     -fx-font-size: 14px;
 }
 

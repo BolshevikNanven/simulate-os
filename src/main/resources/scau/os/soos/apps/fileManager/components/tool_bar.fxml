@@ -123,7 +123,7 @@
                         </graphic>
                     </Button>
                     <Region prefWidth="1.0" styleClass="v-region" />
-               <MenuButton mnemonicParsing="false" prefHeight="38.0" prefWidth="72.0" styleClass="window-control-btn" text="排序">
+               <MenuButton fx:id="sortItemMenu" mnemonicParsing="false" prefHeight="38.0" prefWidth="72.0" styleClass="window-control-btn" text="排序">
                   <items>
                      <RadioMenuItem fx:id="sortByNameItem" mnemonicParsing="false" styleClass="window-control-btn" text="名称" />
                      <RadioMenuItem fx:id="sortByTypeItem" mnemonicParsing="false" styleClass="window-control-btn" text="类型" />
@@ -136,7 +136,7 @@
                      <RadioMenuItem fx:id="sortDescendingItem" mnemonicParsing="false" styleClass="window-control-btn" text="递减" />
                   </items>
                </MenuButton>
-               <MenuButton mnemonicParsing="false" prefHeight="38.0" prefWidth="72.0" styleClass="window-control-btn" text="筛选器">
+               <MenuButton fx:id="selectItemMenu" mnemonicParsing="false" prefHeight="38.0" prefWidth="72.0" styleClass="window-control-btn" text="筛选器">
                   <items>
                      <RadioMenuItem fx:id="selectAllItem" mnemonicParsing="false" styleClass="window-control-btn" text="所有文件类型" />
                      <RadioMenuItem fx:id="selectTxtItem" mnemonicParsing="false" styleClass="window-control-btn" text="文本文件" />

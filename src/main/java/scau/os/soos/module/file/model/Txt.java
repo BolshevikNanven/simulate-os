@@ -1,7 +1,6 @@
 package scau.os.soos.module.file.model;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class Txt extends Item {
     private StringBuilder context;

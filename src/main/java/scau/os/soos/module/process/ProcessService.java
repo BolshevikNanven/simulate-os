@@ -5,6 +5,7 @@ import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
 import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.memory.MemoryController;
@@ -67,7 +68,12 @@ public class ProcessService {
 
         // 5.将文件装入内存用户区
         // 获取文件数据
-        byte[] instructions = FileController.getInstance().readFile(file);
+        byte[] instructions = new byte[0];
+        try {
+            instructions = FileController.getInstance().readFile(file);
+        } catch (ItemNotFoundException e) {
+            System.out.println("文件未找到");
+        }
         int address = newPCB.getPC();
         // 写入内存用户区
         for (byte instruction : instructions) {

@@ -3,13 +3,24 @@ package scau.os.soos.apps.fileManager.controller;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.enums.SORT_TYPE;
+import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.apps.fileManager.util.matchUtil;
+import scau.os.soos.apps.fileManager.util.tipUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
+import scau.os.soos.common.exception.DirectoryNoEmptyException;
+import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
@@ -68,6 +79,9 @@ public class ToolBarController implements Initializable {
     private final Map<RadioMenuItem, Boolean> sortOrderMap = new HashMap<>();
     private final Map<RadioMenuItem, FILE_TYPE> selectItemMap = new HashMap<>();
 
+
+    @FXML
+    public MenuButton sortItemMenu;
     @FXML
     public RadioMenuItem sortByNameItem;
     @FXML
@@ -85,6 +99,8 @@ public class ToolBarController implements Initializable {
     ToggleGroup sortOrderGroup = new ToggleGroup();
 
     @FXML
+    public MenuButton selectItemMenu;
+    @FXML
     public RadioMenuItem selectAllItem;
     @FXML
     public RadioMenuItem selectTxtItem;
@@ -94,6 +110,8 @@ public class ToolBarController implements Initializable {
     public RadioMenuItem selectDirectoryItem;
 
     ToggleGroup selectItemGroup = new ToggleGroup();
+
+    HashMap<Button, String> buttonToTooltipMap = new HashMap<>();
 
     private static ToolBarController instance;
 
@@ -107,11 +125,9 @@ public class ToolBarController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         instance = this;
-
-        addListener();
     }
 
-    private void addListener() {
+    public void init() {
         // 为后退按钮添加监听器
         addListenerForBackwardButton();
         // 为前进按钮添加监听器
@@ -130,6 +146,9 @@ public class ToolBarController implements Initializable {
         // 为搜索按钮添加监听器
         addListenerForSearchButton();
 
+
+        // 为创建按钮添加监听器
+        addListenerForCreateButton();
         // 为创建文本文件按钮添加监听器
         addListenerForCreateTxtButton();
         // 为创建可执行文件按钮添加监听器
@@ -155,6 +174,9 @@ public class ToolBarController implements Initializable {
         addListenerForSortMenu();
         // 添加选择菜单的监听器
         addListenerForSelectMenu();
+
+        // 初始化提示
+        initTooltip();
     }
 
 
@@ -245,22 +267,28 @@ public class ToolBarController implements Initializable {
 
     private void handleGoToButtonClick() {
         String path = currentDirectory.getText();
-        Item target = FileController.getInstance().findItem(path, FILE_TYPE.DIRECTORY);
 
-        if (target == null) {
+        Item target = null;
+
+        try {
+            target = FileController.getInstance().findItem(path, FILE_TYPE.DIRECTORY);
+            // 如果找到了目标目录，则跳转到该目录
+            DirectoryTreeController.getInstance().goToDirectory(target);
+        } catch (ItemNotFoundException e) {
             String errorMessage = "找不到:\"" + (path == null ? "" : path) + "\", 请检查拼写并重试";
             Label label = new Label(errorMessage);
             Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
             // 显示对话框, 将文本框内容设置为当前目录的路径
             Dialog.getDialog(FileManagerApp.getInstance(),
                     "文件管理器",
-                    aBoolean -> currentDirectory.setText(
+                    true,
+                    false,
+                    confirm -> currentDirectory.setText(
+                            directory == null ? null : directory.getPath()),
+                    cancelOrClose -> currentDirectory.setText(
                             directory == null ? null : directory.getPath()),
                     label).show();
-            return;
         }
-        // 如果找到了目标目录，则跳转到该目录
-        DirectoryTreeController.getInstance().goToDirectory(target);
     }
 
     public void showCurrentDirectory(String directory) {
@@ -355,6 +383,8 @@ public class ToolBarController implements Initializable {
 
         searchIcon.getStyleClass().remove("search-icon");
         searchIcon.getStyleClass().add("cancel-icon");
+
+        tipUtil.setTooltip(searchBtn, "cancel");
     }
 
     public void unSearch(boolean isRefresh) {
@@ -370,6 +400,12 @@ public class ToolBarController implements Initializable {
 
         searchIcon.getStyleClass().remove("cancel-icon");
         searchIcon.getStyleClass().add("search-icon");
+
+        tipUtil.setTooltip(searchBtn, "search");
+    }
+
+    private void addListenerForCreateButton() {
+        createBtn.disableProperty().bind(DirectoryTreeController.getInstance().getCurrentDirectoryProperty().isNull());
     }
 
 
@@ -378,7 +414,12 @@ public class ToolBarController implements Initializable {
      */
     private void addListenerForCreateTxtButton() {
         createTxtBtn.setOnAction(e -> {
-            // TODO: 实现创建txt文件功能
+            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
+            if (cur == null) {
+                return;
+            }
+//            FileController.getInstance().createFile(cur.getPath() + "new.t");
+            FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
 
@@ -388,7 +429,12 @@ public class ToolBarController implements Initializable {
      */
     private void addListenerForCreateExeButton() {
         createExeBtn.setOnAction(e -> {
-            // TODO: 实现创建exe文件功能
+            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
+            if (cur == null) {
+                return;
+            }
+//            FileController.getInstance().createFile(cur.getPath() + "new.e");
+            FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
 
@@ -398,7 +444,13 @@ public class ToolBarController implements Initializable {
      */
     private void addListenerForCreateDirectoryButton() {
         createDirectoryBtn.setOnAction(e -> {
-            // TODO: 实现创建目录功能
+            Item cur = DirectoryTreeController.getInstance().getCurrentDirectory();
+            if (cur == null) {
+                return;
+            }
+//            FileController.getInstance().createDirectory(cur.getPath() + "new");
+            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
 
@@ -434,8 +486,14 @@ public class ToolBarController implements Initializable {
      * 为重命名按钮添加事件监听器（当前为空实现）。
      */
     private void addListenerForRenameButton() {
+        reNameBtn.disableProperty().bind(FileManagerApp.getInstance().getSelectedCountProperty().lessThanOrEqualTo(0));
         reNameBtn.setOnAction(e -> {
-            // TODO: 实现重命名功能
+            List<ThumbnailBox> selectedItems = FileManagerApp.getInstance().getSelectedList();
+            if (selectedItems.isEmpty()) {
+                return;
+            }
+            ThumbnailBox targetItem = selectedItems.get(0);
+            targetItem.startRenaming();
         });
     }
 
@@ -443,9 +501,98 @@ public class ToolBarController implements Initializable {
      * 为删除按钮添加事件监听器（当前为空实现）。
      */
     private void addListenerForDeleteButton() {
+        deleteBtn.disableProperty().bind(FileManagerApp.getInstance().getSelectedCountProperty().lessThanOrEqualTo(0));
         deleteBtn.setOnAction(e -> {
-            // TODO: 实现删除功能
+            List<ThumbnailBox> selectedItems = FileManagerApp.getInstance().getSelectedList();
+            if (selectedItems.isEmpty()) {
+                return;
+            }
+            if (selectedItems.size() == 1) {
+                handleDeleteItem(selectedItems.getFirst());
+            } else {
+                handleDeleteItems(selectedItems);
+            }
         });
+    }
+
+    private void handleDeleteItem(ThumbnailBox selectItemBox) {
+        Item item = selectItemBox.getItem();
+        BorderPane borderPane = createDeleteConfirmationPane(item,selectItemBox);
+
+        // 显示对话框, 将文本框内容设置为当前目录的路径
+        Dialog.getDialog(FileManagerApp.getInstance(),
+                "删除文件"+ (item.getType() == 0 ? "夹" : ""),
+                true,
+                true,
+                confirm -> {
+                    deleteSpecificItem(item);
+                    FileManagerApp.getInstance().refreshCurrentDirectory();
+                },
+                null,
+                borderPane).show();
+    }
+
+    private BorderPane createDeleteConfirmationPane(Item item,ThumbnailBox box) {
+        String message = "确定要永久性地删除此文件" + (item.getType() == 0 ? "夹" : "") + "吗？";
+        Label label = new Label(message);
+        HBox hbox = new HBox();
+        ImageView imageView = new ImageView(box.getImagePath());
+        imageView.setFitHeight(60);
+        imageView.setPreserveRatio(true);
+
+        StringBuilder itemInfo = new StringBuilder();
+        itemInfo.append("名称:\t").append(item.getFullName()).append("\n");
+        if (item.getType() != 0) {
+            itemInfo.append("类型:\t").append((char) item.getType()).append("\n");
+        }
+        itemInfo.append("大小:\t").append(item.getSize()).append(" byte\n");
+        Label label1 = new Label(itemInfo.toString());
+
+        hbox.getChildren().addAll(imageView, label1);
+        hbox.setPadding(new Insets(10, 0, 0, 0));
+        hbox.setSpacing(10);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setPadding(new Insets(10, 10, 10, 30));
+        borderPane.setTop(label);
+        borderPane.setCenter(hbox);
+        return borderPane;
+    }
+
+    private void handleDeleteItems(List<ThumbnailBox> selectedItems) {
+        String message = "确定要永久性地删除这 " + selectedItems.size() + " 项吗？";
+        Label label = new Label(message);
+
+        // 显示对话框, 将文本框内容设置为当前目录的路径
+        Dialog.getDialog(FileManagerApp.getInstance(),
+                "删除多个项目",
+                true,
+                true,
+                confirm -> {
+                    for (ThumbnailBox itemBox : selectedItems) {
+                        Item item = itemBox.getItem();
+                        if (item == null) {
+                            continue;
+                        }
+                        deleteSpecificItem(item);
+                    }
+                    FileManagerApp.getInstance().refreshCurrentDirectory();
+                },
+                null,
+                label).show();
+    }
+
+    private void deleteSpecificItem(Item item) {
+        try {
+            if (item instanceof Directory) {
+                FileController.getInstance().deleteDirectory(item.getPath());
+                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
+            } else if (item instanceof Txt || item instanceof Exe) {
+                FileController.getInstance().deleteFile(item.getPath());
+            }
+        } catch (ItemNotFoundException e) {
+            Dialog.getEmptyDialog(FileManagerApp.getInstance()).show();
+        }
     }
 
 
@@ -453,6 +600,8 @@ public class ToolBarController implements Initializable {
      * 为排序菜单项添加事件监听器。
      */
     private void addListenerForSortMenu() {
+        sortItemMenu.disableProperty().bind(DirectoryTreeController.getInstance().getCurrentDirectoryProperty().isNull());
+
         sortByNameItem.setToggleGroup(sortRuleGroup);
         sortByTypeItem.setToggleGroup(sortRuleGroup);
         sortBySizeItem.setToggleGroup(sortRuleGroup);
@@ -533,6 +682,8 @@ public class ToolBarController implements Initializable {
      * 为选择菜单项添加事件监听器。
      */
     private void addListenerForSelectMenu() {
+        selectItemMenu.disableProperty().bind(DirectoryTreeController.getInstance().getCurrentDirectoryProperty().isNull());
+
         selectAllItem.setToggleGroup(selectItemGroup);
         selectTxtItem.setToggleGroup(selectItemGroup);
         selectExeItem.setToggleGroup(selectItemGroup);
@@ -596,5 +747,24 @@ public class ToolBarController implements Initializable {
         // 加载搜索结果列表
         FileManagerApp.getInstance().setItemList(filteredItemList);
         FileManagerApp.getInstance().displayItem();
+    }
+
+    // 初始化提示框
+    private void initTooltip() {
+        buttonToTooltipMap.put(leftBtn, "StepBackward");
+        buttonToTooltipMap.put(rightBtn, "StepForward");
+        buttonToTooltipMap.put(upBtn, "UpDirectory");
+        buttonToTooltipMap.put(refreshBtn, "Refresh");
+        buttonToTooltipMap.put(goToBtn, "GoToDirectory");
+        buttonToTooltipMap.put(searchBtn, "Search");
+        buttonToTooltipMap.put(shearBtn, "Shear");
+        buttonToTooltipMap.put(copyBtn, "Copy");
+        buttonToTooltipMap.put(pasteBtn, "Paste");
+        buttonToTooltipMap.put(reNameBtn, "ReName");
+        buttonToTooltipMap.put(deleteBtn, "Delete");
+
+        for (HashMap.Entry<Button, String> entry : buttonToTooltipMap.entrySet()) {
+            tipUtil.setTooltip(entry.getKey(), entry.getValue());
+        }
     }
 }
