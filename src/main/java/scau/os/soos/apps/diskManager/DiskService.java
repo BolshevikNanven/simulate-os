@@ -1,11 +1,16 @@
 package scau.os.soos.apps.diskManager;
 
+
+
+import javafx.beans.property.*;
+;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,29 +27,35 @@ public class DiskService {
     Fat fatTable = FileController.getInstance().getFat();
 
     public class DiskBlock {
-        private final Integer blockNumber;
-        private final String state;
-
-        Fat fatTable = FileController.getInstance().getFat();
+        private final IntegerProperty blockNumber = new SimpleIntegerProperty(this, "blockNumber");
+        private final StringProperty state = new SimpleStringProperty(this, "state");
 
         public DiskBlock(Integer blockNumber, String state) {
-            this.blockNumber = blockNumber;
-            this.state = state;
+            this.blockNumber.set(blockNumber);
+            this.state.set(state);
         }
 
-        public Integer getBlockNumber() {
+        public IntegerProperty blockNumberProperty() {
             return blockNumber;
         }
 
-        public String getState() {
+        public int getBlockNumber() {
+            return blockNumber.get();
+        }
+
+        public StringProperty stateProperty() {
             return state;
+        }
+
+        public String getState() {
+            return state.get();
         }
     }
 
     public  void diskRender(GridPane diskBlocks) {
         diskBlocks.setHgap(3); // 水平间隔
         diskBlocks.setVgap(1.5); // 垂直间隔
-        Color[] occupiedColors = {Color.DARKRED, Color.SALMON, Color.ORANGERED, Color.CRIMSON, Color.FIREBRICK}; // 占用盘块的颜色数组
+
 
         for (int i = 0; i < 256; i++) {
             Label diskBlock = new Label("" + (i));
@@ -57,10 +68,8 @@ public class DiskService {
 
             // 根据fat表的返回值设置背景颜色
             if (!fatTable.isFreeBlock(i)) {
-                // 为占用的盘块分配不同的颜色
-                int colorIndex = i % occupiedColors.length;
                 diskBlock.setTextFill(Color.WHITE); // 设置文本颜色为白色，以提高对比度
-                diskBlock.setStyle("-fx-background-color: " + toWebColor(occupiedColors[colorIndex]) + "; "+
+                diskBlock.setStyle("-fx-background-color: " + toWebColor(Color.FIREBRICK) + "; "+
                         "-fx-border-style: solid; " +
                         "-fx-border-color: gray; " +
                         "-fx-border-width: 1;");
@@ -80,10 +89,43 @@ public class DiskService {
         blockNumberColumn.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
         stateColumn.setCellValueFactory(new PropertyValueFactory<>("state"));
 
+        // 设置stateColumn的单元格工厂
+        stateColumn.setCellFactory(column -> {
+            return new TableCell<DiskBlock, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        setStyle(getStateStyleBasedOnValue(item));
+                    }
+                }
+            };
+        });
+
         // 初始化数据
         ObservableList<DiskBlock> diskBlocksData = FXCollections.observableArrayList();
         for (int i = 0; i < 256; i++) {
-            diskBlocksData.add(new DiskBlock(i, fatTable.isFreeBlock(i) ? "空闲" : "占用")); // 添加数据
+            DiskBlock diskBlock=null;
+            if(i<4){
+                diskBlock = new DiskBlock(i, "系统占用");
+            }else{
+                diskBlock = new DiskBlock(i, fatTable.isFreeBlock(i) ? "空闲" : "占用");
+            }
+
+
+            // 添加监听器
+            diskBlock.blockNumberProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("Block number changed from " + oldValue + " to " + newValue);
+            });
+
+            diskBlock.stateProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("State changed from " + oldValue + " to " + newValue);
+            });
+            diskBlocksData.add(diskBlock);
         }
 
         // 设置数据到TableView
@@ -91,23 +133,39 @@ public class DiskService {
     }
 
     public void occupationGraphRender(StackPane occupationGraph) {
-        // 创建饼图数据
+        // 获取空闲和占用的块的数量
+        int totalBlocks = 256; // 假设总共有256个块
+        int freeBlocks = 0;
+        for (int i = 0; i < totalBlocks; i++) {
+            if (fatTable.isFreeBlock(i)) {
+                freeBlocks++;
+            }
+        }
+        int occupiedBlocks = totalBlocks - freeBlocks;
+
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("空闲:" + 30, 30),
-                new PieChart.Data("占用:" + 50, 50),
-                new PieChart.Data("系统:" + 20, 20)
+                new PieChart.Data("空闲:" + freeBlocks, freeBlocks),
+                new PieChart.Data("占用:" + occupiedBlocks, occupiedBlocks)
         );
 
         // 创建饼图
         PieChart pieChart = new PieChart(pieChartData);
+        pieChart.setTitle("磁盘使用情况");
 
-        // 设置饼图的首选大小
-        pieChart.setPrefSize(occupationGraph.getWidth(), occupationGraph.getHeight()); // 设置为200x200像素
+        // 启用动画
+        pieChart.setAnimated(true);
 
+        // 设置图例
+        pieChart.setLegendVisible(true);
+
+        // 自定义样式
+
+        // 清除之前的饼图（如果有）并添加新的饼图到StackPane
+        occupationGraph.getChildren().clear();
         occupationGraph.getChildren().add(pieChart);
-
-        occupationGraph.setClip(pieChart);
     }
+
+
 
 
     private String toWebColor(Color color) {
@@ -115,6 +173,17 @@ public class DiskService {
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
+    }
+
+    private String getStateStyleBasedOnValue(String state) {
+
+        switch (state) {
+            case "系统占用": return "-fx-text-fill: gray;";
+            case "空闲": return "-fx-text-fill: green;";
+            case "占用": return "-fx-text-fill: red;";
+            default: return "";
+        }
+
     }
 
 }

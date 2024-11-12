@@ -30,7 +30,7 @@
         </BorderPane>
     </right>
     <center>
-        <BorderPane fx:id="diskDisplay" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; /* Light Blue */: ;" BorderPane.alignment="CENTER">
+        <BorderPane fx:id="diskDisplay" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; /* Light Blue */;" BorderPane.alignment="CENTER">
             <center>
                 <GridPane fx:id="diskBlocks" hgap="1.0" prefHeight="318.0" prefWidth="612.0" vgap="1.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
@@ -90,7 +90,7 @@
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-border-width: 0.5; -fx-border-style: solid; -fx-border-color: gray;">
                <children>
-                  <Label text="操作(F)">
+                  <Label fx:id="ReFresh" text="刷新(F)">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
