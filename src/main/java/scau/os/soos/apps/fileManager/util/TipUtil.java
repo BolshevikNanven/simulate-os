@@ -3,7 +3,7 @@ package scau.os.soos.apps.fileManager.util;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 
-public class tipUtil {
+public class TipUtil {
     public static void setTooltip(Node button, String message, String style){
         // 设置提示框样式
         Tooltip tooltip = new Tooltip(message);

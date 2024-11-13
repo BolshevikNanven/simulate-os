@@ -4,22 +4,22 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.enums.SORT_TYPE;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
-import scau.os.soos.apps.fileManager.util.matchUtil;
-import scau.os.soos.apps.fileManager.util.tipUtil;
+import scau.os.soos.common.Clipboard;
+import scau.os.soos.apps.fileManager.util.MatchUtil;
+import scau.os.soos.apps.fileManager.util.TipUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.common.exception.DirectoryNoEmptyException;
+import scau.os.soos.common.exception.DiskSpaceInsufficientException;
+import scau.os.soos.common.exception.IllegalPathException;
+import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
@@ -63,6 +63,8 @@ public class ToolBarController implements Initializable {
     @FXML
     public MenuItem createDirectoryBtn;
 
+
+    private boolean isShear;
     @FXML
     public Button shearBtn;
     @FXML
@@ -351,9 +353,9 @@ public class ToolBarController implements Initializable {
             if (lastDotIndex != -1) {
                 name = name.substring(0, lastDotIndex);
             }
-            int maxCommonSubstring = matchUtil.longestCommonSubstring(name, searchName);
+            int maxCommonSubstring = MatchUtil.longestCommonSubstring(name, searchName);
             // 计算匹配水平
-            double level = matchUtil.matchLevel(name, searchName, 1, 4, 50);
+            double level = MatchUtil.matchLevel(name, searchName, 1, 4, 50);
             // 判断高度相似
             if (maxCommonSubstring > searchName.length() / 2) {
                 heightMatch = true;
@@ -384,7 +386,7 @@ public class ToolBarController implements Initializable {
         searchIcon.getStyleClass().remove("search-icon");
         searchIcon.getStyleClass().add("cancel-icon");
 
-        tipUtil.setTooltip(searchBtn, "cancel");
+        TipUtil.setTooltip(searchBtn, "cancel");
     }
 
     public void unSearch(boolean isRefresh) {
@@ -401,7 +403,7 @@ public class ToolBarController implements Initializable {
         searchIcon.getStyleClass().remove("cancel-icon");
         searchIcon.getStyleClass().add("search-icon");
 
-        tipUtil.setTooltip(searchBtn, "search");
+        TipUtil.setTooltip(searchBtn, "search");
     }
 
     private void addListenerForCreateButton() {
@@ -418,11 +420,17 @@ public class ToolBarController implements Initializable {
             if (cur == null) {
                 return;
             }
-//            FileController.getInstance().createFile(cur.getPath() + "new.t");
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+
+            String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.TXT,"t", ".t", 99);
+
+            try {
+                FileController.getInstance().createFile(filePath);
+                FileManagerApp.getInstance().refreshCurrentDirectory();
+            } catch (Exception ex) {
+                handleError(ex);
+            }
         });
     }
-
 
     /**
      * 为创建exe文件按钮添加事件监听器。
@@ -433,8 +441,15 @@ public class ToolBarController implements Initializable {
             if (cur == null) {
                 return;
             }
-//            FileController.getInstance().createFile(cur.getPath() + "new.e");
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+
+            String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.EXE,"e", ".e", 99);
+
+            try {
+                FileController.getInstance().createFile(filePath);
+                FileManagerApp.getInstance().refreshCurrentDirectory();
+            } catch (Exception ex) {
+                handleError(ex);
+            }
         });
     }
 
@@ -448,10 +463,65 @@ public class ToolBarController implements Initializable {
             if (cur == null) {
                 return;
             }
-//            FileController.getInstance().createDirectory(cur.getPath() + "new");
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+
+            String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.DIRECTORY,"d", "", 99);
+
+            try {
+                FileController.getInstance().createDirectory(filePath);
+                FileManagerApp.getInstance().refreshCurrentDirectory();
+            } catch (Exception ex) {
+                handleError(ex);
+            }
         });
+    }
+
+
+    /**
+     * 生成一个唯一的文件路径。
+     *
+     * @param dir 目录路径，文件将被保存在此目录下。
+     * @param type 文件类型，用于文件查找时的类型匹配。
+     * @param name 文件的基础名称，不包含扩展名。
+     * @param extension 文件的扩展名，不包含点号（.）。
+     * @param maxCounter 最大重试次数，当达到此次数时，如果仍无法生成唯一文件名，则抛出异常。
+     * @return 返回生成的唯一文件路径。
+     * @throws RuntimeException 如果达到最大重试次数仍无法生成唯一文件名，则抛出此异常。
+     */
+    private String generateUniqueFilePath(String dir, FILE_TYPE type,String name, String extension, int maxCounter) {
+        int counter = 0;
+        String fileName = name + counter + extension; // 初始文件名
+        while (true) {
+            try {
+                FileController.getInstance().findItem(dir + fileName,type);
+            } catch (ItemNotFoundException e) {
+                return dir + fileName;
+            }
+
+            if (counter > maxCounter) {
+                throw new RuntimeException("无法创建文件，已达到最大重试次数。");
+            }
+            counter++; // 计数器递增
+            fileName = name + counter + extension; // 生成新的文件名
+        }
+    }
+
+    private void handleError(Exception ex) {
+        switch (ex) {
+            case ItemAlreadyExistsException itemAlreadyExistsException -> {
+            }
+            // 文件已存在的具体处理逻辑（如用户提示等）
+            case DiskSpaceInsufficientException diskSpaceInsufficientException -> {
+            }
+            // 磁盘空间不足的具体处理逻辑（如用户提示等）
+            case ItemNotFoundException itemNotFoundException -> {
+            }
+            // 项目未找到的具体处理逻辑（如用户提示等）
+            case null, default -> {
+            }
+            // 其他异常的处理逻辑（如日志记录、用户提示等）
+        }
+        // 可以根据需要选择是否抛出异常或如何抛出
+        throw new RuntimeException("文件创建过程中发生错误。", ex);
     }
 
 
@@ -459,26 +529,86 @@ public class ToolBarController implements Initializable {
      * 为剪切按钮添加事件监听器（当前为空实现）。
      */
     private void addListenerForShearButton() {
-        shearBtn.setOnAction(e -> {
-            // TODO: 实现剪切功能
-        });
+        shearBtn.disableProperty().bind(FileManagerApp.getInstance().getSelectedCountProperty().lessThanOrEqualTo(0));
+
+        shearBtn.setOnAction(e -> performClipboardOperation(true));
     }
+
 
     /**
      * 为复制按钮添加事件监听器（当前为空实现）。
      */
     private void addListenerForCopyButton() {
-        copyBtn.setOnAction(e -> {
-            // TODO: 实现复制功能
-        });
+        copyBtn.disableProperty().bind(FileManagerApp.getInstance().getSelectedCountProperty().lessThanOrEqualTo(0));
+
+        copyBtn.setOnAction(e -> performClipboardOperation(false));
+    }
+
+
+    private void performClipboardOperation(boolean isShear) {
+        List<ThumbnailBox> selectedItems = FileManagerApp.getInstance().getSelectedList();
+        this.isShear = isShear;
+
+        if (!selectedItems.isEmpty()) {
+            Clipboard.getInstance().copy(selectedItems);
+        }
     }
 
     /**
      * 为粘贴按钮添加事件监听器（当前为空实现）。
      */
     private void addListenerForPasteButton() {
+        pasteBtn.disableProperty().bind(DirectoryTreeController.getInstance().getCurrentDirectoryProperty().isNull()
+                .or(Clipboard.getInstance().getCopiedItemsProperty().emptyProperty()));
+
         pasteBtn.setOnAction(e -> {
-            // TODO: 实现粘贴功能
+            List<ThumbnailBox> selectedItems = Clipboard.getInstance().getCopiedItems();
+            String target = DirectoryTreeController.getInstance().getCurrentDirectory().getPath();
+
+            for (ThumbnailBox item : selectedItems) {
+                Item source = item.getItem();
+                try {
+                    if (isShear) {
+                        FileController.getInstance().moveFile(source.getPath(), target);
+                    }else {
+                        FileController.getInstance().copyFile(source.getPath(), target);
+                    }
+                } catch (ItemAlreadyExistsException ex) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("正在将").append(selectedItems.size()).append("个项目从 ")
+                            .append(Clipboard.getInstance().getSourcePath()).append(" 复制到 ")
+                            .append(target).append("\n目标已包含一个名为\"").append(source.getFullName()).append("\"的文件\n\t是否要替换它?");
+                    Label message = new Label(sb.toString());
+                    Dialog.getDialog(FileManagerApp.getInstance(), "替换或跳过文件",
+                            true, true,
+                            confirm -> {
+                                try {
+                                    FileController.getInstance().deleteFile(target + "/" + source.getFullName());
+                                    if (isShear) {
+                                        FileController.getInstance().moveFile(source.getPath(), target);
+                                    }else {
+                                        FileController.getInstance().copyFile(source.getPath(), target);
+                                    }
+                                } catch (Exception exc) {
+                                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), "Error!!!").show();
+                                }
+                            }, null,
+                            message).show();
+                } catch (DiskSpaceInsufficientException ex) {
+                    Label message = new Label("磁盘空间不足，请清理部分空间后重试");
+                    Dialog.getDialog(FileManagerApp.getInstance(), "粘贴文件",
+                            true, false,
+                            null, null,
+                            message);
+                } catch (IllegalPathException ex) {
+                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), "IllegalPathException!!!").show();
+                } catch (ItemNotFoundException ex) {
+                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), "ItemNotFoundException!!!").show();
+                }
+            }
+
+            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
 
@@ -517,26 +647,10 @@ public class ToolBarController implements Initializable {
 
     private void handleDeleteItem(ThumbnailBox selectItemBox) {
         Item item = selectItemBox.getItem();
-        BorderPane borderPane = createDeleteConfirmationPane(item,selectItemBox);
-
-        // 显示对话框, 将文本框内容设置为当前目录的路径
-        Dialog.getDialog(FileManagerApp.getInstance(),
-                "删除文件"+ (item.getType() == 0 ? "夹" : ""),
-                true,
-                true,
-                confirm -> {
-                    deleteSpecificItem(item);
-                    FileManagerApp.getInstance().refreshCurrentDirectory();
-                },
-                null,
-                borderPane).show();
-    }
-
-    private BorderPane createDeleteConfirmationPane(Item item,ThumbnailBox box) {
         String message = "确定要永久性地删除此文件" + (item.getType() == 0 ? "夹" : "") + "吗？";
         Label label = new Label(message);
         HBox hbox = new HBox();
-        ImageView imageView = new ImageView(box.getImagePath());
+        ImageView imageView = new ImageView(selectItemBox.getImagePath());
         imageView.setFitHeight(60);
         imageView.setPreserveRatio(true);
 
@@ -556,7 +670,18 @@ public class ToolBarController implements Initializable {
         borderPane.setPadding(new Insets(10, 10, 10, 30));
         borderPane.setTop(label);
         borderPane.setCenter(hbox);
-        return borderPane;
+
+        // 显示对话框, 将文本框内容设置为当前目录的路径
+        Dialog.getDialog(FileManagerApp.getInstance(),
+                "删除文件" + (item.getType() == 0 ? "夹" : ""),
+                true,
+                true,
+                confirm -> {
+                    deleteSpecificItem(item);
+                    FileManagerApp.getInstance().refreshCurrentDirectory();
+                },
+                null,
+                borderPane).show();
     }
 
     private void handleDeleteItems(List<ThumbnailBox> selectedItems) {
@@ -590,8 +715,8 @@ public class ToolBarController implements Initializable {
             } else if (item instanceof Txt || item instanceof Exe) {
                 FileController.getInstance().deleteFile(item.getPath());
             }
-        } catch (ItemNotFoundException e) {
-            Dialog.getEmptyDialog(FileManagerApp.getInstance()).show();
+        } catch (Exception e) {
+            Dialog.getEmptyDialog(FileManagerApp.getInstance(), "ItemNotFoundException").show();
         }
     }
 
@@ -764,7 +889,7 @@ public class ToolBarController implements Initializable {
         buttonToTooltipMap.put(deleteBtn, "Delete");
 
         for (HashMap.Entry<Button, String> entry : buttonToTooltipMap.entrySet()) {
-            tipUtil.setTooltip(entry.getKey(), entry.getValue());
+            TipUtil.setTooltip(entry.getKey(), entry.getValue());
         }
     }
 }

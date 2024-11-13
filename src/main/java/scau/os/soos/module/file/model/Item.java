@@ -29,6 +29,7 @@ public abstract class Item {
         setStartBlockNum(startBlockNum);
         setSize(size);
         setAttribute(readOnly, systemFile, regularFile, isDirectory);
+        setPath();
     }
 
     public void setDisk(Disk disk) {
