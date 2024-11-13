@@ -3,7 +3,6 @@ package scau.os.soos.apps.diskManager;
 
 
 import javafx.beans.property.*;
-;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

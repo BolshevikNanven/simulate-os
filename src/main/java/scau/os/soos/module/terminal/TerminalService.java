@@ -1,5 +1,6 @@
 package scau.os.soos.module.terminal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,10 +8,15 @@ public class TerminalService {
     private String  currentDirectory; // 当前操作目录
     private final Map<String, Operation<String,String>> commandMap; // 指令集
 
+    private final ArrayList<String> historyCommand; // 历史命令
+
+    private int historyIndex; // 历史命令索引
+
     public TerminalService() {
-        currentDirectory = "/"; // 初始化操作目录为根目录
+        currentDirectory = "C:/"; // 初始化操作目录为根目录
         commandMap = new HashMap<>();
         initCommandMap(); // 初始化指令集
+        historyCommand = new ArrayList<>();
     }
 
     private void initCommandMap() {
@@ -36,8 +42,29 @@ public class TerminalService {
         if (operation != null) {
             return operation.execute(arg);
         } else {
-            return("未知命令: " + cmd + "\n");
+            return("未知命令: " + cmd);
         }
+    }
+
+    // 获取上一条指令
+    public String getLastCommand() {
+        historyIndex = historyIndex > 0 ? historyIndex - 1 : historyCommand.size()-1;
+        return historyCommand.get(historyIndex);
+    }
+
+    // 获取下一条指令
+    public String getNextCommand() {
+        historyIndex = (historyIndex + 1) % historyCommand.size();
+        return historyCommand.get(historyIndex);
+    }
+
+    public void addCommand(String command) {
+        historyCommand.add(command);
+        historyIndex = historyCommand.size()-1;
+    }
+
+    public boolean isHistoryEmpty() {
+        return historyCommand.isEmpty();
     }
 
 

@@ -23,6 +23,26 @@ public class TerminalController implements Module {
         return terminalService.executeCommand(command);
     }
 
+    public String getCurrentDirectory(){
+        return terminalService.getCurrentDirectory();
+    }
+
+    public String getLastCommand() {
+        return terminalService.getLastCommand();
+    }
+
+    public String getNextCommand() {
+        return terminalService.getNextCommand();
+    }
+
+    public void addCommand(String command) {
+        terminalService.addCommand(command);
+    }
+
+    public boolean isHistoryEmpty() {
+        return terminalService.isHistoryEmpty();
+    }
+
     @Override
     public void run() {
 
