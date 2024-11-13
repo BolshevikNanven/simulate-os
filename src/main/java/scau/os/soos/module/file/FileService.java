@@ -174,8 +174,8 @@ public class FileService {
         System.out.println("写入成功!");
     }
 
-    public void copy(String sourcePath, String targetPath) throws
-            DiskSpaceInsufficientException, ItemNotFoundException, ItemAlreadyExistsException, ItemNotFoundException, IllegalPathException {
+    public void copy(String sourcePath, String targetPath,boolean isMove) throws
+            DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalPathException {
 
         //查重
         FILE_TYPE type = FileServiceUtil.check(sourcePath);
@@ -228,8 +228,14 @@ public class FileService {
         newItem.setDisk(disk);
         newItem.setParent(parent);
         newItem.setStartBlockNum(needDiskBlocks.get(0));
+        newItem.setPath();
 
         parent.addChildren(newItem);
+
+        if(isMove){
+            FileServiceUtil.delete(srcItem);
+        }
+
         FileServiceUtil.updateItemSize(newItem);
         FileServiceUtil.writeItemAndParentsToDisk(newItem);
     }

@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
-import scau.os.soos.apps.fileManager.util.tipUtil;
+import scau.os.soos.apps.fileManager.util.TipUtil;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
@@ -223,7 +223,7 @@ public class ThumbnailBox extends VBox {
 
     private void setTipEvent() {
         this.setOnMouseEntered(event -> {
-            tipUtil.setTooltip(this,
+            TipUtil.setTooltip(this,
                     "类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
         });
     }

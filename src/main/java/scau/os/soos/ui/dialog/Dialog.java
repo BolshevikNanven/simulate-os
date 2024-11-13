@@ -81,8 +81,8 @@ public class Dialog extends Window {
     }
 
     // 调试窗口
-    public static Dialog getEmptyDialog(Window source) {
-        return getDialog(source, "", true, false, null, null, null);
+    public static Dialog getEmptyDialog(Window source,String title) {
+        return getDialog(source, title, true, false, null, null, null);
     }
 
     private void onConfirm() {

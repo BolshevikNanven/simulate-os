@@ -1,6 +1,6 @@
 package scau.os.soos.apps.fileManager.util;
-public class matchUtil {
-    private matchUtil() {
+public class MatchUtil {
+    private MatchUtil() {
     }
     public static double matchLevel(String s, String t,double w1,double w2,double w3){
         return (levenshteinDistance(s, t) * w1 + longestCommonSubsequence(s, t) * -w2 + longestCommonSubstring(s, t) * -w3);
