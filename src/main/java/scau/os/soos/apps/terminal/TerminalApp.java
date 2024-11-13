@@ -6,6 +6,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import scau.os.soos.common.OS;
 import scau.os.soos.common.model.Handler;
 import scau.os.soos.module.terminal.TerminalController;
@@ -39,6 +40,8 @@ public class TerminalApp extends Window {
                 handleEnter();
             } else if (event.getCode() == KeyCode.UP) {
                 handleUpArrow();
+            } else if (event.getCode() == KeyCode.DOWN) {
+                handleDownArrow();
             }
         });
         textArea.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -55,6 +58,13 @@ public class TerminalApp extends Window {
         });
         textArea.addEventFilter(KeyEvent.KEY_TYPED, event -> {
             if (event.getCharacter().equals(prompt.trim())) {
+                event.consume();
+            }
+        });
+        textArea.addEventFilter(MouseEvent.ANY, event -> {
+            if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+                textArea.requestFocus();
+                textArea.positionCaret(textArea.getText().length());
                 event.consume();
             }
         });
@@ -84,19 +94,20 @@ public class TerminalApp extends Window {
             int commandLength = textArea.getText().length() - lastPromptIndex - prompt.length();
             textArea.deleteText(lastPromptIndex + prompt.length(), lastPromptIndex + prompt.length() + commandLength);
             textArea.appendText(lastCommand);
-
-
-
-
         }
     }
 
+    private void handleDownArrow() {
+        if(!TerminalController.getInstance().isHistoryEmpty()){
+            String lastCommand = TerminalController.getInstance().getNextCommand();
+            int lastPromptIndex = textArea.getText().lastIndexOf(prompt);
+            int commandLength = textArea.getText().length() - lastPromptIndex - prompt.length();
+            textArea.deleteText(lastPromptIndex + prompt.length(), lastPromptIndex + prompt.length() + commandLength);
+            textArea.appendText(lastCommand);
+        }
+    }
+    
 
-
-    // 光标不能随鼠标
-    // 左键不能过>
-    // 在中间换行bug
-    // nextCommand
     @Override
     protected void close() {
 //        OS.clock.unBind(handler);
