@@ -19,6 +19,10 @@ public class TerminalController implements Module {
         terminalService = new TerminalService();
     }
 
+    public String executeCommand(String command) {
+        return terminalService.executeCommand(command);
+    }
+
     @Override
     public void run() {
 

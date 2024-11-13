@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane fx:id="body" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="container" stylesheets="@main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <TextArea id="terminal-display" editable="false" text="cd ../" wrapText="true" BorderPane.alignment="CENTER">
-         <font>
-            <Font name="JetBrains Mono Bold" size="13.0" />
-         </font>
-      </TextArea>
+      <ScrollPane BorderPane.alignment="CENTER">
+         <content>
+            <TextArea id="terminal-display" editable="false" text="cd../" wrapText="true">
+               <font>
+                  <Font name="JetBrains Mono Bold" size="13.0" />
+               </font>
+            </TextArea>
+         </content>
+      </ScrollPane>
    </center>
    <bottom>
-      <TextField fx:id="input" id="terminal-input" maxWidth="1.7976931348623157E308" prefHeight="36.0" BorderPane.alignment="CENTER">
+      <TextField id="terminal-input" fx:id="input" maxWidth="1.7976931348623157E308" prefHeight="36.0" BorderPane.alignment="CENTER">
          <font>
             <Font name="JetBrains Mono Bold" size="13.0" />
          </font>
