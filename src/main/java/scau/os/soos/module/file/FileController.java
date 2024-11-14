@@ -7,6 +7,7 @@ import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Item;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +114,28 @@ public class FileController implements Module {
     public boolean isExistedDirectory(String path) throws ItemNotFoundException {
         return findItem(path, FILE_TYPE.DIRECTORY) != null;
     }
+
+    // 待写
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory){
+        return ;
+    }
+
+    // 待写 格式化硬盘
+    public void formatDisk(Path path) {
+        return ;
+    }
+
+    // 待写 返回文件内容
+    public String typeFile(String path) {
+        return "";
+    }
+
+    // 待写
+    public Item findItem(String path){
+        return null;
+    }
+
+
 
     public int getFileSize(Item file) {
         return fileService.getSize(file);

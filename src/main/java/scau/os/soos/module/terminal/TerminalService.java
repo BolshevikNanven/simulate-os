@@ -110,11 +110,13 @@ public class TerminalService {
             return "删除成功";
         } catch (ItemNotFoundException e) {
             return "该文件不存在";
+        } catch (IllegalPathException e) {
+            return "非法路径";           // ?????
         }
     }
 
     private String typeFile(String arg) {
-        return "暂不支持该命令";
+        return FileController.getInstance().typeFile(arg);
     }
 
     private String copyFile(String arg) {
@@ -159,6 +161,8 @@ public class TerminalService {
             return "该目录不存在";
         } catch (DirectoryNoEmptyException e) {
             return "该目录不为空";
+        } catch (IllegalPathException e) {
+            return "非法路径";           // ?????
         }
     }
 
@@ -170,6 +174,8 @@ public class TerminalService {
             return "删除成功";
         } catch (ItemNotFoundException e) {
             return "该目录不存在";
+        } catch (IllegalPathException e) {
+            return "非法路径";           // ?????
         }
     }
 
