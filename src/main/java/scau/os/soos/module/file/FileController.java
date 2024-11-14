@@ -28,14 +28,14 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException {
+    public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalPathException {
          return fileService.createFile(path);
     }
 
     /**
      * 删除文件
      */
-    public void deleteFile(String path) throws ItemNotFoundException {
+    public void deleteFile(String path) throws ItemNotFoundException, IllegalPathException {
         try {
             fileService.delete(path,false,true);
         } catch (DirectoryNoEmptyException ignored) {
@@ -81,14 +81,14 @@ public class FileController implements Module {
     /**
      * 删除空目录
      */
-    public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException {
+    public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException, IllegalPathException {
         fileService.delete(path,true,false);
     }
 
     /**
      * 删除目录
      */
-    public void deleteDirectory(String path) throws ItemNotFoundException {
+    public void deleteDirectory(String path) throws ItemNotFoundException, IllegalPathException {
         try {
             fileService.delete(path,true,true);
         } catch (DirectoryNoEmptyException ignored) {
@@ -96,7 +96,7 @@ public class FileController implements Module {
         }
     }
 
-    public void reName(Item item, String newName) throws ItemAlreadyExistsException {
+    public void reName(Item item, String newName) throws ItemAlreadyExistsException, IllegalNameException {
         fileService.reName(item, newName);
     }
 

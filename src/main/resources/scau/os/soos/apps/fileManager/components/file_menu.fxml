@@ -7,16 +7,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane focusTraversable="true" prefHeight="244.0" stylesheets="@../../../css/common.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<Pane focusTraversable="true" stylesheets="@../../../css/common.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox styleClass="popover">
+        <VBox id="menu" styleClass="popover">
             <children>
             <Button id="open-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="打开">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Region prefHeight="1.0" />
+            <Region id="separator-1" prefHeight="1.0" />
                 <Button id="copy-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="复制">
                     <font>
                         <Font size="14.0" />
@@ -32,7 +32,7 @@
                         <Font size="14.0" />
                     </font>
                 </Button>
-                <Region prefHeight="1.0">
+                <Region id="separator-2" prefHeight="1.0">
                     <VBox.margin>
                         <Insets bottom="2.0" top="2.0" />
                     </VBox.margin>
@@ -52,7 +52,7 @@
                         <Font size="14.0" />
                     </font>
                 </Button>
-            <Region prefHeight="1.0" />
+            <Region id="separator-3" prefHeight="1.0" />
                 <Button id="re-name-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="重命名">
                     <font>
                         <Font size="14.0" />
