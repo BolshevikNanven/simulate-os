@@ -135,6 +135,15 @@ public class FileController implements Module {
         return null;
     }
 
+    // 待写 分区
+    private void partitionDisk(String src,String dec,int size){
+        // 磁盘分区 从src 抽取size 分配到dec
+        // 判断src 是否有足够空闲空间
+        // 判断dec 是否存在，不存在则创建
+        // 从src转移size到dec
+        // 判断src是否变为0，是则删除src
+    }
+
 
 
     public int getFileSize(Item file) {
