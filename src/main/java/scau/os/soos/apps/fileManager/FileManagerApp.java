@@ -18,6 +18,7 @@ import scau.os.soos.apps.editor.EditorApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
+import scau.os.soos.common.Clipboard;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.ui.TaskBarManager;
@@ -28,12 +29,18 @@ import java.util.List;
 
 
 public class FileManagerApp extends Window {
-    @FXML public ScrollPane scrollPane;
-    @FXML public StackPane scrollPaneContent;
-    @FXML public Pane selectedArea;
-    @FXML public FlowPane itemContainer;
-    @FXML public Label itemNumber;
-    @FXML public Label itemSelectedNumber;
+    @FXML
+    public ScrollPane scrollPane;
+    @FXML
+    public StackPane scrollPaneContent;
+    @FXML
+    public Pane selectedArea;
+    @FXML
+    public FlowPane itemContainer;
+    @FXML
+    public Label itemNumber;
+    @FXML
+    public Label itemSelectedNumber;
 
     private FileMenu fileMenu;
 
@@ -60,7 +67,7 @@ public class FileManagerApp extends Window {
         return selectedCount;
     }
 
-    public Pane getSelectedArea(){
+    public Pane getSelectedArea() {
         return selectedArea;
     }
 
@@ -72,13 +79,17 @@ public class FileManagerApp extends Window {
         return itemContainer;
     }
 
-    public List<Item> getItemList(){
+    public List<Item> getItemList() {
         return itemList;
     }
 
     public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
         itemCount.set(itemList.size());
+    }
+
+    public FileMenu getFileMenu() {
+        return fileMenu;
     }
 
     @Override
@@ -114,7 +125,11 @@ public class FileManagerApp extends Window {
     public void addListener() {
         scrollPane.addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
             if (e.isSecondaryButtonDown()) {
-                fileMenu.render(e);
+                if (!selectedList.isEmpty()) {
+                    fileMenu.renderOverItem(e);
+                } else {
+                    fileMenu.renderOverPane(e, !Clipboard.getInstance().getCopiedItems().isEmpty());
+                }
             }
         });
         itemContainer.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
@@ -205,9 +220,9 @@ public class FileManagerApp extends Window {
     }
 
     public void open(Item item) {
-        if(item instanceof Directory){
+        if (item instanceof Directory) {
             DirectoryTreeController.getInstance().goToDirectory(item);
-        }else{
+        } else {
             TaskBarManager.getInstance().addTask(new EditorApp(item));
         }
     }

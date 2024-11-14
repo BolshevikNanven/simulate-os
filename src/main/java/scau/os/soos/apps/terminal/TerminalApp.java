@@ -29,7 +29,7 @@ public class TerminalApp extends Window {
     @Override
     protected void initialize() {
         //获取根目录
-        String directory = "C:/";
+        String directory = TerminalController.getInstance().getCurrentDirectory();
         textArea.appendText(directory + prompt);
         addListener();
     }
@@ -90,23 +90,29 @@ public class TerminalApp extends Window {
     private void handleUpArrow() {
         if(!TerminalController.getInstance().isHistoryEmpty()){
             String lastCommand = TerminalController.getInstance().getLastCommand();
-            int lastPromptIndex = textArea.getText().lastIndexOf(prompt);
-            int commandLength = textArea.getText().length() - lastPromptIndex - prompt.length();
-            textArea.deleteText(lastPromptIndex + prompt.length(), lastPromptIndex + prompt.length() + commandLength);
-            textArea.appendText(lastCommand);
+            if(!lastCommand.isEmpty()){
+                int lastPromptIndex = textArea.getText().lastIndexOf(prompt);
+                int commandLength = textArea.getText().length() - lastPromptIndex - prompt.length();
+                textArea.deleteText(lastPromptIndex + prompt.length(), lastPromptIndex + prompt.length() + commandLength);
+                textArea.appendText(lastCommand);
+            }
         }
+        textArea.positionCaret(textArea.getText().length());
     }
 
     private void handleDownArrow() {
         if(!TerminalController.getInstance().isHistoryEmpty()){
-            String lastCommand = TerminalController.getInstance().getNextCommand();
-            int lastPromptIndex = textArea.getText().lastIndexOf(prompt);
-            int commandLength = textArea.getText().length() - lastPromptIndex - prompt.length();
-            textArea.deleteText(lastPromptIndex + prompt.length(), lastPromptIndex + prompt.length() + commandLength);
-            textArea.appendText(lastCommand);
+            String nextCommand = TerminalController.getInstance().getNextCommand();
+            if(!nextCommand.isEmpty()) {
+                int lastPromptIndex = textArea.getText().lastIndexOf(prompt);
+                int commandLength = textArea.getText().length() - lastPromptIndex - prompt.length();
+                textArea.deleteText(lastPromptIndex + prompt.length(), lastPromptIndex + prompt.length() + commandLength);
+                textArea.appendText(nextCommand);
+            }
         }
+        textArea.positionCaret(textArea.getText().length());
     }
-    
+
 
     @Override
     protected void close() {

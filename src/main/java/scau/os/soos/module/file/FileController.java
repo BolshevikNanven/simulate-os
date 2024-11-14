@@ -7,6 +7,7 @@ import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Item;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +29,14 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException {
+    public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalPathException {
          return fileService.createFile(path);
     }
 
     /**
      * 删除文件
      */
-    public void deleteFile(String path) throws ItemNotFoundException {
+    public void deleteFile(String path) throws ItemNotFoundException, IllegalPathException {
         try {
             fileService.delete(path,false,true);
         } catch (DirectoryNoEmptyException ignored) {
@@ -81,14 +82,14 @@ public class FileController implements Module {
     /**
      * 删除空目录
      */
-    public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException {
+    public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException, IllegalPathException {
         fileService.delete(path,true,false);
     }
 
     /**
      * 删除目录
      */
-    public void deleteDirectory(String path) throws ItemNotFoundException {
+    public void deleteDirectory(String path) throws ItemNotFoundException, IllegalPathException {
         try {
             fileService.delete(path,true,true);
         } catch (DirectoryNoEmptyException ignored) {
@@ -96,7 +97,7 @@ public class FileController implements Module {
         }
     }
 
-    public void reName(Item item, String newName) throws ItemAlreadyExistsException {
+    public void reName(Item item, String newName) throws ItemAlreadyExistsException, IllegalNameException {
         fileService.reName(item, newName);
     }
 
@@ -105,8 +106,45 @@ public class FileController implements Module {
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
+        // 获取后缀
+
         return fileService.findItem(path,type);
     }
+
+    public boolean isExistedDirectory(String path) throws ItemNotFoundException {
+        return findItem(path, FILE_TYPE.DIRECTORY) != null;
+    }
+
+    // 待写
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory){
+        return ;
+    }
+
+    // 待写 格式化硬盘
+    public void formatDisk(Path path) {
+        return ;
+    }
+
+    // 待写 返回文件内容
+    public String typeFile(String path) {
+        return "";
+    }
+
+    // 待写
+    public Item findItem(String path){
+        return null;
+    }
+
+    // 待写 分区
+    private void partitionDisk(String src,String dec,int size){
+        // 磁盘分区 从src 抽取size 分配到dec
+        // 判断src 是否有足够空闲空间
+        // 判断dec 是否存在，不存在则创建
+        // 从src转移size到dec
+        // 判断src是否变为0，是则删除src
+    }
+
+
 
     public int getFileSize(Item file) {
         return fileService.getSize(file);

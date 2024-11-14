@@ -15,6 +15,11 @@ import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.ReadyQueue;
 import scau.os.soos.module.process.model.Process;
 import scau.os.soos.module.process.view.ProcessOverviewReadView;
+import scau.os.soos.module.process.view.ProcessReadView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ProcessService {
     // 进程最大数量
@@ -242,6 +247,22 @@ public class ProcessService {
         }
 
         return new ProcessOverviewReadView(total, busy, currentProcessTimeSlice);
+    }
+
+    public List<ProcessReadView> analyse() {
+        List<ProcessReadView> list = new ArrayList<>();
+        Map<Integer, Integer> usageMap = MemoryController.getInstance().getProcessUsage();
+
+        Process runningProcess = CpuController.getInstance().getCurrentProcess();
+        if (runningProcess != null) {
+            int pid = runningProcess.getPCB().getPid();
+            list.add(new ProcessReadView(pid, PROCESS_STATES.RUNNING, usageMap.get(pid)));
+        }
+
+        readyQueue.stream().forEach(pcb -> list.add(new ProcessReadView(pcb.getPid(), PROCESS_STATES.READY, usageMap.get(pcb.getPid()))));
+        blockingQueue.stream().forEach(pcb -> list.add(new ProcessReadView(pcb.getPid(), PROCESS_STATES.BLOCKED, usageMap.get(pcb.getPid()))));
+
+        return list;
     }
 
     private void resetTimeSlice() {

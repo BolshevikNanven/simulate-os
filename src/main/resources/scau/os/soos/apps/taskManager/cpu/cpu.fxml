@@ -97,58 +97,11 @@
                   <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
                   <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="占用内存" />
                   <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                  <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="等待设备" />
-                  <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
                </children>
             </HBox>
-            <VBox styleClass="running-process-list">
-               <children>
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="process-item">
-                     <children>
-                        <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="12" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="运行" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="12B" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <VBox styleClass="ready-process-list">
-               <children>
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="process-item">
-                     <children>
-                        <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="6" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="就绪" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="12B" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <VBox styleClass="block-process-list">
-               <children>
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="process-item">
-                     <children>
-                        <Label maxHeight="1.7976931348623157E308" prefWidth="129.0" text="9" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="48.0" text="阻塞" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="12B" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                        <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="26.0" prefWidth="80.0" text="设备A" />
-                        <Region prefHeight="32.0" prefWidth="1.0" styleClass="item-divider" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
+            <VBox id="running-process-list" styleClass="running-process-list" />
+            <VBox id="ready-process-list" styleClass="ready-process-list" />
+            <VBox id="block-process-list" styleClass="block-process-list" />
          </children>
       </VBox>
    </children>
