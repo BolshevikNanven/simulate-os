@@ -198,6 +198,7 @@ public class Directory extends Item {
                 0);
         for (Item child : this.getChildren()) {
             Item newChild = child.copy();
+
             newItem.getChildren().add(newChild);
         }
         return newItem;

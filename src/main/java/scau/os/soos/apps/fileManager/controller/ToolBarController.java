@@ -421,13 +421,22 @@ public class ToolBarController implements Initializable {
                 return;
             }
 
-            String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.TXT,"t", ".t", 99);
-
             try {
+                String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.TXT, "t", ".t");
                 FileController.getInstance().createFile(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
-            } catch (Exception ex) {
-                handleError(ex);
+            } catch (RuntimeException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                        true, false,
+                        null, null,
+                        new Label("请重命名部分文件！！！"));
+            } catch (DiskSpaceInsufficientException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                        true, false,
+                        null, null,
+                        DiskSpaceInsufficientException.getPane());
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
+                Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
     }
@@ -442,13 +451,22 @@ public class ToolBarController implements Initializable {
                 return;
             }
 
-            String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.EXE,"e", ".e", 99);
-
             try {
+                String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.EXE, "e", ".e");
                 FileController.getInstance().createFile(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
-            } catch (Exception ex) {
-                handleError(ex);
+            } catch (RuntimeException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                        true, false,
+                        null, null,
+                        new Label("请重命名部分文件！！！"));
+            } catch (DiskSpaceInsufficientException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                        true, false,
+                        null, null,
+                        DiskSpaceInsufficientException.getPane());
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
+                Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
     }
@@ -464,13 +482,22 @@ public class ToolBarController implements Initializable {
                 return;
             }
 
-            String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.DIRECTORY,"d", "", 99);
-
             try {
+                String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.DIRECTORY, "d", "");
                 FileController.getInstance().createDirectory(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
-            } catch (Exception ex) {
-                handleError(ex);
+            } catch (RuntimeException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                        true, false,
+                        null, null,
+                        new Label("请重命名部分文件！！！"));
+            } catch (DiskSpaceInsufficientException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                        true, false,
+                        null, null,
+                        DiskSpaceInsufficientException.getPane());
+            } catch (ItemAlreadyExistsException | ItemNotFoundException ex) {
+                Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
     }
@@ -479,51 +506,30 @@ public class ToolBarController implements Initializable {
     /**
      * 生成一个唯一的文件路径。
      *
-     * @param dir 目录路径，文件将被保存在此目录下。
-     * @param type 文件类型，用于文件查找时的类型匹配。
-     * @param name 文件的基础名称，不包含扩展名。
+     * @param dir       目录路径，文件将被保存在此目录下。
+     * @param type      文件类型，用于文件查找时的类型匹配。
+     * @param name      文件的基础名称，不包含扩展名。
      * @param extension 文件的扩展名，不包含点号（.）。
-     * @param maxCounter 最大重试次数，当达到此次数时，如果仍无法生成唯一文件名，则抛出异常。
      * @return 返回生成的唯一文件路径。
      * @throws RuntimeException 如果达到最大重试次数仍无法生成唯一文件名，则抛出此异常。
      */
-    private String generateUniqueFilePath(String dir, FILE_TYPE type,String name, String extension, int maxCounter) {
+    private String generateUniqueFilePath(String dir, FILE_TYPE type, String name, String extension) {
         int counter = 0;
         String fileName = name + counter + extension; // 初始文件名
         while (true) {
             try {
-                FileController.getInstance().findItem(dir + fileName,type);
+                FileController.getInstance().findItem(dir + fileName, type);
             } catch (ItemNotFoundException e) {
                 return dir + fileName;
             }
 
-            if (counter > maxCounter) {
+            if (counter > 99) {
                 throw new RuntimeException("无法创建文件，已达到最大重试次数。");
             }
             counter++; // 计数器递增
             fileName = name + counter + extension; // 生成新的文件名
         }
     }
-
-    private void handleError(Exception ex) {
-        switch (ex) {
-            case ItemAlreadyExistsException itemAlreadyExistsException -> {
-            }
-            // 文件已存在的具体处理逻辑（如用户提示等）
-            case DiskSpaceInsufficientException diskSpaceInsufficientException -> {
-            }
-            // 磁盘空间不足的具体处理逻辑（如用户提示等）
-            case ItemNotFoundException itemNotFoundException -> {
-            }
-            // 项目未找到的具体处理逻辑（如用户提示等）
-            case null, default -> {
-            }
-            // 其他异常的处理逻辑（如日志记录、用户提示等）
-        }
-        // 可以根据需要选择是否抛出异常或如何抛出
-        throw new RuntimeException("文件创建过程中发生错误。", ex);
-    }
-
 
     /**
      * 为剪切按钮添加事件监听器（当前为空实现）。
@@ -570,7 +576,8 @@ public class ToolBarController implements Initializable {
                 try {
                     if (isShear) {
                         FileController.getInstance().moveFile(source.getPath(), target);
-                    }else {
+                        Clipboard.getInstance().clear();
+                    } else {
                         FileController.getInstance().copyFile(source.getPath(), target);
                     }
                 } catch (ItemAlreadyExistsException ex) {
@@ -586,7 +593,7 @@ public class ToolBarController implements Initializable {
                                     FileController.getInstance().deleteFile(target + "/" + source.getFullName());
                                     if (isShear) {
                                         FileController.getInstance().moveFile(source.getPath(), target);
-                                    }else {
+                                    } else {
                                         FileController.getInstance().copyFile(source.getPath(), target);
                                     }
                                 } catch (Exception exc) {
@@ -595,11 +602,10 @@ public class ToolBarController implements Initializable {
                             }, null,
                             message).show();
                 } catch (DiskSpaceInsufficientException ex) {
-                    Label message = new Label("磁盘空间不足，请清理部分空间后重试");
                     Dialog.getDialog(FileManagerApp.getInstance(), "粘贴文件",
                             true, false,
                             null, null,
-                            message);
+                            DiskSpaceInsufficientException.getPane());
                 } catch (IllegalPathException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "IllegalPathException!!!").show();
                 } catch (ItemNotFoundException ex) {

@@ -8,7 +8,7 @@ public class EditorApp extends Window {
     private Item item;
 
     public EditorApp(Item item) {
-        super("编辑器", "main.fxml", 900, 520);
+        super(item.getPath(), "main.fxml", 900, 520);
         this.item = item;
     }
 

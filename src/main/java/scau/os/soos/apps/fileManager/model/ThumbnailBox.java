@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.util.TipUtil;
+import scau.os.soos.common.exception.IllegalNameException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
@@ -188,7 +189,7 @@ public class ThumbnailBox extends VBox {
             }
 
             // 双击打开
-            if (event.getClickCount() == 2) {
+            if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
                 FileManagerApp.getInstance().open(item);
 
                 /***
@@ -252,17 +253,14 @@ public class ThumbnailBox extends VBox {
     private void completeRenaming() {
         String newName = textField.getText().trim();
 
-        if(newName.isEmpty() || newName.equals(item.getName())){
-            cancelRenaming();
-        }
-
         try {
             FileController.getInstance().reName(item, newName);
-            cancelRenaming();
             DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         } catch (ItemAlreadyExistsException e) {
             handleFileAlreadyExistsException(e);
+        } catch (IllegalNameException e) {
+            cancelRenaming();
         }
     }
 
