@@ -19,6 +19,9 @@ public class Exe extends Item {
     }
 
 
+    public void setInstructions(List<Byte> instructions) {
+        this.instructions = instructions;
+    }
     public List<Byte> getInstructions() {
         return instructions;
     }
