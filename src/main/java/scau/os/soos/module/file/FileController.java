@@ -135,6 +135,11 @@ public class FileController implements Module {
         return null;
     }
 
+    // 待写 分区
+    private void partitionDisk(String src,String dec,int size){
+        // 磁盘分区
+    }
+
 
 
     public int getFileSize(Item file) {
