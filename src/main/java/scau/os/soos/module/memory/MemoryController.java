@@ -5,6 +5,8 @@ import scau.os.soos.module.memory.view.MemoryReadView;
 import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.Process;
 
+import java.util.Map;
+
 public class MemoryController implements Module {
     private static MemoryController instance;
     private final MemoryService memoryService;
@@ -40,6 +42,9 @@ public class MemoryController implements Module {
         return memoryService.analyse();
     }
 
+    public Map<Integer,Integer> getProcessUsage(){
+        return memoryService.getUsage();
+    }
     @Override
     public void run() {
 

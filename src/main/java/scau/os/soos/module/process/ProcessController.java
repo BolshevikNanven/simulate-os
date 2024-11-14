@@ -5,6 +5,9 @@ import scau.os.soos.module.Module;
 import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.module.process.model.Process;
 import scau.os.soos.module.process.view.ProcessOverviewReadView;
+import scau.os.soos.module.process.view.ProcessReadView;
+
+import java.util.List;
 
 public class ProcessController implements Module {
     private static ProcessController instance;
@@ -67,6 +70,9 @@ public class ProcessController implements Module {
 
     public ProcessOverviewReadView getOverview(){
         return processService.overview();
+    }
+    public List<ProcessReadView> getData(){
+        return processService.analyse();
     }
     @Override
     public void run() {

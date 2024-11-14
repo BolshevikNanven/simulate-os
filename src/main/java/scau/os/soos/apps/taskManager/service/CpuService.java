@@ -6,6 +6,7 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.taskManager.TaskManagerApp;
 import scau.os.soos.apps.taskManager.TaskManagerService;
@@ -14,8 +15,10 @@ import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.cpu.view.CpuReadView;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.process.view.ProcessOverviewReadView;
+import scau.os.soos.module.process.view.ProcessReadView;
 
 import java.io.IOException;
+import java.util.List;
 
 public class CpuService implements TaskManagerService {
     private final ScrollPane detailContainer;
@@ -30,6 +33,9 @@ public class CpuService implements TaskManagerService {
     private final Label cpuPid;
     private final Label cpuInstruction;
     private final Label cpuAX;
+    private final VBox runningProcessList;
+    private final VBox readyProcessList;
+    private final VBox blockProcessList;
 
     public CpuService(AreaChart<String, Integer> overviewChart, Label overview, ScrollPane detailContainer) {
         this.detailContainer = detailContainer;
@@ -51,6 +57,10 @@ public class CpuService implements TaskManagerService {
         cpuInstruction = (Label) cpuDetail.lookup("#cpu-instruction");
         cpuAX = (Label) cpuDetail.lookup("#cpu-AX");
 
+        runningProcessList = (VBox) cpuDetail.lookup("#running-process-list");
+        readyProcessList = (VBox) cpuDetail.lookup("#ready-process-list");
+        blockProcessList = (VBox) cpuDetail.lookup("#block-process-list");
+
         this.overviewChart.getData().add(overviewSeries);
         this.processChart.getData().add(processSeries);
     }
@@ -63,11 +73,19 @@ public class CpuService implements TaskManagerService {
     @Override
     public void render() {
         CpuReadView cpuReadView = CpuController.getInstance().getData();
+        List<ProcessReadView> processReadViews = ProcessController.getInstance().getData();
 
         Platform.runLater(() -> {
             cpuPid.setText(String.valueOf(cpuReadView.pid()));
             cpuInstruction.setText(cpuReadView.instruction());
             cpuAX.setText(String.valueOf(cpuReadView.AX()));
+            for (ProcessReadView process : processReadViews) {
+                switch (process.state()){
+                    case RUNNING -> runningProcessList.getChildren().add(newProcessItem(process.pid(),"运行中", process.memory()));
+                    case READY -> readyProcessList.getChildren().add(newProcessItem(process.pid(),"就绪", process.memory()));
+                    case BLOCKED -> blockProcessList.getChildren().add(newProcessItem(process.pid(),"阻塞", process.memory()));
+                }
+            }
         });
 
     }
@@ -82,5 +100,22 @@ public class CpuService implements TaskManagerService {
         overview.setText(String.format("%s %d个进程", overviewReadView.busy() ? "忙碌" : "空闲", overviewReadView.total()));
         cpuState.setText(overviewReadView.busy() ? "忙碌中" : "空闲");
         cpuTimeSlice.setText(String.valueOf(overviewReadView.timeSlice()));
+    }
+
+    private HBox newProcessItem(int pid, String state, int memory) {
+        try {
+            HBox item = FXMLLoader.load(TaskManagerApp.class.getResource("cpu/process_item.fxml"));
+            Label pidLabel = (Label) item.lookup("#process-item-pid");
+            Label stateLabel = (Label) item.lookup("#process-item-state");
+            Label memoryLabel = (Label) item.lookup("#process-item-memory");
+
+            pidLabel.setText(String.valueOf(pid));
+            stateLabel.setText(state);
+            memoryLabel.setText(String.valueOf(memory));
+
+            return item;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

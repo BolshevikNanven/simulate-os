@@ -6,7 +6,9 @@ import scau.os.soos.module.memory.view.MemoryReadView;
 import scau.os.soos.module.process.model.PCB;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MemoryService {
     private final Memory memory;
@@ -93,6 +95,19 @@ public class MemoryService {
                 availablePCB,
                 memoryBlockList
         );
+    }
+
+    public Map<Integer,Integer> getUsage() {
+        Map<Integer, Integer> map = new HashMap<>();
+        MemoryBlock memoryBlock = memory.getHeadBlock();
+        while (memoryBlock != null) {
+            if (!memoryBlock.isFree()) {
+                map.put(memoryBlock.getPid(), memoryBlock.getSize());
+            }
+            memoryBlock = memoryBlock.getNext();
+        }
+
+        return map;
     }
 
     private MemoryBlock splitMemoryBlock(int size, MemoryBlock target) {
