@@ -28,6 +28,7 @@ public class MainApplication extends Application {
         stage.setScene(scene);
         stage.setFullScreen(true);
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("F10"));
         stage.show();
         stage.setOnCloseRequest((e) -> {
             OS.state = OS_STATES.STOPPED;

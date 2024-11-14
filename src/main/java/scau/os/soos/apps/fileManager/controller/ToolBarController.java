@@ -847,21 +847,21 @@ public class ToolBarController implements Initializable {
         List<Item> itemList = FileManagerApp.getInstance().getItemList();
         List<Item> filteredItemList = new ArrayList<>();
         switch (filterType) {
-            case FILE_TYPE.TXT:
+            case TXT:
                 for (Item item : itemList) {
                     if (item instanceof Txt) {
                         filteredItemList.add(item);
                     }
                 }
                 break;
-            case FILE_TYPE.EXE:
+            case EXE:
                 for (Item item : itemList) {
                     if (item instanceof Exe) {
                         filteredItemList.add(item);
                     }
                 }
                 break;
-            case FILE_TYPE.DIRECTORY:
+            case DIRECTORY:
                 for (Item item : itemList) {
                     if (item instanceof Directory) {
                         filteredItemList.add(item);

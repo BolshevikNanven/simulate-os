@@ -1,5 +1,8 @@
 package scau.os.soos.module.terminal;
 
+import scau.os.soos.common.exception.*;
+import scau.os.soos.module.file.FileController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +13,10 @@ public class TerminalService {
 
     private final ArrayList<String> historyCommand; // 历史命令
 
-    private int historyIndex; // 历史命令索引
+    private int commandIndex; // 命令索引
 
     public TerminalService() {
-        currentDirectory = "C:/"; // 初始化操作目录为根目录
+        currentDirectory = FileController.getInstance().getRoot().get(0).getPath(); // 初始化操作目录为根目录
         commandMap = new HashMap<>();
         initCommandMap(); // 初始化指令集
         historyCommand = new ArrayList<>();
@@ -48,19 +51,26 @@ public class TerminalService {
 
     // 获取上一条指令
     public String getLastCommand() {
-        historyIndex = historyIndex > 0 ? historyIndex - 1 : historyCommand.size()-1;
-        return historyCommand.get(historyIndex);
+        if(!isLegalIndex(commandIndex -1)){return "";}
+        commandIndex--;
+        return historyCommand.get(commandIndex);
+
     }
 
     // 获取下一条指令
     public String getNextCommand() {
-        historyIndex = (historyIndex + 1) % historyCommand.size();
-        return historyCommand.get(historyIndex);
+        if(!isLegalIndex(commandIndex +1)){return "";}
+        commandIndex++;
+        return historyCommand.get(commandIndex);
+    }
+
+    private boolean isLegalIndex(int index) {
+        return (index >= 0 && index < historyCommand.size());
     }
 
     public void addCommand(String command) {
         historyCommand.add(command);
-        historyIndex = historyCommand.size()-1;
+        commandIndex = historyCommand.size();
     }
 
     public boolean isHistoryEmpty() {
@@ -68,62 +78,132 @@ public class TerminalService {
     }
 
 
-    private String changeDirectory(String arg) {return "";}
+    private String changeDirectory(String arg) {
+        try {
+            if(FileController.getInstance().isExistedDirectory(arg)){
+                currentDirectory = arg;
+            }
+        } catch (ItemNotFoundException e) {
+            return "该目录不存在";
+        }
+        return "";
+    }
 
     private String createFile(String arg) {
-        // 实现创建文件的逻辑
-        return "";
+        String path = currentDirectory + "/" + arg;
+        try {
+            FileController.getInstance().createFile(path);
+            return "创建成功";
+        }catch (ItemAlreadyExistsException e){
+            return "该文件已存在";
+        }catch (DiskSpaceInsufficientException e){
+            return "磁盘空间不足";
+        }catch (Exception e){
+            return "未知错误";
+        }
     }
 
     private String deleteFile(String arg) {
-        // 实现删除文件的逻辑
-        return "";
+        try {
+            String path = currentDirectory + "/" + arg;
+            FileController.getInstance().deleteFile(path);
+            return "删除成功";
+        } catch (ItemNotFoundException e) {
+            return "该文件不存在";
+        }
     }
 
     private String typeFile(String arg) {
-        // 实现显示文件内容的逻辑
-        return "";
+        return "暂不支持该命令";
     }
 
     private String copyFile(String arg) {
-        // 实现拷贝文件的逻辑
-        return "";
+        // 分离源文件和目标文件
+        String[] parts = arg.split(" ", 2);
+        String src = currentDirectory + "/" + parts[0];
+        String dest = parts[1];
+        try {
+            FileController.getInstance().copyFile(src, dest);
+            return "复制成功";
+        }catch (ItemNotFoundException e) {
+            return "源文件不存在";
+        }catch (ItemAlreadyExistsException e){
+            return "目标文件已存在";
+        }catch (DiskSpaceInsufficientException e){
+            return "磁盘空间不足";
+        }catch (IllegalPathException e){
+            return "非法目标路径";
+        }
     }
 
     private String makeDirectory(String arg) {
-        // 实现创建目录的逻辑
-        return "";
+        try {
+            String path = currentDirectory + "/" + arg;
+            FileController.getInstance().createDirectory(path);
+            return "创建成功";
+        } catch (ItemAlreadyExistsException e) {
+            return "该目录已存在";
+        }catch (DiskSpaceInsufficientException e){
+            return "磁盘空间不足";
+        }catch (Exception e){
+            return "未知错误";
+        }
     }
 
     private String removeDirectory(String arg) {
-        // 实现删除空目录的逻辑
-        return "";
+        try {
+            String path = currentDirectory + "/" + arg;
+            FileController.getInstance().deleteEmptyDirectory(path);
+            return "删除成功";
+        } catch (ItemNotFoundException e) {
+            return "该目录不存在";
+        } catch (DirectoryNoEmptyException e) {
+            return "该目录不为空";
+        }
     }
 
 
     private String deleteDirectory(String arg) {
-        // 实现删除目录的逻辑
-        return "";
+        try {
+            String path = currentDirectory + "/" + arg;
+            FileController.getInstance().deleteFile(path);
+            return "删除成功";
+        } catch (ItemNotFoundException e) {
+            return "该目录不存在";
+        }
     }
 
     private String moveFile(String arg) {
-        // 实现移动文件的逻辑
-        return "";
+        String[] parts = arg.split(" ", 2);
+        String src = currentDirectory + "/" + parts[0];
+        String dest = parts[1];
+        try {
+            FileController.getInstance().moveFile(src, dest);
+            return "移动成功";
+        }catch (ItemNotFoundException e) {
+            return "源文件不存在";
+        }catch (ItemAlreadyExistsException e){
+            return "目标文件已存在";
+        }catch (DiskSpaceInsufficientException e){
+            return "磁盘空间不足";
+        }catch (IllegalPathException e){
+            return "非法目标路径";
+        }
     }
 
     private String changeFileAttribute(String arg) {
-        // 实现改变文件属性的逻辑
-        return "";
+        // 改变文件属性
+        return "暂不支持该命令";
     }
 
     private String formatDisk(String arg) {
-        // 实现磁盘格式化的逻辑
-        return "";
+        // 磁盘格式化
+        return "暂不支持该命令";
     }
 
     private String partitionDisk(String arg) {
-        // 实现磁盘分区的逻辑
-        return "";
+        // 磁盘分区
+        return "暂不支持该命令";
     }
 
 
@@ -132,7 +212,4 @@ public class TerminalService {
         return currentDirectory;
     }
 
-    public void setCurrentDirectory(String currentDirectory) {
-        this.currentDirectory = currentDirectory;
-    }
 }
