@@ -5,6 +5,8 @@ import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.common.enums.PROCESS_STATES;
 import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.common.exception.ItemNotFoundException;
+import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.model.BlockingQueue;
@@ -12,6 +14,12 @@ import scau.os.soos.module.process.model.EmptyPCBQueue;
 import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.ReadyQueue;
 import scau.os.soos.module.process.model.Process;
+import scau.os.soos.module.process.view.ProcessOverviewReadView;
+import scau.os.soos.module.process.view.ProcessReadView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ProcessService {
     // 进程最大数量
@@ -37,8 +45,8 @@ public class ProcessService {
 
     // 新建 -> 就绪
     public synchronized Process create(Item file) {
-        if (file == null) {
-            System.out.println("-------Process-------文件为空");
+        if (!(file instanceof Exe)) {
+            System.out.println("-------Process-------文件为空 或 非可执行程序");
             return null;
         }
 
@@ -65,9 +73,19 @@ public class ProcessService {
 
         // 5.将文件装入内存用户区
         // 获取文件数据
-        Object content = FileController.getInstance().readFile(file);
+        byte[] instructions = new byte[0];
+        try {
+            instructions = FileController.getInstance().readFile(file);
+        } catch (ItemNotFoundException e) {
+            System.out.println("文件未找到");
+        }
+        int address = newPCB.getPC();
         // 写入内存用户区
-        MemoryController.getInstance().write(newPCB.getPC(), content);
+        for (byte instruction : instructions) {
+            MemoryController.getInstance().write(address, instruction);
+            address++;
+        }
+
 
         // 6.将进程放入就绪队列
         // 设置进程为就绪态度
@@ -90,7 +108,7 @@ public class ProcessService {
 
         // 2.从就绪队列中选择一个新进程
         PCB pcb = readyQueue.pollPCB();
-        if(pcb==null){
+        if (pcb == null) {
             System.out.println("-------Process-------就绪队列为空");
             return false;
         }
@@ -216,6 +234,35 @@ public class ProcessService {
                 resetTimeSlice();
             }
         }
+    }
+
+    public ProcessOverviewReadView overview() {
+        int total = readyQueue.size() + blockingQueue.size();
+        boolean busy = false;
+        Process runningProcess = CpuController.getInstance().getCurrentProcess();
+
+        if (runningProcess != null) {
+            total++;
+            busy = true;
+        }
+
+        return new ProcessOverviewReadView(total, busy, currentProcessTimeSlice);
+    }
+
+    public List<ProcessReadView> analyse() {
+        List<ProcessReadView> list = new ArrayList<>();
+        Map<Integer, Integer> usageMap = MemoryController.getInstance().getProcessUsage();
+
+        Process runningProcess = CpuController.getInstance().getCurrentProcess();
+        if (runningProcess != null) {
+            int pid = runningProcess.getPCB().getPid();
+            list.add(new ProcessReadView(pid, PROCESS_STATES.RUNNING, usageMap.get(pid)));
+        }
+
+        readyQueue.stream().forEach(pcb -> list.add(new ProcessReadView(pcb.getPid(), PROCESS_STATES.READY, usageMap.get(pcb.getPid()))));
+        blockingQueue.stream().forEach(pcb -> list.add(new ProcessReadView(pcb.getPid(), PROCESS_STATES.BLOCKED, usageMap.get(pcb.getPid()))));
+
+        return list;
     }
 
     private void resetTimeSlice() {

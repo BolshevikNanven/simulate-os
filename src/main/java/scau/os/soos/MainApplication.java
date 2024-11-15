@@ -3,7 +3,7 @@ package scau.os.soos;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import scau.os.soos.common.OS;
 import scau.os.soos.common.GlobalUI;
@@ -16,7 +16,7 @@ import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.terminal.TerminalController;
-import scau.os.soos.ui.TaskBarManager;
+
 
 import java.io.IOException;
 
@@ -27,8 +27,9 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         stage.setScene(scene);
         stage.setFullScreen(true);
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("F10"));
         stage.show();
-
         stage.setOnCloseRequest((e) -> {
             OS.state = OS_STATES.STOPPED;
             System.out.println(OS.state);

@@ -1,6 +1,7 @@
 package scau.os.soos.module.file.model;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,8 @@ public class Disk {
                 ROOT_BLOCK_NUM,
                 0);
         fat.setNextBlockIndex(ROOT_BLOCK_NUM, Fat.TERMINATED);
+        rootDirectory.isRoot(true);
+        rootDirectory.setPath();
         rootDirectory.initFromDisk();
     }
 

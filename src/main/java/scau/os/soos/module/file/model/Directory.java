@@ -1,7 +1,7 @@
 package scau.os.soos.module.file.model;
 
 import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.module.file.Util.FileServiceUtil;
+import scau.os.soos.module.file.util.FileServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,23 +10,34 @@ import java.util.StringTokenizer;
 public class Directory extends Item {
     public static final int BYTES_PER_ITEM = 8;
     private final List<Item> children;
+    private boolean isRoot;
 
     public Directory(Disk disk, byte[] data) {
         super(disk, data);
+        this.isRoot(false);
         this.children = new ArrayList<>();
     }
 
     public Directory(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
+        this.isRoot(false);
         this.children = new ArrayList<>();
+    }
+
+    public void isRoot(boolean isRoot) {
+        this.isRoot = isRoot;
     }
 
     public List<Item> getChildren() {
         return children;
     }
 
-    public void addChildren(Item item) {
+    public boolean addChildren(Item item) {
+        if(isRoot && this.getChildren().size() >= getDisk().BYTES_PER_BLOCK / BYTES_PER_ITEM){
+            return false;
+        }
         children.add(item);
+        return true;
     }
 
     public void removeChild(Item item) {
@@ -49,6 +60,9 @@ public class Directory extends Item {
     }
 
     private Item find(String path, boolean isDirectory, byte type) {
+        if (path == null) {
+            return null;
+        }
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
         List<String> pathParts = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
@@ -130,7 +144,9 @@ public class Directory extends Item {
                 if (item != null && disk.isItemExist(item)) {
                     children.add(item);
                     item.setParent(this);
+                    item.setPath();
                     item.setDisk(disk);
+                    item.initFromDisk();
                 }
             }
         }
@@ -182,6 +198,7 @@ public class Directory extends Item {
                 0);
         for (Item child : this.getChildren()) {
             Item newChild = child.copy();
+
             newItem.getChildren().add(newChild);
         }
         return newItem;

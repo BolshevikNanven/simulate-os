@@ -2,7 +2,13 @@ package scau.os.soos.module.memory;
 
 import scau.os.soos.module.memory.model.Memory;
 import scau.os.soos.module.memory.model.MemoryBlock;
+import scau.os.soos.module.memory.view.MemoryReadView;
 import scau.os.soos.module.process.model.PCB;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MemoryService {
     private final Memory memory;
@@ -67,6 +73,43 @@ public class MemoryService {
         return memory.getUserArea(address);
     }
 
+    public MemoryReadView analyse() {
+        int availablePCB = 0;
+        for (int i = 0; i < 10; i++) {
+            if (memory.getSystemArea(i) != null) {
+                availablePCB++;
+            }
+        }
+
+        List<MemoryBlock> memoryBlockList = new ArrayList<>();
+        MemoryBlock block = memory.getHeadBlock();
+        while (block != null) {
+            memoryBlockList.add(new MemoryBlock(block.getSize(), block.isFree()));
+            block = block.getNext();
+        }
+
+        return new MemoryReadView(
+                memory.getTotal(),
+                memory.getUsed(),
+                memory.getTotal() - memory.getUsed(),
+                availablePCB,
+                memoryBlockList
+        );
+    }
+
+    public Map<Integer,Integer> getUsage() {
+        Map<Integer, Integer> map = new HashMap<>();
+        MemoryBlock memoryBlock = memory.getHeadBlock();
+        while (memoryBlock != null) {
+            if (!memoryBlock.isFree()) {
+                map.put(memoryBlock.getPid(), memoryBlock.getSize());
+            }
+            memoryBlock = memoryBlock.getNext();
+        }
+
+        return map;
+    }
+
     private MemoryBlock splitMemoryBlock(int size, MemoryBlock target) {
         MemoryBlock memoryBlock = new MemoryBlock(target.getAddress(), size, false);
         memoryBlock.setAddress(target.getAddress());
@@ -102,7 +145,7 @@ public class MemoryService {
     private boolean freePCB(PCB pcb) {
         for (int i = 0; i < 10; i++) {
             PCB memoryPcb = memory.getSystemArea(i);
-            if(memoryPcb==null)
+            if (memoryPcb == null)
                 continue;
             if (memoryPcb.getPid() == pcb.getPid()) {
                 memory.setSystemArea(i, null);

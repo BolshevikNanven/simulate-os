@@ -15,11 +15,13 @@ public class Exe extends Item {
 
     public Exe(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
-        System.out.println("000e: "+size);
         this.instructions = new ArrayList<>();
     }
 
 
+    public void setInstructions(List<Byte> instructions) {
+        this.instructions = instructions;
+    }
     public List<Byte> getInstructions() {
         return instructions;
     }

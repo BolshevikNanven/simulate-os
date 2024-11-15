@@ -7,7 +7,6 @@ import javafx.stage.WindowEvent;
 import scau.os.soos.MainApplication;
 import scau.os.soos.apps.diskManager.DiskManagerApp;
 import scau.os.soos.apps.fileManager.FileManagerApp;
-import scau.os.soos.apps.mindmap.MindMapApp;
 import scau.os.soos.apps.taskManager.TaskManagerApp;
 import scau.os.soos.apps.terminal.TerminalApp;
 import scau.os.soos.common.GlobalUI;
@@ -23,7 +22,6 @@ public class WindowsMenu extends Popover {
     private final Button diskManagerBtn;
     private final Button fileManagerBtn;
     private final Button taskManagerBtn;
-    private final Button mindMapBtn;
 
     public WindowsMenu() {
         this.gap = 8;
@@ -33,7 +31,6 @@ public class WindowsMenu extends Popover {
         cmdBtn = (Button) this.container.lookup("#windows-cmd-btn");
         diskManagerBtn = (Button) this.container.lookup("#windows-disk-manager-btn");
         fileManagerBtn = (Button) this.container.lookup("#windows-file-manager-btn");
-        mindMapBtn = (Button) this.container.lookup("#windows-mind-map-btn");
         taskManagerBtn = (Button) this.container.lookup("#windows-task-manager-btn");
 
         addListener();
@@ -60,15 +57,11 @@ public class WindowsMenu extends Popover {
             TaskBarManager.getInstance().addTask(new TaskManagerApp());
             hide();
         });
-        mindMapBtn.setOnAction(actionEvent -> {
-            TaskBarManager.getInstance().addTask(new MindMapApp());
-            hide();
-        });
     }
 
     @Override
     protected Pane setup() {
-        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("components/windows_menu.fxml"));
+        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("ui/components/windows_menu.fxml"));
         try {
             return loader.load();
         } catch (IOException e) {

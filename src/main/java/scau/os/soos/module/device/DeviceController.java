@@ -3,8 +3,13 @@ package scau.os.soos.module.device;
 import scau.os.soos.common.OS;
 import scau.os.soos.common.enums.DEVICE_TYPE;
 import scau.os.soos.module.Module;
+import scau.os.soos.module.device.view.DeviceOverviewReadView;
+import scau.os.soos.module.device.view.DeviceReadView;
 import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.Process;
+
+import java.util.List;
+import java.util.Map;
 
 public class DeviceController implements Module {
     private static DeviceController instance;
@@ -32,17 +37,25 @@ public class DeviceController implements Module {
         deviceService.assignDevice(deviceType, time, process);
     }
 
+    public DeviceOverviewReadView getOverview() {
+        return deviceService.overview();
+    }
+
+    public Map<DEVICE_TYPE, DeviceReadView> getData() {
+        return deviceService.analyse();
+    }
+
     @Override
     public void run() {
         OS.clock.bind(deviceService::checkDevice);
     }
 
     public static void main(String[] args) {
-        getInstance().assign(DEVICE_TYPE.B,6,new Process(new PCB(),1));
-        getInstance().assign(DEVICE_TYPE.B,10,new Process(new PCB(),2));
-        getInstance().assign(DEVICE_TYPE.B,6,new Process(new PCB(),3));
+        getInstance().assign(DEVICE_TYPE.B, 6, new Process(new PCB(), 1));
+        getInstance().assign(DEVICE_TYPE.B, 10, new Process(new PCB(), 2));
+        getInstance().assign(DEVICE_TYPE.B, 6, new Process(new PCB(), 3));
 
-        while (true){
+        while (true) {
             getInstance().deviceService.checkDevice();
             getInstance().deviceService.printDevices();
             try {

@@ -85,6 +85,10 @@ public abstract class AreaSelect {
         selectionRectangle.setVisible(false);
     }
 
+    public double[] getSelectionArea() {
+        return new double[]{selectionRectangle.getX(), selectionRectangle.getY(), selectionRectangle.getWidth(), selectionRectangle.getHeight()};
+    }
+
     protected abstract void onSelect(double startX, double startY, double endX, double endY);
 }
 

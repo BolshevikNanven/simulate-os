@@ -4,6 +4,7 @@ import scau.os.soos.common.OS;
 import scau.os.soos.common.enums.CPU_STATES;
 import scau.os.soos.common.enums.INTERRUPT;
 import scau.os.soos.module.Module;
+import scau.os.soos.module.cpu.view.CpuReadView;
 import scau.os.soos.module.process.model.Process;
 
 public class CpuController implements Module {
@@ -46,6 +47,9 @@ public class CpuController implements Module {
 
     public Process getCurrentProcess(){
         return cpuService.getCurrentProcess();
+    }
+    public CpuReadView getData(){
+        return cpuService.analyse();
     }
     @Override
     public void run() {

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<?import java.net.URL?>
+<?import javafx.scene.layout.Region?>
+<BorderPane fx:id="body" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="container" stylesheets="@main.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TextArea id="terminal-display" fx:id="display" editable="true" text="cd ../" wrapText="true" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="JetBrains Mono Bold" size="13.0" />
+         </font>
+      </TextArea>
+   </center>
+   <bottom>
+      <TextField id="terminal-input" fx:id="input" maxWidth="1.7976931348623157E308" prefHeight="36.0" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="JetBrains Mono Bold" size="13.0" />
+         </font>
+      </TextField>
+   </bottom>
+   <top>
+      <HBox alignment="CENTER_RIGHT"  spacing="10.0"  prefWidth="562.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="editor_save" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefHeight="38.0" prefWidth="48.0" styleClass="window-control-btn">
+               <graphic>
+                  <Region maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="13.5" prefWidth="13.5" styleClass="save-icon" />
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+   <stylesheets>
+      <URL value="@main.css" />
+      <URL value="@../../css/icon.css" />
+   </stylesheets>
+</BorderPane>

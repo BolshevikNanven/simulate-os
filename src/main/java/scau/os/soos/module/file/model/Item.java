@@ -10,6 +10,7 @@ public abstract class Item {
     private byte attribute;
     private byte startBlockNum;
     private final byte[] size = new byte[2];
+    private String path;
 
     public Item(Disk disk, byte[] data) {
         setDisk(disk);
@@ -18,7 +19,6 @@ public abstract class Item {
         attribute = data[4];
         startBlockNum = data[5];
         System.arraycopy(data, 6, size, 0, 2);
-        System.out.println(Arrays.toString(size));
     }
 
     public Item(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
@@ -27,9 +27,9 @@ public abstract class Item {
         setType(type);
         setParent(parent);
         setStartBlockNum(startBlockNum);
-        System.out.println("000: "+size);
         setSize(size);
         setAttribute(readOnly, systemFile, regularFile, isDirectory);
+        setPath();
     }
 
     public void setDisk(Disk disk) {
@@ -51,6 +51,10 @@ public abstract class Item {
     public void setName(String name) {
         if (name == null) {
             System.out.println("Name is null");
+            return;
+        }
+        if (name.getBytes().length > 3) {
+            System.out.println("Name is too long");
             return;
         }
         this.name = Arrays.copyOf(name.getBytes(), 3);
@@ -123,9 +127,35 @@ public abstract class Item {
 
     public int getSize() {
         int s = 0;
-        s+=size[0];
-        s+=size[1] << 8;
+        s += size[0] & 0xFF;
+        s += (size[1] << 8) & 0xFFFF;
         return s;
+    }
+
+    public void setPath() {
+        if (parent == null) {
+            path = "/";
+            return;
+        }
+
+        if (this instanceof Directory) {
+            path = parent.getPath() + getName() + "/";
+            return;
+        }
+
+        path = parent.getPath() + getName() + '.' + (char) getType();
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getFullName() {
+        return getName() + (getType() == 0 ? "" : "." + (char) getType());
     }
 
     public byte[] getData() {
@@ -171,10 +201,10 @@ public abstract class Item {
         int cur = getStartBlockNum();
         int pre = cur;
         for (byte[] bytes : content) {
-            if (cur == -1) {
+            if (cur == Fat.TERMINATED) {
                 cur = disk.findFreeDiskBlock();
                 System.out.println("分配新磁盘块");
-                if (cur == -1) {
+                if (cur == Fat.TERMINATED) {
                     System.out.println("磁盘已满");
                     disk.formatFatTable(getStartBlockNum());
                     return false;
@@ -186,6 +216,7 @@ public abstract class Item {
             pre = cur;
             cur = fat.getNextBlockIndex(cur);
         }
+        fat.writeFatToDisk();
         return true;
     }
 
@@ -221,7 +252,7 @@ public abstract class Item {
 
     public String toString() {
         return "name: " + getName() +
-                " type: " + (char)getType() +
+                " type: " + (char) getType() +
                 " attribute: " + attribute +
                 " startBlockNum: " + getStartBlockNum() +
                 " size: " + getSize();

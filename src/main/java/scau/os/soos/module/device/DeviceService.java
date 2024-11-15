@@ -6,10 +6,15 @@ import scau.os.soos.module.cpu.CpuController;
 import scau.os.soos.module.device.model.Device;
 import scau.os.soos.module.device.model.DeviceQueue;
 import scau.os.soos.module.device.model.Task;
+import scau.os.soos.module.device.view.DeviceOverviewReadView;
+import scau.os.soos.module.device.view.DeviceReadView;
 import scau.os.soos.module.process.model.Process;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DeviceService {
     private final DeviceQueue deviceQueue;
@@ -50,6 +55,46 @@ public class DeviceService {
                 releaseDevice(device);
             }
         }
+    }
+
+    public DeviceOverviewReadView overview() {
+        Integer usage = 0;
+        for (Device device : devices) {
+            if (device.isBusy()) {
+                usage++;
+            }
+        }
+        return new DeviceOverviewReadView(usage);
+    }
+
+    public Map<DEVICE_TYPE, DeviceReadView> analyse() {
+        Map<DEVICE_TYPE, DeviceReadView> map = new HashMap<>();
+
+        map.put(DEVICE_TYPE.A, analyseDeviceType(DEVICE_TYPE.A, 2));
+        map.put(DEVICE_TYPE.B, analyseDeviceType(DEVICE_TYPE.B, 3));
+        map.put(DEVICE_TYPE.C, analyseDeviceType(DEVICE_TYPE.C, 3));
+
+        return map;
+    }
+
+    private DeviceReadView analyseDeviceType(DEVICE_TYPE type, int maxLimit) {
+        int usage = 0, available = 0;
+        List<Integer> using = new ArrayList<>();
+
+        for (Device device : devices) {
+            if (device.getType() == type) {
+                if (device.isBusy()) {
+                    usage++;
+                    using.add(device.getProcess().getPCB().getPid());
+                } else {
+                    available++;
+                }
+            }
+        }
+
+        List<Integer> waiting = deviceQueue.getItemList(type).stream().map(task -> task.getProcess().getPCB().getPid()).toList();
+
+        return new DeviceReadView(usage, available, maxLimit, using, waiting);
     }
 
     private void releaseDevice(Device device) {
