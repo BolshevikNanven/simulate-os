@@ -1,35 +1,35 @@
-package scau.os.soos.module.file.model;
+package scau.os.soos.module.file;
 
-import scau.os.soos.common.exception.DiskSpaceInsufficientException;
-import scau.os.soos.common.exception.ItemAlreadyExistsException;
-import scau.os.soos.common.exception.ItemNotFoundException;
-import scau.os.soos.module.file.FileController;
-import scau.os.soos.module.file.FileService;
+import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Fat;
+import scau.os.soos.module.file.model.Item;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Disk {
-    public final int BLOCKS_PER_DISK = 256;
-    public final int BYTES_PER_BLOCK = 64;
-    public final int[] FAT_BLOCK_NUMS = {0, 1, 2, 3};
-    public final int PARTITION_BLOCK_NUM = 4;
+    public static final int BLOCKS_PER_DISK = 256;
+    public static final int BYTES_PER_BLOCK = 64;
+    public static final int[] FAT_BLOCK_NUMS = {0, 1, 2, 3};
+    public static final int PARTITION_BLOCK_NUM = 4;
 
     private byte[][] disk;
     private final Fat fat;
-    private final Directory partitionDirectory;
+    private Directory partitionDirectory;
 
     public Disk() {
         this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
-        disk2file();
-//        this.file2disk();
+//        disk2file();
+        this.file2disk();
 //        for (byte[]bytes:getDisk()){
 //            System.out.println(Arrays.toString(bytes));
 //        }
         this.fat = new Fat(this);
+    }
+
+    public void init(){
         this.partitionDirectory = new Directory(
-                this,
                 null,
                 "",
                 (byte)0,
@@ -43,10 +43,6 @@ public class Disk {
         partitionDirectory.isRoot(true);
         partitionDirectory.setPath();
         partitionDirectory.initFromDisk();
-    }
-
-    public byte[][] getDisk() {
-        return disk;
     }
 
     public Directory getPartitionDirectory() {

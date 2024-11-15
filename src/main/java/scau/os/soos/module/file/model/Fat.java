@@ -1,5 +1,7 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.module.file.Disk;
+
 public class Fat {
     private final Disk disk;
     public static final int FREE = 0;
@@ -15,10 +17,10 @@ public class Fat {
      */
     public Fat(Disk disk) {
         this.disk = disk;
-        this.fat = new byte[disk.BLOCKS_PER_DISK];
+        this.fat = new byte[Disk.BLOCKS_PER_DISK];
 
         int index = 0;
-        for (int i : disk.FAT_BLOCK_NUMS) {
+        for (int i : Disk.FAT_BLOCK_NUMS) {
             byte[] content = disk.getDiskBlock(i);
             for (byte b : content) {
                 fat[index] = b;
@@ -32,10 +34,10 @@ public class Fat {
      * 将FAT表中的所有块状态重置为FREE（空闲）状态，除了最后一个块设置为TERMINATED（终止）状态。
      */
     public void resetFat() {
-        for (int i = 0; i < disk.BLOCKS_PER_DISK; i++) {
+        for (int i = 0; i < Disk.BLOCKS_PER_DISK; i++) {
             fat[i] = FREE;
         }
-        for (int i = 0; i < disk.BLOCKS_PER_DISK / disk.BYTES_PER_BLOCK; i++) {
+        for (int i = 0; i < Disk.BLOCKS_PER_DISK / Disk.BYTES_PER_BLOCK; i++) {
             fat[i] = TERMINATED;
         }
     }
@@ -68,11 +70,11 @@ public class Fat {
      * @return 总是返回true，表示更新操作成功
      */
     public boolean writeFatToDisk() {
-        byte[] data = new byte[disk.BLOCKS_PER_DISK];
+        byte[] data = new byte[Disk.BLOCKS_PER_DISK];
 
         int index = 0;
-        for (int i : disk.FAT_BLOCK_NUMS) {
-            for (int j = 0; j < disk.BYTES_PER_BLOCK; j++, index++) {
+        for (int i : Disk.FAT_BLOCK_NUMS) {
+            for (int j = 0; j < Disk.BYTES_PER_BLOCK; j++, index++) {
                 data[j] = fat[index];
             }
             disk.setDiskBlock(i, data);

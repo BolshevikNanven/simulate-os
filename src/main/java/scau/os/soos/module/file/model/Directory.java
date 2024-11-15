@@ -1,6 +1,7 @@
 package scau.os.soos.module.file.model;
 
 import scau.os.soos.common.enums.FILE_TYPE;
+import scau.os.soos.module.file.Disk;
 import scau.os.soos.module.file.FileService;
 
 import java.util.ArrayList;
@@ -12,14 +13,14 @@ public class Directory extends Item {
     private final List<Item> children;
     private boolean isRoot;
 
-    public Directory(Disk disk, byte[] data) {
-        super(disk, data);
+    public Directory(byte[] data) {
+        super(data);
         this.isRoot(false);
         this.children = new ArrayList<>();
     }
 
-    public Directory(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
-        super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
+    public Directory(Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        super(parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
         this.isRoot(false);
         this.children = new ArrayList<>();
     }
@@ -33,7 +34,7 @@ public class Directory extends Item {
     }
 
     public boolean addChildren(Item item) {
-        if(isRoot && this.getChildren().size() >= getDisk().BYTES_PER_BLOCK / BYTES_PER_ITEM){
+        if(isRoot && this.getChildren().size() >= Disk.BYTES_PER_BLOCK / BYTES_PER_ITEM){
             return false;
         }
         children.add(item);
@@ -133,8 +134,8 @@ public class Directory extends Item {
     }
 
     public void initFromDisk() {
-        Disk disk = super.getDisk();
-        byte[][] content = super.readContentFromDisk(disk);
+        Disk disk = FileService.getDisk();
+        byte[][] content = super.readContentFromDisk();
 
         for (byte[] block : content) {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
@@ -145,7 +146,6 @@ public class Directory extends Item {
                     children.add(item);
                     item.setParent(this);
                     item.setPath();
-                    item.setDisk(disk);
                     item.initFromDisk();
                 }
             }
@@ -157,7 +157,7 @@ public class Directory extends Item {
     public boolean writeContentToDisk() {
         // 计算需要多少个数据块来存储所有子项
         int blockNum = (int) Math.ceil((double) getChildren().size() / BYTES_PER_ITEM);
-        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
+        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
 
         int itemIndex = 0; // 用于追踪当前处理的Item
         int byteIndex = 0; // 用于追踪当前数据块中的字节位置
@@ -165,7 +165,7 @@ public class Directory extends Item {
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
 
-            while (itemIndex < children.size() && byteIndex < getDisk().BYTES_PER_BLOCK) {
+            while (itemIndex < children.size() && byteIndex < Disk.BYTES_PER_BLOCK) {
                 Item item = children.get(itemIndex);
                 byte[] itemData = item.getData();
 
@@ -186,7 +186,6 @@ public class Directory extends Item {
 
     public Item copy() {
         Directory newItem = new Directory(
-                null,
                 null,
                 this.getName(),
                 this.getType(),

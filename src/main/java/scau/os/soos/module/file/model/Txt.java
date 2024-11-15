@@ -1,18 +1,20 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.module.file.Disk;
+
 import java.nio.charset.StandardCharsets;
 
 public class Txt extends Item {
     private StringBuilder context;
     private boolean isOpened = false;
 
-    public Txt(Disk disk, byte[] data) {
-        super(disk, data);
+    public Txt(byte[] data) {
+        super(data);
         this.context = new StringBuilder();
     }
 
-    public Txt(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
-        super(disk, parent,name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum,size);
+    public Txt(Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        super(parent,name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum,size);
         this.context = new StringBuilder();
     }
 
@@ -40,10 +42,9 @@ public class Txt extends Item {
     }
 
     public void initFromDisk() {
-        Disk disk = super.getDisk();
         this.context = new StringBuilder();
 
-        byte[][] content = super.readContentFromDisk(disk);
+        byte[][] content = super.readContentFromDisk();
 
         for (byte[] block : content) {
             context.append(new String(block, StandardCharsets.UTF_8).trim());
@@ -56,14 +57,14 @@ public class Txt extends Item {
         // 将context转换为字节数组
         byte[] contextBytes = context.toString().getBytes(StandardCharsets.US_ASCII);
         // 计算需要多少个数据块来存储所有子项
-        int blockNum = (int) Math.ceil((double) contextBytes.length / getDisk().BYTES_PER_BLOCK);
-        byte[][] allItemsData = new byte[blockNum][getDisk().BYTES_PER_BLOCK];
+        int blockNum = (int) Math.ceil((double) contextBytes.length / Disk.BYTES_PER_BLOCK);
+        byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
 
         // 将内容复制到数据块中
         int byteIndex = 0;
         for (int block = 0; block < blockNum; block++) {
             byte[] currentBlock = allItemsData[block];
-            int bytesToCopy = Math.min(contextBytes.length - byteIndex, getDisk().BYTES_PER_BLOCK);
+            int bytesToCopy = Math.min(contextBytes.length - byteIndex, Disk.BYTES_PER_BLOCK);
             System.arraycopy(contextBytes, byteIndex, currentBlock, 0, bytesToCopy);
             byteIndex += bytesToCopy;
         }
@@ -74,7 +75,6 @@ public class Txt extends Item {
 
     public Item copy(){
         Txt newItem = new Txt(
-                null,
                 null,
                 this.getName(),
                 this.getType(),

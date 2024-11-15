@@ -157,7 +157,7 @@ public class FileController implements Module {
     }
 
     public Fat getFat() {
-        return fileService.getDisk().getFat();
+        return FileService.getDisk().getFat();
     }
 
     @Override
@@ -210,7 +210,7 @@ public class FileController implements Module {
 
 
 
-//        getInstance().fileService.getDisk().disk2file();
+
 //        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
 //            System.out.println(Arrays.toString(bytes));
 //        }

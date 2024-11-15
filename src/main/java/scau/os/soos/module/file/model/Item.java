@@ -1,9 +1,11 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.module.file.Disk;
+import scau.os.soos.module.file.FileService;
+
 import java.util.Arrays;
 
 public abstract class Item {
-    private Disk disk;
     private Item parent;
     private byte[] name = new byte[3];
     private byte type;
@@ -12,8 +14,7 @@ public abstract class Item {
     private final byte[] size = new byte[2];
     private String path;
 
-    public Item(Disk disk, byte[] data) {
-        setDisk(disk);
+    public Item(byte[] data) {
         System.arraycopy(data, 0, name, 0, 3);
         type = data[3];
         attribute = data[4];
@@ -21,23 +22,14 @@ public abstract class Item {
         System.arraycopy(data, 6, size, 0, 2);
     }
 
-    public Item(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
-        setDisk(disk);
+    public Item(Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        setParent(parent);
         setName(name);
         setType(type);
-        setParent(parent);
+        setAttribute(readOnly, systemFile, regularFile, isDirectory);
         setStartBlockNum(startBlockNum);
         setSize(size);
-        setAttribute(readOnly, systemFile, regularFile, isDirectory);
         setPath();
-    }
-
-    public void setDisk(Disk disk) {
-        this.disk = disk;
-    }
-
-    public Disk getDisk() {
-        return disk;
     }
 
     public void setParent(Item parent) {
@@ -166,23 +158,23 @@ public abstract class Item {
     /**
      * 从磁盘中读取指定起始块之后的所有数据块的内容，并存储到二维数组中
      *
-     * @param disk 磁盘对象，用于从中读取数据
      * @return 二维字节数组，存储了从指定起始块开始的所有数据块的内容
      * 返回 64 字节/块
      */
-    protected byte[][] readContentFromDisk(Disk disk) {
+    protected byte[][] readContentFromDisk() {
+        Disk disk = FileService.getDisk();
         Fat fat = disk.getFat();
 
         int blockCount = calculateTotalBlockNum(fat);
 
-        byte[][] content = new byte[blockCount][disk.BYTES_PER_BLOCK];
+        byte[][] content = new byte[blockCount][Disk.BYTES_PER_BLOCK];
 
         // 重新遍历FAT表，以实际读取数据块并填充二维数组
         int currentBlock = getStartBlockNum();
         for (int i = 0; i < blockCount; i++) {
             byte[] blockData = disk.getDiskBlock(currentBlock);
             // 复制数据到二维数组的当前行
-            System.arraycopy(blockData, 0, content[i], 0, disk.BYTES_PER_BLOCK);
+            System.arraycopy(blockData, 0, content[i], 0, Disk.BYTES_PER_BLOCK);
             currentBlock = fat.getNextBlockIndex(currentBlock);
         }
 
@@ -196,7 +188,7 @@ public abstract class Item {
      *                要求严格按照 64 字节/块的规定的格式进行填充
      */
     protected boolean writeContentToDisk(byte[][] content) {
-        Disk disk = getDisk();
+        Disk disk = FileService.getDisk();
         Fat fat = disk.getFat();
         int cur = getStartBlockNum();
         int pre = cur;
@@ -246,7 +238,6 @@ public abstract class Item {
 
     /***
      * 需自行设置 disk, parent, startBlockNum 属性
-     * @return
      */
     public abstract Item copy();
 
