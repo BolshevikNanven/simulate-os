@@ -17,7 +17,6 @@ import scau.os.soos.module.device.view.DeviceReadView;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class DeviceService implements TaskManagerService {
     private final ScrollPane detailContainer;
@@ -106,13 +105,7 @@ public class DeviceService implements TaskManagerService {
         DeviceOverviewReadView overviewReadView = DeviceController.getInstance().getOverview();
         overviewSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), overviewReadView.usage()));
         if (overviewSeries.getData().size() > 60) {
-//            overviewSeries.getData().removeFirst();
-            if (overviewSeries.getData().isEmpty()) {
-                throw new NoSuchElementException();
-            } else {
-                overviewSeries.getData().remove(0);
-            }
-
+            overviewSeries.getData().removeFirst();
         }
         overview.setText(String.format("%d/8台", overviewReadView.usage()));
     }
@@ -125,7 +118,7 @@ public class DeviceService implements TaskManagerService {
         using.setText(String.join(";", data.waiting().stream().map(String::valueOf).toList()));
         series.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), data.usage()));
         if (overviewSeries.getData().size() > 60) {
-            //overviewSeries.getData().removeFirst();
+            overviewSeries.getData().removeFirst();
         }
     }
 }

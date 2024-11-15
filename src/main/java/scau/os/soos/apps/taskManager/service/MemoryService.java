@@ -19,7 +19,6 @@ import scau.os.soos.module.process.model.PCB;
 import scau.os.soos.module.process.model.Process;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.util.Random;
 
 public class MemoryService implements TaskManagerService {
@@ -91,12 +90,7 @@ public class MemoryService implements TaskManagerService {
         MemoryReadView memoryData = MemoryController.getInstance().getData();
         overviewSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), memoryData.usage()));
         if (overviewSeries.getData().size() > 60) {
-            //overviewSeries.getData().removeFirst();
-            if (overviewSeries.getData().isEmpty()) {
-                throw new NoSuchElementException();
-            } else {
-                overviewSeries.getData().remove(0);
-            }
+            overviewSeries.getData().removeFirst();
         }
         overview.setText(String.format("%d/%dB (%d%%)", memoryData.usage(), memoryData.total(), memoryData.usage() / memoryData.total()));
     }
