@@ -86,13 +86,33 @@ public class ThumbnailBox extends VBox {
      * @return 图片路径，如果不需要图片则返回 null
      */
     private String determineImagePath() {
-        return switch (item) {
-            case Exe exe -> EXE_IMAGE_PATH;
-            case Txt txt -> TXT_IMAGE_PATH;
-            case Directory directoryItem ->
-                    directoryItem.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
-            case null, default -> null;
-        };
+//        return switch (item) {
+//            case Exe exe -> EXE_IMAGE_PATH;
+//            case Txt txt -> TXT_IMAGE_PATH;
+//            case Directory directoryItem ->
+//                    directoryItem.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
+//            case null, default -> null;
+//        };
+        String imagePath=null;
+//        switch (item) {
+//            case Exe exe:
+//                imagePath = EXE_IMAGE_PATH;
+//                break;
+//            case Txt txt:
+//                imagePath = TXT_IMAGE_PATH;
+//                break;
+//            case Directory directoryItem:
+//                if (directoryItem.getSize() > 0) {
+//                    imagePath = DIRECTORY_IMAGE_PATH;
+//                } else {
+//                    imagePath = EMPTY_DIRECTORY_IMAGE_PATH;
+//                }
+//                break;
+//            default:
+//                imagePath = null;
+//                break;
+//        }
+        return imagePath;
     }
 
     /**

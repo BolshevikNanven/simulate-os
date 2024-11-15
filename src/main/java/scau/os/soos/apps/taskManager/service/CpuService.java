@@ -95,7 +95,7 @@ public class CpuService implements TaskManagerService {
         ProcessOverviewReadView overviewReadView = ProcessController.getInstance().getOverview();
         overviewSeries.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), overviewReadView.total()));
         if (overviewSeries.getData().size() > 60) {
-            overviewSeries.getData().removeFirst();
+            //overviewSeries.getData().removeFirst();
         }
         overview.setText(String.format("%s %d个进程", overviewReadView.busy() ? "忙碌" : "空闲", overviewReadView.total()));
         cpuState.setText(overviewReadView.busy() ? "忙碌中" : "空闲");
