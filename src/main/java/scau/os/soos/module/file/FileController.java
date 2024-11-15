@@ -108,7 +108,7 @@ public class FileController implements Module {
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
         // 获取后缀
 
-        return fileService.find(path,type);
+        return fileService.findItem(path,type);
     }
 
     public boolean isExistedDirectory(String path) throws ItemNotFoundException {

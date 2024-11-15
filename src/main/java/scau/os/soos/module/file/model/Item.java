@@ -1,11 +1,9 @@
 package scau.os.soos.module.file.model;
 
-import scau.os.soos.module.file.FileService;
-
 import java.util.Arrays;
 
 public abstract class Item {
-    private Directory rootDirectory;
+    private Disk disk;
     private Item parent;
     private byte[] name = new byte[3];
     private byte type;
@@ -14,8 +12,8 @@ public abstract class Item {
     private final byte[] size = new byte[2];
     private String path;
 
-    public Item(Directory rootDirectory, byte[] data) {
-        setRootDirectory(rootDirectory);
+    public Item(Disk disk, byte[] data) {
+        setDisk(disk);
         System.arraycopy(data, 0, name, 0, 3);
         type = data[3];
         attribute = data[4];
@@ -23,8 +21,8 @@ public abstract class Item {
         System.arraycopy(data, 6, size, 0, 2);
     }
 
-    public Item(Directory rootDirectory, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
-        setRootDirectory(rootDirectory);
+    public Item(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        setDisk(disk);
         setName(name);
         setType(type);
         setParent(parent);
@@ -34,12 +32,12 @@ public abstract class Item {
         setPath();
     }
 
-    public void setRootDirectory(Directory rootDirectory) {
-        this.rootDirectory = rootDirectory;
+    public void setDisk(Disk disk) {
+        this.disk = disk;
     }
 
-    public Directory getRootDirectory() {
-        return rootDirectory;
+    public Disk getDisk() {
+        return disk;
     }
 
     public void setParent(Item parent) {
@@ -198,7 +196,7 @@ public abstract class Item {
      *                要求严格按照 64 字节/块的规定的格式进行填充
      */
     protected boolean writeContentToDisk(byte[][] content) {
-        Disk disk = FileService.getDisk();
+        Disk disk = getDisk();
         Fat fat = disk.getFat();
         int cur = getStartBlockNum();
         int pre = cur;
