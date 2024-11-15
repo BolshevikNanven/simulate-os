@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class Exe extends Item {
     private List<Byte> instructions;
+    private boolean isOpened;
 
     public Exe(Disk disk, byte[] data) {
         super(disk, data);
@@ -17,7 +18,12 @@ public class Exe extends Item {
         super(disk, parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
         this.instructions = new ArrayList<>();
     }
-
+    public void setOpened(boolean opened) {
+        isOpened = opened;
+    }
+    public boolean isOpened() {
+        return isOpened;
+    }
 
     public void setInstructions(List<Byte> instructions) {
         this.instructions = instructions;

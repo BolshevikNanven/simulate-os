@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 public class Txt extends Item {
     private StringBuilder context;
+    private boolean isOpened = false;
 
     public Txt(Disk disk, byte[] data) {
         super(disk, data);
@@ -20,6 +21,12 @@ public class Txt extends Item {
     }
     public void setContext(String context) {
         this.context = new StringBuilder(context);
+    }
+    public void setOpened(boolean opened) {
+        isOpened = opened;
+    }
+    public boolean isOpened() {
+        return isOpened;
     }
 
     public void updateSize(){

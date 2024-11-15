@@ -1,30 +1,34 @@
 package scau.os.soos.module.file.model;
 
+import scau.os.soos.common.exception.DiskSpaceInsufficientException;
+import scau.os.soos.common.exception.ItemAlreadyExistsException;
+import scau.os.soos.common.exception.ItemNotFoundException;
+import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.FileService;
+
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Disk {
     public final int BLOCKS_PER_DISK = 256;
     public final int BYTES_PER_BLOCK = 64;
     public final int[] FAT_BLOCK_NUMS = {0, 1, 2, 3};
-    public final int ROOT_BLOCK_NUM = 4;
+    public final int PARTITION_BLOCK_NUM = 4;
 
     private byte[][] disk;
     private final Fat fat;
-    private final Directory rootDirectory;
+    private final Directory partitionDirectory;
 
     public Disk() {
-//        this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
-//        disk2file();
-        this.file2disk();
+        this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
+        disk2file();
+//        this.file2disk();
 //        for (byte[]bytes:getDisk()){
 //            System.out.println(Arrays.toString(bytes));
 //        }
         this.fat = new Fat(this);
-        this.rootDirectory = new Directory(
+        this.partitionDirectory = new Directory(
                 this,
                 null,
                 "",
@@ -33,20 +37,20 @@ public class Disk {
                 false,
                 false,
                 true,
-                ROOT_BLOCK_NUM,
+                PARTITION_BLOCK_NUM,
                 0);
-        fat.setNextBlockIndex(ROOT_BLOCK_NUM, Fat.TERMINATED);
-        rootDirectory.isRoot(true);
-        rootDirectory.setPath();
-        rootDirectory.initFromDisk();
+        fat.setNextBlockIndex(PARTITION_BLOCK_NUM, Fat.TERMINATED);
+        partitionDirectory.isRoot(true);
+        partitionDirectory.setPath();
+        partitionDirectory.initFromDisk();
     }
 
     public byte[][] getDisk() {
         return disk;
     }
 
-    public Directory getRootDirectory() {
-        return rootDirectory;
+    public Directory getPartitionDirectory() {
+        return partitionDirectory;
     }
 
     public Fat getFat() {
@@ -59,7 +63,7 @@ public class Disk {
 
     public int findFreeDiskBlock() {
         //从第3块磁盘块开始查询，如果找到空闲磁盘块则返回该编号，否则返回-1
-        for (int i = ROOT_BLOCK_NUM + 1; i < BLOCKS_PER_DISK; i++) {
+        for (int i = PARTITION_BLOCK_NUM + 1; i < BLOCKS_PER_DISK; i++) {
             if (fat.isFreeBlock(i)) {
                 return i;
             }
@@ -71,7 +75,7 @@ public class Disk {
         List<Integer> list = new ArrayList<>();
         int n=0;
 
-        for (int i = ROOT_BLOCK_NUM + 1; i < BLOCKS_PER_DISK; i++) {
+        for (int i = PARTITION_BLOCK_NUM + 1; i < BLOCKS_PER_DISK; i++) {
             if (fat.isFreeBlock(i) && n<num) {
                 list.add(i);
                 n++;

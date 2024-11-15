@@ -2,14 +2,13 @@ package scau.os.soos.module.file;
 
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.common.exception.*;
-import scau.os.soos.module.file.util.FileServiceUtil;
 import scau.os.soos.module.file.model.*;
 
 import java.util.List;
 
 public class FileService {
 
-    private Disk disk;
+    private final Disk disk;
 
     public FileService() {
         disk = new Disk();
@@ -24,12 +23,12 @@ public class FileService {
             ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
 
         //查重
-        FILE_TYPE type = FileServiceUtil.check(path);
+        FILE_TYPE type = check(path);
         if (type == FILE_TYPE.DIRECTORY) {
             throw new IllegalPathException("非法路径！");
         }
 
-        Item existingItem = FileServiceUtil.find(disk, path, type);
+        Item existingItem = find(disk, path, type);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException(existingItem.getFullName());
         }
@@ -43,7 +42,7 @@ public class FileService {
         //找父目录
         Item file = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) FileServiceUtil.find(disk, parentPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find(disk, parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
@@ -51,9 +50,9 @@ public class FileService {
         //创建文件
         String name = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));
         if (type == FILE_TYPE.EXE) {
-            file = FileServiceUtil.getItemFromCreate(disk, parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
+            file = getItemFromCreate(disk, parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
         } else {
-            file = FileServiceUtil.getItemFromCreate(disk, parent, name, (byte) 't', true, false, true, false, startDisk, 0);
+            file = getItemFromCreate(disk, parent, name, (byte) 't', true, false, true, false, startDisk, 0);
         }
 
         //修改fat表，父目录添加孩子
@@ -61,7 +60,7 @@ public class FileService {
         disk.getFat().writeFatToDisk();
         parent.addChildren(file);
         parent.updateSize();
-        FileServiceUtil.writeItemAndParentsToDisk(file);
+        writeItemAndParentsToDisk(file);
         return file;
     }
 
@@ -69,7 +68,7 @@ public class FileService {
             ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException {
 
         //查重
-        Item existingItem = FileServiceUtil.find(disk, path, FILE_TYPE.DIRECTORY);
+        Item existingItem = find(disk, path, FILE_TYPE.DIRECTORY);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException("目录已存在！");
         }
@@ -83,14 +82,14 @@ public class FileService {
         //找父目录
         Directory folder = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) FileServiceUtil.find(disk, parentPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find(disk, parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
 
         //创建文件夹
         String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
-        folder = (Directory) FileServiceUtil.getItemFromCreate(disk, parent, name, (byte) 0, true, false, false, true, startDisk, 0);
+        folder = (Directory) getItemFromCreate(disk, parent, name, (byte) 0, true, false, false, true, startDisk, 0);
         folder.setPath();
 
         //修改fat表，父目录添加孩子
@@ -98,7 +97,7 @@ public class FileService {
         disk.getFat().writeFatToDisk();
         parent.addChildren(folder);
         parent.updateSize();
-        FileServiceUtil.writeItemAndParentsToDisk(folder);
+        writeItemAndParentsToDisk(folder);
         return folder;
     }
 
@@ -106,7 +105,7 @@ public class FileService {
             ItemNotFoundException, DirectoryNoEmptyException, IllegalPathException {
 
         //查重
-        FILE_TYPE type = FileServiceUtil.check(path);
+        FILE_TYPE type = check(path);
 
         if (isDeleteDirectory && type != FILE_TYPE.DIRECTORY) {
             throw new IllegalPathException("非法路径！");
@@ -116,7 +115,7 @@ public class FileService {
             throw new IllegalPathException("非法路径！");
         }
 
-        Item item = FileServiceUtil.find(disk, path, type);
+        Item item =find(disk, path, type);
 
         if (item == null) {
             throw new ItemNotFoundException("不存在！");
@@ -126,7 +125,7 @@ public class FileService {
             throw new DirectoryNoEmptyException("不是空目录或文件不为空，删除操作被取消。");
         }
 
-        FileServiceUtil.delete(item);
+        delete(item);
     }
 
     public int getSize(Item item) {
@@ -176,8 +175,8 @@ public class FileService {
         fat.writeFatToDisk();
 
         item.initFromString(content);
-        FileServiceUtil.updateItemSize(item);
-        FileServiceUtil.writeItemAndParentsToDisk(item);
+        updateItemSize(item);
+        writeItemAndParentsToDisk(item);
 
         System.out.println("写入成功!");
     }
@@ -186,9 +185,9 @@ public class FileService {
             DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalPathException {
 
         //查重
-        FILE_TYPE type = FileServiceUtil.check(sourcePath);
+        FILE_TYPE type = check(sourcePath);
 
-        Item srcItem = FileServiceUtil.find(disk, sourcePath, type);
+        Item srcItem = find(disk, sourcePath, type);
         if (srcItem == null) {
             throw new ItemNotFoundException("文件不存在！");
         }
@@ -207,7 +206,7 @@ public class FileService {
             throw new DiskSpaceInsufficientException("磁盘空间不足！");
         }
 
-        Directory parent = (Directory) FileServiceUtil.find(disk, targetPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find(disk, targetPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
@@ -216,7 +215,7 @@ public class FileService {
             targetPath = targetPath.substring(0, targetPath.length() - 1);
         }
         String targetItem = targetPath + "/" + srcItem.getName();
-        Item existingItem = FileServiceUtil.find(disk, targetItem, type);
+        Item existingItem = find(disk, targetItem, type);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException(existingItem.getFullName());
         }
@@ -241,15 +240,15 @@ public class FileService {
         parent.addChildren(newItem);
 
         if (isMove) {
-            FileServiceUtil.delete(srcItem);
+            delete(srcItem);
         }
 
-        FileServiceUtil.updateItemSize(newItem);
-        FileServiceUtil.writeItemAndParentsToDisk(newItem);
+        updateItemSize(newItem);
+        writeItemAndParentsToDisk(newItem);
     }
 
     public Directory getRoots() {
-        return disk.getRootDirectory();
+        return disk.getPartitionDirectory();
     }
 
     public void reName(Item item, String newName) throws ItemAlreadyExistsException, IllegalNameException {
@@ -269,18 +268,152 @@ public class FileService {
         }
 
         item.setName(newName);
-        FileServiceUtil.writeItemAndParentsToDisk(item);
+        writeItemAndParentsToDisk(item);
     }
 
     public void reAttribute(Item item, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
         item.setAttribute(readOnly, systemFile, regularFile, isDirectory);
-        FileServiceUtil.writeItemAndParentsToDisk(item);
+        writeItemAndParentsToDisk(item);
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        Item item = FileServiceUtil.find(disk, path, type);
+        Item item = find(disk, path, type);
         if (item == null)
             throw new ItemNotFoundException("文件不存在！");
         return item;
+    }
+
+
+    public static Item getItemFromDisk(Disk disk, byte[] data) {
+        // 获取数据中的类型字节
+        byte type = data[3];
+        // 获取数据中的属性字节
+        byte attribute = data[4];
+
+        // 判断属性字节的第三位是否为0
+        if ((attribute & 0x08) != 0) {
+            // 是目录类型，返回目录实例
+            return new Directory(disk, data);
+        } else {
+            // 如果不是目录，继续判断类型字节
+            if (type != 0) {
+                // 类型字节为'e'，返回exe实例
+                if (type == 'e') {
+                    return new Exe(disk, data);
+                }
+                if (type == 't') {
+                    // 类型字节为't'，返回txt实例
+                    return new Txt(disk, data);
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public static Item getItemFromCreate(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+        if (isDirectory) {
+            return new Directory(disk, parent, name, type, readOnly, systemFile, regularFile, true, startBlockNum, size);
+        } else {
+            if (type == (byte) 'e') {
+                return new Exe(disk, parent, name, (byte) 'e', readOnly, systemFile, regularFile, false, startBlockNum, size);
+            } else {
+                return new Txt(disk, parent, name, type, readOnly, systemFile, regularFile, false, startBlockNum, size);
+            }
+        }
+    }
+
+    public static Item find(Disk disk, String path, FILE_TYPE type) {
+        Directory root = disk.getPartitionDirectory();
+        return root.find(path, type);
+    }
+
+    public static boolean writeItemAndParentsToDisk(Item item) {
+        if (item == null || item.getDisk() == null) {
+            return false;
+        }
+        Directory root = item.getDisk().getPartitionDirectory();
+
+        return writeItemToDiskAndPropagateToRoot(item, root);
+    }
+
+    private static boolean writeItemToDiskAndPropagateToRoot(Item item, Directory root) {
+        item.writeContentToDisk();
+        Item parent = item.getParent();
+        while (parent != null) {
+            if (!parent.writeContentToDisk()) {
+                return false;
+            }
+            parent = parent.getParent();
+        }
+        return true;
+    }
+
+    public static boolean updateItemSize(Item item) {
+        if (item == null || item.getDisk() == null) {
+            return false;
+        }
+        Directory root = item.getDisk().getPartitionDirectory();
+
+        return updateItemAndPropagateToRootSize(item, root);
+    }
+
+    private static boolean updateItemAndPropagateToRootSize(Item item, Directory root) {
+        item.updateSize();
+
+        Item parent = item.getParent();
+        while (parent != null) {
+            parent.updateSize();
+            parent = parent.getParent();
+        }
+        return true;
+    }
+
+    public static void delete(Item item) {
+        if (item instanceof Directory) {
+            deleteDirectoryRecursively((Directory) item);
+        }
+
+        Directory parent = (Directory) item.getParent();
+        if (parent == null) {
+            return;
+        }
+
+        parent.getChildren().remove(item);
+        deleteItem(item);
+
+        // 更新父目录的大小
+        updateItemSize(parent);
+        // 更新父目录及其上级目录到磁盘
+        writeItemAndParentsToDisk(parent);
+    }
+
+    private static void deleteItem(Item file) {
+        Disk disk = file.getDisk();
+        disk.formatFatTable(file.getStartBlockNum());
+        file.setParent(null);
+        file.setDisk(null);
+    }
+
+    private static void deleteDirectoryRecursively(Directory directory) {
+        for (Item child : directory.getChildren()) {
+            if (child instanceof Directory childDir) {
+                deleteDirectoryRecursively(childDir);
+                childDir.getChildren().clear();
+            }
+            deleteItem(child);
+        }
+    }
+
+    public static FILE_TYPE check(String path){
+        if(path.endsWith(".e")){
+            return FILE_TYPE.EXE;
+        } else if (path.endsWith(".t")){
+            return FILE_TYPE.TXT;
+        } else if (path.contains(".")){
+            return null;
+        } else {
+            return FILE_TYPE.DIRECTORY;
+        }
     }
 }
