@@ -29,6 +29,10 @@ public class Directory extends Item {
         this.isRoot = isRoot;
     }
 
+    public boolean judgeRoot(){
+        return isRoot;
+    }
+
     public List<Item> getChildren() {
         return children;
     }

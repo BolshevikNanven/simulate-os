@@ -9,6 +9,7 @@ import scau.os.soos.module.file.model.Item;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileController implements Module {
@@ -157,7 +158,7 @@ public class FileController implements Module {
     }
 
     public Fat getFat() {
-        return FileService.getDisk().getFat();
+        return fileService.getDisk().getFat();
     }
 
     @Override
@@ -210,9 +211,47 @@ public class FileController implements Module {
 
 
 
+//        getInstance().fileService.getDisk().disk2file();
 
-//        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
-//            System.out.println(Arrays.toString(bytes));
+
+//        try {
+//            getInstance().createDirectory("/C:");
+//        } catch (ItemAlreadyExistsException e) {
+//            throw new RuntimeException(e);
+//        } catch (ItemNotFoundException e) {
+//            throw new RuntimeException(e);
+//        } catch (DiskSpaceInsufficientException e) {
+//            throw new RuntimeException(e);
 //        }
+
+        Directory root = (Directory) FileService.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
+        Directory C = (Directory) FileService.find(getInstance().fileService.getDisk(), "/C:", FILE_TYPE.DIRECTORY);
+        System.out.println("---");
+//        System.out.println(getInstance().fileService.getDisk().);
+        try {
+            getInstance().createDirectory( "/C:/a");
+            getInstance().createDirectory( "/C:/b");
+        } catch (ItemAlreadyExistsException e) {
+            throw new RuntimeException(e);
+        } catch (ItemNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (DiskSpaceInsufficientException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("-------------------");
+        System.out.println(root.getPath());
+        System.out.println(root.getChildren());
+        System.out.println(C.getChildren());
+        FileController.getInstance().getFat().diskPartition("/C:",50);
+        FileController.getInstance().getFat().diskPartition("/C:",50);
+        FileController.getInstance().getFat().diskPartition("/C:",50);
+        FileController.getInstance().getFat().writeFatToDisk();
+
+
+        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
+            for(byte b:bytes) System.out.print((b & 0xFF) + " ");
+        System.out.println();
+        }
+
     }
 }
