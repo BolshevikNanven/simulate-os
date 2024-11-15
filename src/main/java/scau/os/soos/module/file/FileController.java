@@ -9,7 +9,6 @@ import scau.os.soos.module.file.model.Item;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FileController implements Module {
@@ -31,7 +30,7 @@ public class FileController implements Module {
      * 创建文件
      */
     public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalPathException {
-         return fileService.createFile(path);
+        return fileService.createFile(path);
     }
 
     /**
@@ -39,7 +38,7 @@ public class FileController implements Module {
      */
     public void deleteFile(String path) throws ItemNotFoundException, IllegalPathException {
         try {
-            fileService.delete(path,false,true);
+            fileService.delete(path, false, true);
         } catch (DirectoryNoEmptyException ignored) {
 
         }
@@ -62,15 +61,15 @@ public class FileController implements Module {
     /**
      * 拷贝文件
      */
-    public void copyFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
-        fileService.copy(sourcePath, targetPath,false);
+    public void copyFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
+        fileService.copy(sourcePath, targetPath, false);
     }
 
     /**
      * 移动文件
      */
-    public void moveFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
-        fileService.copy(sourcePath, targetPath,true);
+    public void moveFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
+        fileService.copy(sourcePath, targetPath, true);
     }
 
     /**
@@ -84,7 +83,7 @@ public class FileController implements Module {
      * 删除空目录
      */
     public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException, IllegalPathException {
-        fileService.delete(path,true,false);
+        fileService.delete(path, true, false);
     }
 
     /**
@@ -92,7 +91,7 @@ public class FileController implements Module {
      */
     public void deleteDirectory(String path) throws ItemNotFoundException, IllegalPathException {
         try {
-            fileService.delete(path,true,true);
+            fileService.delete(path, true, true);
         } catch (DirectoryNoEmptyException ignored) {
 
         }
@@ -102,14 +101,14 @@ public class FileController implements Module {
         fileService.reName(item, newName);
     }
 
-    public void reAttribute(Item item,boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory){
-        fileService.reAttribute(item,readOnly,systemFile,regularFile,isDirectory);
+    public void reAttribute(Item item, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
+        fileService.reAttribute(item, readOnly, systemFile, regularFile, isDirectory);
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
         // 获取后缀
 
-        return fileService.findItem(path,type);
+        return fileService.findItem(path, type);
     }
 
     public boolean isExistedDirectory(String path) throws ItemNotFoundException {
@@ -117,13 +116,11 @@ public class FileController implements Module {
     }
 
     // 待写
-    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory){
-        return ;
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
     }
 
     // 待写 格式化硬盘
     public void formatDisk(Path path) {
-        return ;
     }
 
     // 待写 返回文件内容
@@ -132,12 +129,12 @@ public class FileController implements Module {
     }
 
     // 待写
-    public Item findItem(String path){
+    public Item findItem(String path) {
         return null;
     }
 
     // 待写 分区
-    private void partitionDisk(String src,String dec,int size){
+    private void partitionDisk(String src, String dec, int size) {
         // 磁盘分区 从src 抽取size 分配到dec
         // 判断src 是否有足够空闲空间
         // 判断dec 是否存在，不存在则创建
@@ -146,19 +143,18 @@ public class FileController implements Module {
     }
 
 
-
     public int getFileSize(Item file) {
         return fileService.getSize(file);
     }
 
-    public List<Item> getRoot(){
+    public List<Item> getRoot() {
         List<Item> roots = new ArrayList<>();
         roots.add(fileService.getRoots());
         return roots;
     }
 
     public Fat getFat() {
-        return fileService.getDisk().getFat();
+        return FileService.getDisk().getFat();
     }
 
     @Override
@@ -166,51 +162,9 @@ public class FileController implements Module {
 
     }
 
-    public static void main(String[] args) {//显示根目录
-//        getInstance().createDirectory("/a");
-//        getInstance().createDirectory("/a/b");
-//        getInstance().createFile("/e.t");
-//        getInstance().copyFile("/e.t","a/b/");
-
-//        Directory root = (Directory) FileServiceUtil.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
-//        System.out.println(root.getPath());
-//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT).getPath());
-//        getInstance().writeFile(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT),"12345678901234567890");
-//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/e.t", FILE_TYPE.TXT));
-
-//        getInstance().copyFile("/e.t", "/a/");
-//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a/e.t", FILE_TYPE.TXT).getPath());
-
-//        getInstance().fileService.getDisk().disk2file();
-
-////
-//        getInstance().createDirectory("/a");
-//        getInstance().createDirectory("/a/b");
-//        getInstance().createDirectory("/a/c");
-//        getInstance().createDirectory("/a/d");
-//        getInstance().createDirectory("/a/e");
-//        getInstance().createFile("/a/f.t");
-//        getInstance().createFile("/a/g.t");
-//        getInstance().createFile("/a/h.e");
-//        getInstance().createFile("/a/i.e");
-//        getInstance().createFile("/a/j.e");
-//        getInstance().createFile("/a/k.e");
-//        getInstance().createFile("/a/l.e");
-//        getInstance().createFile("/a/m.e");
-//        getInstance().createFile("/a/n.e");
-//        getInstance().createFile("/a/o.e");
-//        getInstance().createFile("/a/p.e");
-//        getInstance().createFile("/a/q.e");
-//        getInstance().createFile("/a/r.e");
-
-
-//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(),"/a/m.e",FILE_TYPE.EXE).getPath());
-//
-//
-//        System.out.println(FileServiceUtil.find(getInstance().fileService.getDisk(), "/a", FILE_TYPE.DIRECTORY));
-
-
-
+    public static void main(String[] args) {
+        FileController.getInstance();
+        System.out.println(3);
 //        getInstance().fileService.getDisk().disk2file();
 
 
@@ -224,34 +178,25 @@ public class FileController implements Module {
 //            throw new RuntimeException(e);
 //        }
 
-        Directory root = (Directory) FileService.find(getInstance().fileService.getDisk(), "/", FILE_TYPE.DIRECTORY);
-        Directory C = (Directory) FileService.find(getInstance().fileService.getDisk(), "/C:", FILE_TYPE.DIRECTORY);
+        Directory root = (Directory) FileService.find("/", FILE_TYPE.DIRECTORY);
+        Directory C = (Directory) FileService.find("/C:", FILE_TYPE.DIRECTORY);
         System.out.println("---");
 //        System.out.println(getInstance().fileService.getDisk().);
         try {
-            getInstance().createDirectory( "/C:/a");
-            getInstance().createDirectory( "/C:/b");
-        } catch (ItemAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        } catch (ItemNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (DiskSpaceInsufficientException e) {
+            getInstance().createDirectory("/C:/a");
+            getInstance().createDirectory("/C:/b");
+        } catch (ItemAlreadyExistsException | ItemNotFoundException | DiskSpaceInsufficientException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("-------------------");
         System.out.println(root.getPath());
         System.out.println(root.getChildren());
         System.out.println(C.getChildren());
-        FileController.getInstance().getFat().diskPartition("/C:",50);
-        FileController.getInstance().getFat().diskPartition("/C:",50);
-        FileController.getInstance().getFat().diskPartition("/C:",50);
+        FileController.getInstance().getFat().diskPartition("/C:", 50);
+        FileController.getInstance().getFat().diskPartition("/C:", 50);
+        FileController.getInstance().getFat().diskPartition("/C:", 50);
         FileController.getInstance().getFat().writeFatToDisk();
 
 
-        for (byte[]bytes: getInstance().fileService.getDisk().getDisk()){
-            for(byte b:bytes) System.out.print((b & 0xFF) + " ");
-        System.out.println();
-        }
-
+        FileService.getDisk().test();
     }
 }

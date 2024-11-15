@@ -8,14 +8,17 @@ import java.util.List;
 
 public class FileService {
 
-    private final Disk disk;
+    private static Disk disk;
 
     public FileService() {
+        System.out.println("1");
         disk = new Disk();
+        System.out.println(2);
+        disk.init();
         //disk.file2disk();
     }
 
-    public Disk getDisk() {
+    public static Disk getDisk() {
         return disk;
     }
 
@@ -28,7 +31,7 @@ public class FileService {
             throw new IllegalPathException("非法路径！");
         }
 
-        Item existingItem = find(disk, path, type);
+        Item existingItem = find(path, type);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException(existingItem.getFullName());
         }
@@ -38,7 +41,7 @@ public class FileService {
         //找父目录
         Item file = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) find(disk, parentPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find(parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
@@ -53,9 +56,9 @@ public class FileService {
         //创建文件
         String name = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));
         if (type == FILE_TYPE.EXE) {
-            file = getItemFromCreate(disk, parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
+            file = getItemFromCreate(parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
         } else {
-            file = getItemFromCreate(disk, parent, name, (byte) 't', true, false, true, false, startDisk, 0);
+            file = getItemFromCreate(parent, name, (byte) 't', true, false, true, false, startDisk, 0);
         }
 
         //修改fat表，父目录添加孩子
@@ -73,7 +76,7 @@ public class FileService {
         // TODO: 2024/11/15 修改
 
         //查重
-        Item existingItem = find(disk, path, FILE_TYPE.DIRECTORY);
+        Item existingItem = find( path, FILE_TYPE.DIRECTORY);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException("目录已存在！");
         }
@@ -83,7 +86,7 @@ public class FileService {
         //找父目录
         Directory folder = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) find(disk, parentPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find( parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
@@ -98,7 +101,7 @@ public class FileService {
 
         //创建文件夹
         String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
-        folder = (Directory) getItemFromCreate(disk, parent, name, (byte) 0, true, false, false, true, startDisk, 0);
+        folder = (Directory) getItemFromCreate(parent, name, (byte) 0, true, false, false, true, startDisk, 0);
         folder.setPath();
 
         //修改fat表，父目录添加孩子
@@ -124,7 +127,7 @@ public class FileService {
             throw new IllegalPathException("非法路径！");
         }
 
-        Item item =find(disk, path, type);
+        Item item =find(path, type);
 
         if (item == null) {
             throw new ItemNotFoundException("不存在！");
@@ -161,10 +164,9 @@ public class FileService {
 
         // TODO: 2024/11/15
         //获取需要写入的字符串长度，计算需要多少个磁盘块
-        Disk disk = item.getDisk();
-        Fat fat = item.getDisk().getFat();
+        Fat fat = disk.getFat();
         //需要的块数=文件总大小需要的磁盘块数-已占有的块数
-        int needDiskNum = (int) Math.ceil((double) content.length() / disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
+        int needDiskNum = (int) Math.ceil((double) content.length() / Disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
         List<Integer> list = disk.findFreeDiskBlock(needDiskNum,item.getRootParent().getStartBlockNum());
         int num = list.size();
 
@@ -197,7 +199,7 @@ public class FileService {
         //查重
         FILE_TYPE type = check(sourcePath);
 
-        Item srcItem = find(disk, sourcePath, type);
+        Item srcItem = find(sourcePath, type);
         if (srcItem == null) {
             throw new ItemNotFoundException("文件不存在！");
         }
@@ -206,12 +208,11 @@ public class FileService {
             throw new IllegalPathException("目标非路径！");
         }
 
-        Disk disk = srcItem.getDisk();
         Fat fat = disk.getFat();
 
         int needDiskNum = srcItem.calculateTotalBlockNum(fat);
 
-        Directory parent = (Directory) find(disk, targetPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find( targetPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
@@ -228,7 +229,7 @@ public class FileService {
             targetPath = targetPath.substring(0, targetPath.length() - 1);
         }
         String targetItem = targetPath + "/" + srcItem.getName();
-        Item existingItem = find(disk, targetItem, type);
+        Item existingItem = find( targetItem, type);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException(existingItem.getFullName());
         }
@@ -245,7 +246,7 @@ public class FileService {
         fat.writeFatToDisk();
 
         Item newItem = srcItem.copy();
-        newItem.setDisk(disk);
+
         newItem.setParent(parent);
         newItem.setStartBlockNum(needDiskBlocks.get(0));
         newItem.setPath();
@@ -290,14 +291,14 @@ public class FileService {
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        Item item = find(disk, path, type);
+        Item item = find( path, type);
         if (item == null)
             throw new ItemNotFoundException("文件不存在！");
         return item;
     }
 
 
-    public static Item getItemFromDisk(Disk disk, byte[] data) {
+    public static Item getItemFromDisk(byte[] data) {
         // 获取数据中的类型字节
         byte type = data[3];
         // 获取数据中的属性字节
@@ -306,17 +307,17 @@ public class FileService {
         // 判断属性字节的第三位是否为0
         if ((attribute & 0x08) != 0) {
             // 是目录类型，返回目录实例
-            return new Directory(disk, data);
+            return new Directory(data);
         } else {
             // 如果不是目录，继续判断类型字节
             if (type != 0) {
                 // 类型字节为'e'，返回exe实例
                 if (type == 'e') {
-                    return new Exe(disk, data);
+                    return new Exe( data);
                 }
                 if (type == 't') {
                     // 类型字节为't'，返回txt实例
-                    return new Txt(disk, data);
+                    return new Txt(data);
                 }
             }
         }
@@ -324,33 +325,34 @@ public class FileService {
     }
 
 
-    public static Item getItemFromCreate(Disk disk, Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
+    public static Item getItemFromCreate(Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         if (isDirectory) {
-            return new Directory(disk, parent, name, type, readOnly, systemFile, regularFile, true, startBlockNum, size);
+            return new Directory(parent, name, type, readOnly, systemFile, regularFile, true, startBlockNum, size);
         } else {
             if (type == (byte) 'e') {
-                return new Exe(disk, parent, name, (byte) 'e', readOnly, systemFile, regularFile, false, startBlockNum, size);
+                return new Exe(parent, name, (byte) 'e', readOnly, systemFile, regularFile, false, startBlockNum, size);
             } else {
-                return new Txt(disk, parent, name, type, readOnly, systemFile, regularFile, false, startBlockNum, size);
+                return new Txt(parent, name, type, readOnly, systemFile, regularFile, false, startBlockNum, size);
             }
         }
     }
 
-    public static Item find(Disk disk, String path, FILE_TYPE type) {
+    public static Item find(String path, FILE_TYPE type) {
+        System.out.println("---");
         Directory root = disk.getPartitionDirectory();
         return root.find(path, type);
     }
 
-    public static boolean writeItemAndParentsToDisk(Item item) {
-        if (item == null || item.getDisk() == null) {
+    public  boolean writeItemAndParentsToDisk(Item item) {
+        if (item == null ) {
             return false;
         }
-        Directory root = item.getDisk().getPartitionDirectory();
+        Directory root = disk.getPartitionDirectory();
 
         return writeItemToDiskAndPropagateToRoot(item, root);
     }
 
-    private static boolean writeItemToDiskAndPropagateToRoot(Item item, Directory root) {
+    private  boolean writeItemToDiskAndPropagateToRoot(Item item, Directory root) {
         item.writeContentToDisk();
         Item parent = item.getParent();
         while (parent != null) {
@@ -362,16 +364,16 @@ public class FileService {
         return true;
     }
 
-    public static boolean updateItemSize(Item item) {
-        if (item == null || item.getDisk() == null) {
+    public  boolean updateItemSize(Item item) {
+        if (item == null) {
             return false;
         }
-        Directory root = item.getDisk().getPartitionDirectory();
+        Directory root = disk.getPartitionDirectory();
 
         return updateItemAndPropagateToRootSize(item, root);
     }
 
-    private static boolean updateItemAndPropagateToRootSize(Item item, Directory root) {
+    private  boolean updateItemAndPropagateToRootSize(Item item, Directory root) {
         item.updateSize();
 
         Item parent = item.getParent();
@@ -382,7 +384,7 @@ public class FileService {
         return true;
     }
 
-    public static void delete(Item item) {
+    public  void delete(Item item) {
         if (item instanceof Directory) {
             deleteDirectoryRecursively((Directory) item);
         }
@@ -401,16 +403,14 @@ public class FileService {
         writeItemAndParentsToDisk(parent);
     }
 
-    private static void deleteItem(Item file) {
-        Disk disk = file.getDisk();
+    private  void deleteItem(Item file) {
 
         int rootStartBlockNum = file.getRootParent().getStartBlockNum();
         disk.formatFatTable(file.getStartBlockNum(),rootStartBlockNum);
         file.setParent(null);
-        file.setDisk(null);
     }
 
-    private static void deleteDirectoryRecursively(Directory directory) {
+    private  void deleteDirectoryRecursively(Directory directory) {
         for (Item child : directory.getChildren()) {
             if (child instanceof Directory childDir) {
                 deleteDirectoryRecursively(childDir);
@@ -420,7 +420,7 @@ public class FileService {
         }
     }
 
-    public static FILE_TYPE check(String path){
+    public  FILE_TYPE check(String path){
         if(path.endsWith(".e")){
             return FILE_TYPE.EXE;
         } else if (path.endsWith(".t")){
@@ -443,5 +443,4 @@ public class FileService {
         return rootParent;
 
     }
-
 }

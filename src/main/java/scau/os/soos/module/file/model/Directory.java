@@ -145,7 +145,7 @@ public class Directory extends Item {
             for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
-                Item item = FileService.getItemFromDisk(disk, itemData);
+                Item item = FileService.getItemFromDisk(itemData);
                 if (item != null && disk.isItemExist(item)) {
                     children.add(item);
                     item.setParent(this);

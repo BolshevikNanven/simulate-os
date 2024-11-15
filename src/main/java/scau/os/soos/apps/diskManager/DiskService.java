@@ -60,19 +60,19 @@ public class DiskService {
             Label diskBlock = new Label("" + (i));
             diskBlock.setPrefWidth(30); // 设置Label的首选宽度
             diskBlock.setAlignment(Pos.CENTER);
-            diskBlock.setStyle("-fx-background-color: #A9A9A9; " + // 深灰色
-                    "-fx-border-style: solid; " +
-                    "-fx-border-color: gray; " +
-                    "-fx-border-width: 1;");
+//            diskBlock.setStyle("-fx-background-color: #A9A9A9; " + // 深灰色
+//                    "-fx-border-style: solid; " +
+//                    "-fx-border-color: gray; " +
+//                    "-fx-border-width: 1;");
 
             // 根据fat表的返回值设置背景颜色
-            if (!fatTable.isFreeBlock(i)) {
-                diskBlock.setTextFill(Color.WHITE); // 设置文本颜色为白色，以提高对比度
-                diskBlock.setStyle("-fx-background-color: " + toWebColor(Color.FIREBRICK) + "; "+
-                        "-fx-border-style: solid; " +
-                        "-fx-border-color: gray; " +
-                        "-fx-border-width: 1;");
-            }
+//            if (!fatTable.isFreeBlock(i)) {
+//                diskBlock.setTextFill(Color.WHITE); // 设置文本颜色为白色，以提高对比度
+//                diskBlock.setStyle("-fx-background-color: " + toWebColor(Color.FIREBRICK) + "; "+
+//                        "-fx-border-style: solid; " +
+//                        "-fx-border-color: gray; " +
+//                        "-fx-border-width: 1;");
+//            }
 
             diskBlocks.add(diskBlock, i % 16, i / 16); // 将Label添加到GridPane
         }
@@ -112,7 +112,7 @@ public class DiskService {
             if(i<4){
                 diskBlock = new DiskBlock(i, "系统占用");
             }else{
-                diskBlock = new DiskBlock(i, fatTable.isFreeBlock(i) ? "空闲" : "占用");
+//                diskBlock = new DiskBlock(i, fatTable.isFreeBlock(i) ? "空闲" : "占用");
             }
 
 
@@ -136,9 +136,9 @@ public class DiskService {
         int totalBlocks = 256; // 假设总共有256个块
         int freeBlocks = 0;
         for (int i = 0; i < totalBlocks; i++) {
-            if (fatTable.isFreeBlock(i)) {
-                freeBlocks++;
-            }
+//            if (fatTable.isFreeBlock(i)) {
+//                freeBlocks++;
+//            }
         }
         int occupiedBlocks = totalBlocks - freeBlocks;
 

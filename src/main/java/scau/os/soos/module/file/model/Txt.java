@@ -55,7 +55,7 @@ public class Txt extends Item {
 
     public boolean writeContentToDisk() {
         // 将context转换为字节数组
-        byte[] contextBytes = context.toString().getBytes(StandardCharsets.US_ASCII);
+        byte[] contextBytes = context.toString().getBytes(StandardCharsets.UTF_8);
         // 计算需要多少个数据块来存储所有子项
         int blockNum = (int) Math.ceil((double) contextBytes.length / Disk.BYTES_PER_BLOCK);
         byte[][] allItemsData = new byte[blockNum][Disk.BYTES_PER_BLOCK];
