@@ -182,6 +182,9 @@ public abstract class Item {
     }
 
     public Item getRootDirectory() {
+        if(parent == null){
+            return this;
+        }
         if (this instanceof Directory) {
             if (((Directory) this).isRoot()) {
                 return this;

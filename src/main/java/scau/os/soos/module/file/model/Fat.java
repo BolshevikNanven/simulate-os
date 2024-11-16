@@ -31,19 +31,15 @@ public class Fat {
                 index++;
             }
         }
-        for (int i = 0; i < Disk.PARTITION_BLOCK_NUM ; i++) {
-            fat[i] = TERMINATED;
-        }
-        fat[Disk.PARTITION_BLOCK_NUM] = Disk.PARTITION_BLOCK_NUM;
-        writeFatToDisk();
-        init();
     }
 
     public void init(){
-        for (int i = 5; i < fat.length ; i++) {
+        for (int i = 0; i < Disk.PARTITION_BLOCK_NUM+1 ; i++) {
+            fat[i] = TERMINATED;
+        }
+        for (int i = 6; i < fat.length ; i++) {
             fat[i]=(byte)5;
         }
-        writeFatToDisk();
     }
 
     /**
@@ -61,7 +57,6 @@ public class Fat {
         for (int i = 0; i < Disk.PARTITION_BLOCK_NUM; i++) {
             fat[i] = TERMINATED;
         }
-        fat[Disk.PARTITION_BLOCK_NUM] = Disk.PARTITION_BLOCK_NUM;
     }
 
     //该方法移植到FileService上

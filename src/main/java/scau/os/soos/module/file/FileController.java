@@ -179,12 +179,17 @@ public class FileController implements Module {
 //        }
 
         Directory root = (Directory) FileService.find("/", FILE_TYPE.DIRECTORY);
+        FileService.getDisk().test();
         Directory C = (Directory) FileService.find("/C:", FILE_TYPE.DIRECTORY);
         System.out.println("---");
 //        System.out.println(getInstance().fileService.getDisk().);
         try {
             getInstance().createDirectory("/C:/a");
             getInstance().createDirectory("/C:/b");
+            Directory a = (Directory) FileService.find("/C:/a", FILE_TYPE.DIRECTORY);
+            Directory b = (Directory) FileService.find("/C:/b", FILE_TYPE.DIRECTORY);
+            System.out.println(a.getPath());
+            System.out.println(b.getPath());
         } catch (ItemAlreadyExistsException | ItemNotFoundException | DiskSpaceInsufficientException e) {
             throw new RuntimeException(e);
         }
@@ -192,16 +197,13 @@ public class FileController implements Module {
         System.out.println(root.getChildren());
         System.out.println(C.getChildren());
         try {
-            getInstance().fileService.diskPartition("/C:", "/D:",50);
-            getInstance().fileService.diskPartition("/C:", "/D:",50);
-            getInstance().fileService.diskPartition("/C:", "/D:",50);
-            getInstance().fileService.diskPartition("/C:", "/D:",50);
-        } catch (IllegalPathException | DiskSpaceInsufficientException | MaxCapacityExceededException e) {
-            throw new RuntimeException(e);
-        }finally {
-            FileService.getDisk().test();
+//            getInstance().fileService.diskPartition("/C:", "/D:",50);
+//            getInstance().fileService.diskPartition("/C:", "/D:",50);
+//            getInstance().fileService.diskPartition("/C:", "/D:",50);
+//            getInstance().fileService.diskPartition("/C:", "/D:",50);
+        } finally {
+
         }
-        FileController.getInstance().getFat().writeFatToDisk();
 
 
     }

@@ -344,8 +344,10 @@ public class FileService {
     }
 
     public static Item find(String path, FILE_TYPE type) {
-        System.out.println("---");
         Directory root = disk.getPartitionDirectory();
+        for(Item partition : root.getChildren()){
+            ((Directory)partition).setRoot(true);
+        }
         return root.find(path, type);
     }
 

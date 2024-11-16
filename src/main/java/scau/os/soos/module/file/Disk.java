@@ -20,8 +20,7 @@ public class Disk {
 
     public Disk() {
         this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
-        disk2file();
-//        this.file2disk();
+        this.file2disk();
         this.fat = new Fat(this);
     }
 
@@ -36,24 +35,9 @@ public class Disk {
                 true,
                 PARTITION_BLOCK_NUM,
                 0);
-        Directory c = new Directory(
-                partitionDirectory,
-                "C:",
-                (byte)0,
-                false,
-                false,
-                false,
-                true,
-                5,
-                251);
-        partitionDirectory.addChildren(c);
-        fat.setNextBlockIndex(PARTITION_BLOCK_NUM, Fat.TERMINATED);
         partitionDirectory.setRoot(true);
-        c.setRoot(true);
         partitionDirectory.setPath();
         partitionDirectory.initFromDisk();
-        partitionDirectory.writeContentToDisk();
-        fat.writeFatToDisk();
     }
 
     public void test(){
