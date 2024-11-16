@@ -11,15 +11,25 @@ public class FileService {
     private static Disk disk;
 
     public FileService() {
-        System.out.println("1");
         disk = new Disk();
-        System.out.println(2);
         disk.init();
         //disk.file2disk();
     }
 
     public static Disk getDisk() {
         return disk;
+    }
+
+    public FILE_TYPE check(String path) {
+        if (path.endsWith(".e")) {
+            return FILE_TYPE.EXE;
+        } else if (path.endsWith(".t")) {
+            return FILE_TYPE.TXT;
+        } else if (path.contains(".")) {
+            return null;
+        } else {
+            return FILE_TYPE.DIRECTORY;
+        }
     }
 
     public Item createFile(String path) throws
@@ -36,16 +46,14 @@ public class FileService {
             throw new ItemAlreadyExistsException(existingItem.getFullName());
         }
 
-        // TODO: 2024/11/15
-
         //找父目录
-        Item file = null;
+        Item file;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
         Directory parent = (Directory) find(parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
-        int rootStartDisk = parent.getRootParent().getStartBlockNum();
+        int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
 
         //找空闲磁盘块
         int startDisk = disk.findFreeDiskBlock(rootStartDisk);
@@ -76,22 +84,21 @@ public class FileService {
         // TODO: 2024/11/15 修改
 
         //查重
-        Item existingItem = find( path, FILE_TYPE.DIRECTORY);
+        Item existingItem = find(path, FILE_TYPE.DIRECTORY);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException("目录已存在！");
         }
 
 
-
         //找父目录
         Directory folder = null;
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) find( parentPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find(parentPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
 
-        int rootStartDisk = parent.getRootParent().getStartBlockNum();
+        int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
         System.out.println(rootStartDisk);
         //找空闲磁盘块
         int startDisk = disk.findFreeDiskBlock(rootStartDisk);
@@ -127,7 +134,7 @@ public class FileService {
             throw new IllegalPathException("非法路径！");
         }
 
-        Item item =find(path, type);
+        Item item = find(path, type);
 
         if (item == null) {
             throw new ItemNotFoundException("不存在！");
@@ -167,7 +174,7 @@ public class FileService {
         Fat fat = disk.getFat();
         //需要的块数=文件总大小需要的磁盘块数-已占有的块数
         int needDiskNum = (int) Math.ceil((double) content.length() / Disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
-        List<Integer> list = disk.findFreeDiskBlock(needDiskNum,item.getRootParent().getStartBlockNum());
+        List<Integer> list = disk.findFreeDiskBlock(needDiskNum, item.getRootDirectory().getStartBlockNum());
         int num = list.size();
 
 
@@ -212,24 +219,23 @@ public class FileService {
 
         int needDiskNum = srcItem.calculateTotalBlockNum(fat);
 
-        Directory parent = (Directory) find( targetPath, FILE_TYPE.DIRECTORY);
+        Directory parent = (Directory) find(targetPath, FILE_TYPE.DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException("父目录不存在！");
         }
 
-        int rootStartBlockNum = parent.getRootParent().getStartBlockNum();
+        int rootStartBlockNum = parent.getRootDirectory().getStartBlockNum();
         List<Integer> needDiskBlocks = disk.findFreeDiskBlock(needDiskNum, rootStartBlockNum);
         if (needDiskBlocks.size() < needDiskNum) {
             throw new DiskSpaceInsufficientException("磁盘空间不足！");
         }
 
 
-
         if (targetPath.endsWith("/")) {
             targetPath = targetPath.substring(0, targetPath.length() - 1);
         }
         String targetItem = targetPath + "/" + srcItem.getName();
-        Item existingItem = find( targetItem, type);
+        Item existingItem = find(targetItem, type);
         if (existingItem != null) {
             throw new ItemAlreadyExistsException(existingItem.getFullName());
         }
@@ -291,7 +297,7 @@ public class FileService {
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        Item item = find( path, type);
+        Item item = find(path, type);
         if (item == null)
             throw new ItemNotFoundException("文件不存在！");
         return item;
@@ -313,7 +319,7 @@ public class FileService {
             if (type != 0) {
                 // 类型字节为'e'，返回exe实例
                 if (type == 'e') {
-                    return new Exe( data);
+                    return new Exe(data);
                 }
                 if (type == 't') {
                     // 类型字节为't'，返回txt实例
@@ -343,8 +349,8 @@ public class FileService {
         return root.find(path, type);
     }
 
-    public  boolean writeItemAndParentsToDisk(Item item) {
-        if (item == null ) {
+    public boolean writeItemAndParentsToDisk(Item item) {
+        if (item == null) {
             return false;
         }
         Directory root = disk.getPartitionDirectory();
@@ -352,7 +358,7 @@ public class FileService {
         return writeItemToDiskAndPropagateToRoot(item, root);
     }
 
-    private  boolean writeItemToDiskAndPropagateToRoot(Item item, Directory root) {
+    private boolean writeItemToDiskAndPropagateToRoot(Item item, Directory root) {
         item.writeContentToDisk();
         Item parent = item.getParent();
         while (parent != null) {
@@ -364,16 +370,15 @@ public class FileService {
         return true;
     }
 
-    public  boolean updateItemSize(Item item) {
+    public boolean updateItemSize(Item item) {
         if (item == null) {
             return false;
         }
-        Directory root = disk.getPartitionDirectory();
 
-        return updateItemAndPropagateToRootSize(item, root);
+        return updateItemAndPropagateToRootSize(item);
     }
 
-    private  boolean updateItemAndPropagateToRootSize(Item item, Directory root) {
+    private boolean updateItemAndPropagateToRootSize(Item item) {
         item.updateSize();
 
         Item parent = item.getParent();
@@ -384,7 +389,7 @@ public class FileService {
         return true;
     }
 
-    public  void delete(Item item) {
+    public void delete(Item item) {
         if (item instanceof Directory) {
             deleteDirectoryRecursively((Directory) item);
         }
@@ -403,14 +408,14 @@ public class FileService {
         writeItemAndParentsToDisk(parent);
     }
 
-    private  void deleteItem(Item file) {
+    private void deleteItem(Item file) {
 
-        int rootStartBlockNum = file.getRootParent().getStartBlockNum();
-        disk.formatFatTable(file.getStartBlockNum(),rootStartBlockNum);
+        int rootStartBlockNum = file.getRootDirectory().getStartBlockNum();
+        disk.formatFatTable(file.getStartBlockNum(), rootStartBlockNum);
         file.setParent(null);
     }
 
-    private  void deleteDirectoryRecursively(Directory directory) {
+    private void deleteDirectoryRecursively(Directory directory) {
         for (Item child : directory.getChildren()) {
             if (child instanceof Directory childDir) {
                 deleteDirectoryRecursively(childDir);
@@ -420,27 +425,63 @@ public class FileService {
         }
     }
 
-    public  FILE_TYPE check(String path){
-        if(path.endsWith(".e")){
-            return FILE_TYPE.EXE;
-        } else if (path.endsWith(".t")){
-            return FILE_TYPE.TXT;
-        } else if (path.contains(".")){
-            return null;
-        } else {
-            return FILE_TYPE.DIRECTORY;
+    public void diskPartition(String sourcePath, String targetPath, int needDiskNum) throws IllegalPathException, DiskSpaceInsufficientException, MaxCapacityExceededException {
+        // 1.验证路径格式：必须以斜杠开头，单个大小写字母，冒号结尾
+        String regex = "/[a-zA-Z]:";
+        if (!sourcePath.matches(regex) || !targetPath.matches(regex)) {
+            throw new IllegalPathException("路径格式必须为 '/[a-zA-Z]:'.");
         }
-    }
 
-    public Directory getRootParent(Item item){
-
-        Directory rootParent= (Directory) item.getParent();
-        //找根节点的起始盘
-        while(rootParent.getParent().getParent()!=null){
-            rootParent= (Directory) rootParent.getParent();
+        // 2.查找源根目录
+        Directory sourceRoot = (Directory) find(sourcePath, FILE_TYPE.DIRECTORY);
+        if (sourceRoot == null) {
+            throw new IllegalPathException("( " + sourcePath + " )盘不存在!");
         }
-//        int rootStartBlockNum=rootParent.getStartBlockNum();
-        return rootParent;
+        int sourceStartBlockNum = sourceRoot.getStartBlockNum();
 
+        // 3.判断源盘空间是否足够
+        Fat fat = disk.getFat();
+        List<Integer> needDiskBlocks = disk.findFreeDiskBlockFromTail(needDiskNum, sourceStartBlockNum);
+        if (needDiskBlocks.size() < needDiskNum) {
+            throw new DiskSpaceInsufficientException("磁盘分区失败, ( " + sourceRoot + " )盘空间不足!");
+        }
+
+        // 4.查找或创建目标根目录
+        Directory targetRoot = (Directory) find(targetPath, FILE_TYPE.DIRECTORY);
+        int targetStartBlockNum;
+        if (targetRoot != null) {
+            targetStartBlockNum = targetRoot.getStartBlockNum();
+            targetRoot.setStartBlockNum(needDiskBlocks.get(0));
+//            fat.setNextBlockIndex(targetStartBlockNum,targetRoot.getStartBlockNum());
+//            disk.copyDiskBlock(targetStartBlockNum,targetRoot.getStartBlockNum());
+//            disk.formatDiskBlock(targetStartBlockNum);
+            targetRoot.setSize(targetRoot.getSize()+needDiskNum);
+        }else{
+            targetStartBlockNum = needDiskBlocks.get(0);
+            targetRoot = (Directory) FileService.getItemFromCreate(
+                    disk.getPartitionDirectory(),
+                    targetPath.substring(1),
+                    (byte)0,
+                    false,
+                    false,
+                    false,
+                    true,
+                    targetStartBlockNum,
+                    needDiskNum);
+            if(!disk.getPartitionDirectory().addChildren(targetRoot)){
+                targetRoot.setParent(null);
+                throw new MaxCapacityExceededException ("已达到最大分区，最多创建 8 个分区！");
+            }
+            targetRoot.setRoot(true);
+        }
+        updateItemSize(targetRoot);
+        writeItemAndParentsToDisk(targetRoot);
+
+        // 5.修改FAT表
+        for (int i : needDiskBlocks) {
+            fat.setNextBlockIndex(i, targetStartBlockNum);
+        }
+        fat.setNextBlockIndex(targetStartBlockNum, Fat.TERMINATED);
+        fat.writeFatToDisk();
     }
 }

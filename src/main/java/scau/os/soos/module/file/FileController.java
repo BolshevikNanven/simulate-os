@@ -191,12 +191,18 @@ public class FileController implements Module {
         System.out.println(root.getPath());
         System.out.println(root.getChildren());
         System.out.println(C.getChildren());
-        FileController.getInstance().getFat().diskPartition("/C:", 50);
-        FileController.getInstance().getFat().diskPartition("/C:", 50);
-        FileController.getInstance().getFat().diskPartition("/C:", 50);
+        try {
+            getInstance().fileService.diskPartition("/C:", "/D:",50);
+            getInstance().fileService.diskPartition("/C:", "/D:",50);
+            getInstance().fileService.diskPartition("/C:", "/D:",50);
+            getInstance().fileService.diskPartition("/C:", "/D:",50);
+        } catch (IllegalPathException | DiskSpaceInsufficientException | MaxCapacityExceededException e) {
+            throw new RuntimeException(e);
+        }finally {
+            FileService.getDisk().test();
+        }
         FileController.getInstance().getFat().writeFatToDisk();
 
 
-        FileService.getDisk().test();
     }
 }

@@ -181,6 +181,16 @@ public abstract class Item {
         return content; // 返回填充后的数组
     }
 
+    public Item getRootDirectory() {
+        if (this instanceof Directory) {
+            if (((Directory) this).isRoot()) {
+                return this;
+            }
+            return parent.getRootDirectory();
+        }
+        return parent.getRootDirectory();
+    }
+
     /**
      * 将内容写入磁盘
      *
@@ -194,7 +204,7 @@ public abstract class Item {
         int pre = cur;
 
         //找根节点起始盘块
-        int rootStartBlockNum = getRootParent().getStartBlockNum();
+        int rootStartBlockNum = getRootDirectory().getStartBlockNum();
 
         for (byte[] bytes : content) {
             if (cur == Fat.TERMINATED) {
@@ -214,16 +224,6 @@ public abstract class Item {
         }
         fat.writeFatToDisk();
         return true;
-    }
-
-    public Item getRootParent() {
-        if (this instanceof Directory) {
-            if (((Directory) this).judgeRoot()) {
-                return this;
-            }
-            return parent.getRootParent();
-        }
-        return parent.getRootParent();
     }
 
     /**

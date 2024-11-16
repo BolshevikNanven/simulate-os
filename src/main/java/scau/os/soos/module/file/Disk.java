@@ -22,12 +22,7 @@ public class Disk {
         this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
         disk2file();
 //        this.file2disk();
-//        for (byte[]bytes:getDisk()){
-//            System.out.println(Arrays.toString(bytes));
-//        }
         this.fat = new Fat(this);
-        this.fat.init();
-//        init();
     }
 
     public void init() {
@@ -53,8 +48,8 @@ public class Disk {
                 0);
         partitionDirectory.addChildren(c);
         fat.setNextBlockIndex(PARTITION_BLOCK_NUM, Fat.TERMINATED);
-        partitionDirectory.isRoot(true);
-        c.isRoot(true);
+        partitionDirectory.setRoot(true);
+        c.setRoot(true);
         partitionDirectory.setPath();
         partitionDirectory.initFromDisk();
         partitionDirectory.writeContentToDisk();
@@ -77,7 +72,7 @@ public class Disk {
     }
 
     public boolean isItemExist(Item item) {
-        int rootBlockNum = item.getRootParent().getStartBlockNum();
+        int rootBlockNum = item.getRootDirectory().getStartBlockNum();
         return !fat.isFreeBlock(item.getStartBlockNum(),rootBlockNum);
     }
 
@@ -118,18 +113,13 @@ public class Disk {
             if(n>=num){
                 break;
             }
-            if (fat.isFreeBlock(i,rootBlockNum)) {
-                list.add(i);
+            if (fat.isFreeBlock(i, rootBlockNum)) {
+                list.add(0, i);
                 n++;
             }
         }
 
-        List<Integer> list2 = new ArrayList<>();
-        for(int i = list.size()-1; i >= 0; i--){
-            list2.add(list.get(i));
-        }
-
-        return list2;
+        return list;
     }
 
     public int findLastDisk(int startDisk) {
@@ -158,6 +148,11 @@ public class Disk {
 
     public void copyDiskBlock(int src, int dest) {
         System.arraycopy(getDiskBlock(src), 0, getDiskBlock(dest), 0, BYTES_PER_BLOCK);
+    }
+
+    public void formatDiskBlock(int src){
+        byte[] empty = new byte[BYTES_PER_BLOCK];
+        setDiskBlock(src,empty);
     }
 
     public void formatFatTable(int startBlockNum,int rootBlockNum) {

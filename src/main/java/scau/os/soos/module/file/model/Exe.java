@@ -20,18 +20,21 @@ public class Exe extends Item {
         super(parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
         this.instructions = new ArrayList<>();
     }
-    public void setOpened(boolean opened) {
-        isOpened = opened;
-    }
-    public boolean isOpened() {
-        return isOpened;
-    }
 
     public void setInstructions(List<Byte> instructions) {
         this.instructions = instructions;
     }
+
     public List<Byte> getInstructions() {
         return instructions;
+    }
+
+    public void setOpened(boolean opened) {
+        isOpened = opened;
+    }
+
+    public boolean isOpened() {
+        return isOpened;
     }
 
     public void updateSize(){

@@ -36,6 +36,7 @@ public class Fat {
         }
         fat[Disk.PARTITION_BLOCK_NUM] = Disk.PARTITION_BLOCK_NUM;
         writeFatToDisk();
+        init();
     }
 
     public void init(){
@@ -49,17 +50,6 @@ public class Fat {
      * 重置FAT表
      * 将FAT表中的所有块状态重置为FREE（空闲）状态，除了最后一个块设置为TERMINATED（终止）状态。
      */
-    public int diskPartition(String s_path,int diskNum){
-        Directory s_root = (Directory) FileService.find(s_path, FILE_TYPE.DIRECTORY);
-
-        List<Integer> blockNums = disk.findFreeDiskBlockFromTail(diskNum,s_root.getStartBlockNum());
-
-        for(int i:blockNums){
-            fat[i] = (byte) (blockNums.get(0)& 0xFF);
-        }
-        return blockNums.get(0);
-    }
-
     public void resetFat(String path) {
         Directory root = (Directory) FileService.find(path, FILE_TYPE.DIRECTORY);
         List<Integer> blockNums = new ArrayList<>();

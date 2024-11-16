@@ -15,21 +15,21 @@ public class Directory extends Item {
 
     public Directory(byte[] data) {
         super(data);
-        this.isRoot(false);
+        this.setRoot(false);
         this.children = new ArrayList<>();
     }
 
     public Directory(Item parent, String name, byte type, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory, int startBlockNum, int size) {
         super(parent, name, type, readOnly, systemFile, regularFile, isDirectory, startBlockNum, size);
-        this.isRoot(false);
+        this.setRoot(false);
         this.children = new ArrayList<>();
     }
 
-    public void isRoot(boolean isRoot) {
+    public void setRoot(boolean isRoot) {
         this.isRoot = isRoot;
     }
 
-    public boolean judgeRoot(){
+    public boolean isRoot(){
         return isRoot;
     }
 
@@ -130,6 +130,9 @@ public class Directory extends Item {
     }
 
     public void updateSize() {
+        if(isRoot&&(getParent()!=null&&((Directory)getParent()).isRoot())){
+            return;
+        }
         this.setSize(children.size() * BYTES_PER_ITEM);
     }
 
