@@ -449,12 +449,20 @@ public class FileService {
         // 4.查找或创建目标根目录
         Directory targetRoot = (Directory) find(targetPath, FILE_TYPE.DIRECTORY);
         int targetStartBlockNum;
+        // 分区存在，则转移根目录并刷新FAT表
         if (targetRoot != null) {
+            // 获取原盘块号
             targetStartBlockNum = targetRoot.getStartBlockNum();
+            // 设置新盘块号
             targetRoot.setStartBlockNum(needDiskBlocks.get(0));
-//            fat.setNextBlockIndex(targetStartBlockNum,targetRoot.getStartBlockNum());
-//            disk.copyDiskBlock(targetStartBlockNum,targetRoot.getStartBlockNum());
-//            disk.formatDiskBlock(targetStartBlockNum);
+            // 剪切磁盘块
+            fat.setNextBlockIndex(targetStartBlockNum,targetRoot.getStartBlockNum());
+            disk.copyDiskBlock(targetStartBlockNum,targetRoot.getStartBlockNum());
+            disk.formatDiskBlock(targetStartBlockNum);
+            // 刷新FAT表
+            fat.refresh(targetStartBlockNum,targetRoot.getStartBlockNum());
+            targetStartBlockNum = targetRoot.getStartBlockNum();
+            // 更新分区大小
             targetRoot.setSize(targetRoot.getSize()+needDiskNum);
         }else{
             targetStartBlockNum = needDiskBlocks.get(0);
@@ -474,6 +482,8 @@ public class FileService {
             }
             targetRoot.setRoot(true);
         }
+        sourceRoot.setSize(sourceRoot.getSize()-needDiskNum);
+        updateItemSize(sourceRoot);
         updateItemSize(targetRoot);
         writeItemAndParentsToDisk(targetRoot);
 

@@ -76,6 +76,13 @@ public class Fat {
         }
     }
 
+    public void refresh(int oldFree,int newFree) {
+        for(int i = Disk.PARTITION_BLOCK_NUM; i < Disk.BLOCKS_PER_DISK; i++){
+            if(isFreeBlock(i,oldFree))
+                setNextBlockIndex(i,newFree);
+        }
+    }
+
     /**
      * 设置指定磁盘块的下一个磁盘块索引
      */
@@ -94,14 +101,8 @@ public class Fat {
         if (diskNum < 0 || diskNum >= fat.length) {
             System.out.println("Block is out of range");
         }
-//        System.out.println(startBlockNum);
-//        Directory root = disk.getPartitionDirectory();
-//        for (Item e : root.getChildren()) {
-//            FREE.add(e.getStartBlockNum());
 
-        return fat[diskNum] ==  (startBlockNum & 0xFF);
-        //看fat[diskNum]是否在FREE列表中，即fat[diskNum]指向的块是否是根目录块，是则为空
-        //return FREE.contains(fat[diskNum]);
+        return (fat[diskNum]&0xFF) ==  (startBlockNum & 0xFF);
     }
 
     /**

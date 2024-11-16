@@ -45,7 +45,7 @@ public class Disk {
                 false,
                 true,
                 5,
-                0);
+                251);
         partitionDirectory.addChildren(c);
         fat.setNextBlockIndex(PARTITION_BLOCK_NUM, Fat.TERMINATED);
         partitionDirectory.setRoot(true);
