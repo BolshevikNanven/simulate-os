@@ -34,7 +34,7 @@ public class MemoryController implements Module {
         return memoryService.read(address);
     }
 
-    public boolean write(int address, byte content) {
+    public boolean write(int address, int content) {
         return memoryService.write(address, content);
     }
 

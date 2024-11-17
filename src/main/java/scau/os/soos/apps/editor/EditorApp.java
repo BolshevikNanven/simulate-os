@@ -54,6 +54,7 @@ public class EditorApp extends Window {
             List<Byte> byteList = parseInstructions(display.getText());
             exeItem.setInstructions(byteList);
             exeItem.setSize(byteList.size());
+            exeItem.writeContentToDisk();
         }
     }
 
