@@ -215,4 +215,8 @@ public class FileController implements Module {
 //            System.out.println(Arrays.toString(bytes));
 //        }
     }
+
+    public void save() {
+//        fileService.getDisk().disk2file();
+    }
 }

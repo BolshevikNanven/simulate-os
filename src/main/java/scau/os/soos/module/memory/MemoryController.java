@@ -34,8 +34,8 @@ public class MemoryController implements Module {
         return memoryService.read(address);
     }
 
-    public boolean write(int address, Object content) {
-        return memoryService.write(address, (int) content);
+    public boolean write(int address, byte content) {
+        return memoryService.write(address, content);
     }
 
     public MemoryReadView getData() {

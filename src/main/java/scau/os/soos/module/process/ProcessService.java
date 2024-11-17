@@ -61,7 +61,7 @@ public class ProcessService {
         int fileSize = FileController.getInstance().getFileSize(file);
 
         // 3.申请内存空间,装入内存系统区
-        if (MemoryController.getInstance().allocate(newPCB, fileSize)) {
+        if (!MemoryController.getInstance().allocate(newPCB, fileSize)) {
             System.out.println("-------Process-------进程内存申请失败");
             return null;
         }
@@ -112,7 +112,7 @@ public class ProcessService {
             System.out.println("-------Process-------就绪队列为空");
             return false;
         }
-        Process process = readyQueue.pollPCB().getProcess();
+        Process process = pcb.getProcess();
 
         // 3.调度新进程上处理机
         if (!CpuController.getInstance().handleProcess(process)) {
