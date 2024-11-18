@@ -43,7 +43,7 @@ public class CpuService implements TaskManagerService {
         this.overview = overview;
         this.processSeries = new XYChart.Series<>();
         this.overviewSeries = new XYChart.Series<>();
-        this.processSeries.setData(overviewSeries.getData());
+        processSeries.setData(overviewSeries.getData());
 
         try {
             cpuDetail = FXMLLoader.load(TaskManagerApp.class.getResource("cpu/cpu.fxml"));
@@ -79,11 +79,17 @@ public class CpuService implements TaskManagerService {
             cpuPid.setText(String.valueOf(cpuReadView.pid()));
             cpuInstruction.setText(cpuReadView.instruction());
             cpuAX.setText(String.valueOf(cpuReadView.AX()));
+            runningProcessList.getChildren().clear();
+            readyProcessList.getChildren().clear();
+            blockProcessList.getChildren().clear();
             for (ProcessReadView process : processReadViews) {
-                switch (process.state()){
-                    case RUNNING -> runningProcessList.getChildren().add(newProcessItem(process.pid(),"运行中", process.memory()));
-                    case READY -> readyProcessList.getChildren().add(newProcessItem(process.pid(),"就绪", process.memory()));
-                    case BLOCKED -> blockProcessList.getChildren().add(newProcessItem(process.pid(),"阻塞", process.memory()));
+                switch (process.state()) {
+                    case RUNNING ->
+                            runningProcessList.getChildren().add(newProcessItem(process.pid(), "运行", process.memory()));
+                    case READY ->
+                            readyProcessList.getChildren().add(newProcessItem(process.pid(), "就绪", process.memory()));
+                    case BLOCKED ->
+                            blockProcessList.getChildren().add(newProcessItem(process.pid(), "阻塞", process.memory()));
                 }
             }
         });
@@ -111,7 +117,7 @@ public class CpuService implements TaskManagerService {
 
             pidLabel.setText(String.valueOf(pid));
             stateLabel.setText(state);
-            memoryLabel.setText(String.valueOf(memory));
+            memoryLabel.setText(memory + "B");
 
             return item;
         } catch (IOException e) {

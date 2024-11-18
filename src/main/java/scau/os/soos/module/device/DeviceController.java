@@ -15,7 +15,7 @@ public class DeviceController implements Module {
     private static DeviceController instance;
     private final DeviceService deviceService;
 
-    public static DeviceController getInstance() {
+    public synchronized static DeviceController getInstance() {
         if (instance == null) {
             instance = new DeviceController();
         }

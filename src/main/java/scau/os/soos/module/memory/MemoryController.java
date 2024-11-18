@@ -11,7 +11,7 @@ public class MemoryController implements Module {
     private static MemoryController instance;
     private final MemoryService memoryService;
 
-    public static MemoryController getInstance() {
+    public synchronized static MemoryController getInstance() {
         if (instance == null) {
             instance = new MemoryController();
         }

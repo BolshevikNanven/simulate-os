@@ -213,10 +213,11 @@ public class CpuService {
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
                 currentInstruction = "!" + time + "," + deviceType;
 
-                unload();
-
                 ProcessController.getInstance().block(runningProcess);
                 DeviceController.getInstance().assign(deviceType, time, runningProcess);
+
+                unload();
+
                 ProcessController.getInstance().schedule();
             }
             case 0b0101 -> {

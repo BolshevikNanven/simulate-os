@@ -14,7 +14,7 @@ public class ProcessController implements Module {
     private static ProcessController instance;
     private final ProcessService processService;
 
-    public static ProcessController getInstance() {
+    public synchronized static ProcessController getInstance() {
         if (instance == null) {
             instance = new ProcessController();
         }
