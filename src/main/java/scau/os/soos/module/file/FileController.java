@@ -217,6 +217,6 @@ public class FileController implements Module {
     }
 
     public void save() {
-//        fileService.getDisk().disk2file();
+        fileService.getDisk().disk2file();
     }
 }
