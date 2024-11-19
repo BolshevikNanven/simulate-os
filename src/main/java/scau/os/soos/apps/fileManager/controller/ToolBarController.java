@@ -26,7 +26,7 @@ import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.model.Txt;
-import scau.os.soos.ui.dialog.Dialog;
+import scau.os.soos.ui.components.Dialog;
 
 import java.net.URL;
 import java.util.*;
@@ -282,14 +282,14 @@ public class ToolBarController implements Initializable {
             Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
             // 显示对话框, 将文本框内容设置为当前目录的路径
             Dialog.getDialog(FileManagerApp.getInstance(),
-                    "文件管理器",
+                    errorMessage,
                     true,
                     false,
                     confirm -> currentDirectory.setText(
                             directory == null ? null : directory.getPath()),
                     cancelOrClose -> currentDirectory.setText(
                             directory == null ? null : directory.getPath()),
-                    label).show();
+                    null).show();
         }
     }
 
@@ -426,15 +426,15 @@ public class ToolBarController implements Initializable {
                 FileController.getInstance().createFile(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
             } catch (RuntimeException ex) {
-                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件",
                         true, false,
                         null, null,
-                        new Label("请重命名部分文件！！！"));
+                        null);
             } catch (DiskSpaceInsufficientException ex) {
-                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                         true, false,
                         null, null,
-                        DiskSpaceInsufficientException.getPane());
+                        null);
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
@@ -456,15 +456,15 @@ public class ToolBarController implements Initializable {
                 FileController.getInstance().createFile(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
             } catch (RuntimeException ex) {
-                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件",
                         true, false,
                         null, null,
-                        new Label("请重命名部分文件！！！"));
+                        null);
             } catch (DiskSpaceInsufficientException ex) {
-                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                         true, false,
                         null, null,
-                        DiskSpaceInsufficientException.getPane());
+                        null);
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
@@ -487,15 +487,15 @@ public class ToolBarController implements Initializable {
                 FileController.getInstance().createDirectory(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
             } catch (RuntimeException ex) {
-                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件!",
                         true, false,
                         null, null,
-                        new Label("请重命名部分文件！！！"));
+                        null);
             } catch (DiskSpaceInsufficientException ex) {
-                Dialog.getDialog(FileManagerApp.getInstance(), "创建目录",
+                Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                         true, false,
                         null, null,
-                        DiskSpaceInsufficientException.getPane());
+                        null);
             } catch (ItemAlreadyExistsException | ItemNotFoundException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
@@ -586,7 +586,7 @@ public class ToolBarController implements Initializable {
                             .append(Clipboard.getInstance().getSourcePath()).append(" 复制到 ")
                             .append(target).append("\n目标已包含一个名为\"").append(source.getFullName()).append("\"的文件\n\t是否要替换它?");
                     Label message = new Label(sb.toString());
-                    Dialog.getDialog(FileManagerApp.getInstance(), "替换或跳过文件",
+                    Dialog.getDialog(FileManagerApp.getInstance(), sb.toString(),
                             true, true,
                             confirm -> {
                                 try {
@@ -600,12 +600,12 @@ public class ToolBarController implements Initializable {
                                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "Error!!!").show();
                                 }
                             }, null,
-                            message).show();
+                            null).show();
                 } catch (DiskSpaceInsufficientException ex) {
-                    Dialog.getDialog(FileManagerApp.getInstance(), "粘贴文件",
+                    Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                             true, false,
                             null, null,
-                            DiskSpaceInsufficientException.getPane());
+                            null);
                 } catch (IllegalPathException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "IllegalPathException!!!").show();
                 } catch (ItemNotFoundException ex) {
@@ -696,7 +696,7 @@ public class ToolBarController implements Initializable {
 
         // 显示对话框, 将文本框内容设置为当前目录的路径
         Dialog.getDialog(FileManagerApp.getInstance(),
-                "删除多个项目",
+                message,
                 true,
                 true,
                 confirm -> {
@@ -710,7 +710,7 @@ public class ToolBarController implements Initializable {
                     FileManagerApp.getInstance().refreshCurrentDirectory();
                 },
                 null,
-                label).show();
+                null).show();
     }
 
     private void deleteSpecificItem(Item item) {

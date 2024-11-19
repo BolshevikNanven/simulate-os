@@ -7,12 +7,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
-import scau.os.soos.module.file.FileController;
-import scau.os.soos.module.file.model.Item;
-import scau.os.soos.ui.dialog.Dialog;
 import scau.os.soos.ui.components.base.Popover;
 
 import java.io.IOException;

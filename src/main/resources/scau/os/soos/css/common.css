@@ -194,15 +194,62 @@ Button {
     全局对话框样式
 ------------------------ */
 
-.dialog{
+.dialog {
     -fx-background-color: #ffffff;
+    -fx-background-radius: 6px;
 }
 
-.dialog > Label{
+.dialog > Label {
     -fx-font-size: 14px;
 }
 
-.dialog .bottom{
-    -fx-background-color: #f0f0f0;
+.dialog .title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212121;
+    -fx-padding: 20px;
+}
+
+.dialog .bottom {
+    -fx-background-color: #f3f3f3;
+    -fx-padding: 12px;
     -fx-background-radius: 0 0 6px 6px;
+}
+
+.primary-btn {
+    -fx-background-color: #0f6dbb;
+    -fx-background-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #0f6dbb;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 6px 28px;
+    -fx-font-size: 13px;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #0e67b0;
+}
+
+.primary-btn:pressed {
+    -fx-background-color: #0c5b9d;
+}
+
+.outline-btn {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #dddddd;
+    -fx-text-fill: #212121;
+    -fx-padding: 6px 28px;
+    -fx-font-size: 13px;
+}
+
+.outline-btn:hover {
+    -fx-background-color: #fafafa;
+}
+
+.outline-btn:pressed {
+    -fx-background-color: #f6f6f6;
 }

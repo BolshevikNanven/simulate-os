@@ -16,6 +16,7 @@ import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.terminal.TerminalController;
+import scau.os.soos.ui.components.Dialog;
 
 
 import java.io.IOException;
@@ -32,7 +33,6 @@ public class MainApplication extends Application {
         stage.show();
         stage.setOnCloseRequest((e) -> {
             OS.state = OS_STATES.STOPPED;
-            System.out.println(OS.state);
             ThreadsPool.stop();
         });
 
@@ -61,9 +61,9 @@ public class MainApplication extends Application {
             OS.state = OS_STATES.RUNNING;
             while (!OS.state.equals(OS_STATES.STOPPED)) {
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Thread.sleep(1200);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 if (OS.state.equals(OS_STATES.PAUSE)) {
