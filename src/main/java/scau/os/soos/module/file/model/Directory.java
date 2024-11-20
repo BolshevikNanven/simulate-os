@@ -1,12 +1,10 @@
 package scau.os.soos.module.file.model;
 
-import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.Disk;
 import scau.os.soos.module.file.FileService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class Directory extends Item {
     public static final int BYTES_PER_ITEM = 8;
@@ -49,37 +47,7 @@ public class Directory extends Item {
         children.remove(item);
     }
 
-    public Item find(String path, FILE_TYPE fileType) {
-        switch (fileType) {
-            case EXE -> {
-                return find(path, false, (byte) 'e');
-            }
-            case TXT -> {
-                return find(path, false, (byte) 't');
-            }
-            case DIRECTORY -> {
-                return find(path, true, (byte) 0);
-            }
-        }
-        return null;
-    }
-
-    private Item find(String path, boolean isDirectory, byte type) {
-        if (path == null) {
-            return null;
-        }
-        StringTokenizer tokenizer = new StringTokenizer(path, "/");
-        List<String> pathParts = new ArrayList<>();
-        while (tokenizer.hasMoreTokens()) {
-            String pathPart = tokenizer.nextToken();
-            pathParts.add(pathPart);
-        }
-
-        // 从根目录（即this）开始查找
-        return findInDirectory(this, pathParts, 0, isDirectory, type);
-    }
-
-    private Item findInDirectory(Directory currentDir, List<String> pathParts, int index, boolean isDirectory, byte type) {
+    public static Item find(Directory currentDir, List<String> pathParts, int index, boolean isDirectory, byte type) {
         // 校验pathParts是否为空或index是否越界
         if (pathParts.isEmpty()) {
             return currentDir;
@@ -102,14 +70,12 @@ public class Directory extends Item {
             if (isDirectory) {
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.isDirectory()) {
-                        System.out.println("find : " + nameToFind);
                         return child;
                     }
                 }
             } else {
                 for (Item child : children) {
                     if (child.getName().equals(nameToFind) && child.getType() == type) {
-                        System.out.println("find : " + nameToFind);
                         return child;
                     }
                 }
@@ -120,7 +86,7 @@ public class Directory extends Item {
                 if (child.getName().equals(nameToFind)) {
                     // 如果找到了匹配的项，并且它是一个目录，则递归地在其内部查找
                     if (child instanceof Directory) {
-                        return findInDirectory((Directory) child, pathParts, index + 1, isDirectory, type);
+                        return find((Directory) child, pathParts, index + 1, isDirectory, type);
                     }
                 }
             }

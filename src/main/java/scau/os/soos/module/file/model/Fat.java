@@ -1,10 +1,7 @@
 package scau.os.soos.module.file.model;
 
-import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.module.file.Disk;
-import scau.os.soos.module.file.FileService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Fat {
@@ -39,23 +36,6 @@ public class Fat {
         }
         for (int i = 6; i < fat.length ; i++) {
             fat[i]=(byte)5;
-        }
-    }
-
-    /**
-     * 重置FAT表
-     * 将FAT表中的所有块状态重置为FREE（空闲）状态，除了最后一个块设置为TERMINATED（终止）状态。
-     */
-    public void resetFat(String path) {
-        Directory root = (Directory) FileService.find(path, FILE_TYPE.DIRECTORY);
-        List<Integer> blockNums = new ArrayList<>();
-        getDiskAreaBlockNum(root,blockNums);//获取指定磁盘区域中的所有占用磁盘块索引
-        for (int i : blockNums) {
-            fat[i] = (byte) root.getStartBlockNum();
-        }
-        //[0,1,2,3,4]块磁盘占用
-        for (int i = 0; i < Disk.PARTITION_BLOCK_NUM; i++) {
-            fat[i] = TERMINATED;
         }
     }
 

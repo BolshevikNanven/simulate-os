@@ -38,6 +38,9 @@ public class Disk {
         partitionDirectory.setRoot(true);
         partitionDirectory.setPath();
         partitionDirectory.initFromDisk();
+        for(Item partition : partitionDirectory.getChildren()){
+            ((Directory)partition).setRoot(true);
+        }
     }
 
     public void test(){

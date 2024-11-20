@@ -496,7 +496,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         DiskSpaceInsufficientException.getPane());
-            } catch (ItemAlreadyExistsException | ItemNotFoundException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException |IllegalPathException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });

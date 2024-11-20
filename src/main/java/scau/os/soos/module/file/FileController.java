@@ -75,7 +75,7 @@ public class FileController implements Module {
     /**
      * 建立目录
      */
-    public Directory createDirectory(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException {
+    public Item createDirectory(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalPathException {
         return fileService.createDirectory(path);
     }
 
@@ -164,7 +164,6 @@ public class FileController implements Module {
 
     public static void main(String[] args) {
         FileController.getInstance();
-        System.out.println(3);
 //        getInstance().fileService.getDisk().disk2file();
 
 
@@ -178,32 +177,48 @@ public class FileController implements Module {
 //            throw new RuntimeException(e);
 //        }
 
-        Directory root = (Directory) FileService.find("/", FILE_TYPE.DIRECTORY);
-        FileService.getDisk().test();
-        Directory C = (Directory) FileService.find("/C:", FILE_TYPE.DIRECTORY);
+        Directory root = (Directory) getInstance().fileService.find("/", FILE_TYPE.DIRECTORY);
+//        FileService.getDisk().test();
+        Directory C = (Directory)  getInstance().fileService.find("/C:", FILE_TYPE.DIRECTORY);
         System.out.println("---");
 //        System.out.println(getInstance().fileService.getDisk().);
         try {
             getInstance().createDirectory("/C:/a");
             getInstance().createDirectory("/C:/b");
-            Directory a = (Directory) FileService.find("/C:/a", FILE_TYPE.DIRECTORY);
-            Directory b = (Directory) FileService.find("/C:/b", FILE_TYPE.DIRECTORY);
+            Directory a = (Directory)  getInstance().fileService.find("/C:/a", FILE_TYPE.DIRECTORY);
+            Directory b = (Directory)  getInstance().fileService.find("/C:/b", FILE_TYPE.DIRECTORY);
             System.out.println(a.getPath());
             System.out.println(b.getPath());
         } catch (ItemAlreadyExistsException | ItemNotFoundException | DiskSpaceInsufficientException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalPathException e) {
             throw new RuntimeException(e);
         }
         System.out.println(root.getPath());
         System.out.println(root.getChildren());
         System.out.println(C.getChildren());
         try {
-//            getInstance().fileService.diskPartition("/C:", "/D:",50);
-//            getInstance().fileService.diskPartition("/C:", "/D:",50);
-//            getInstance().fileService.diskPartition("/C:", "/D:",50);
+            try {
+                getInstance().fileService.diskPartition("/C:", "/D:",50);
+                getInstance().fileService.diskPartition("/C:", "/D:",50);
+                getInstance().fileService.diskPartition("/C:", "/E:",50);
+                getInstance().fileService.diskPartition("/C:", "/D:",50);
+
+                getInstance().fileService.diskPartition("/E:", "/D:",49);
+            } catch (IllegalPathException | ItemNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (DiskSpaceInsufficientException e) {
+                throw new RuntimeException(e);
+            } catch (MaxCapacityExceededException e) {
+                throw new RuntimeException(e);
+            }
+
+
 //            getInstance().fileService.diskPartition("/C:", "/D:",50);
         } finally {
 
         }
+//        FileService.getDisk().test();
 
 
     }
