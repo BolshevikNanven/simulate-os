@@ -16,7 +16,7 @@ public class TerminalService {
     private int commandIndex; // 命令索引
 
     public TerminalService() {
-        currentDirectory = FileController.getInstance().getRoot().get(0).getPath(); // 初始化操作目录为根目录
+        currentDirectory = FileController.getInstance().listRoot().get(0).getPath(); // 初始化操作目录为根目录
         commandMap = new HashMap<>();
         initCommandMap(); // 初始化指令集
         historyCommand = new ArrayList<>();

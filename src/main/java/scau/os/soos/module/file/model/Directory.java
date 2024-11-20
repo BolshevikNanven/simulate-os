@@ -99,7 +99,11 @@ public class Directory extends Item {
         if(isRoot&&(getParent()!=null&&((Directory)getParent()).isRoot())){
             return;
         }
-        this.setSize(children.size() * BYTES_PER_ITEM);
+        int size = 0;
+        for(Item item:children){
+            size+=item.getSize();
+        }
+        setSize(size);
     }
 
     public void initFromString(String content) {

@@ -147,11 +147,14 @@ public class FileController implements Module {
         return fileService.getSize(file);
     }
 
-    public List<Item> getRoot() {
-        List<Item> roots = new ArrayList<>();
-        roots.add(fileService.getRoots());
-        return roots;
+    public List<Item> listRoot() {
+        return new ArrayList<>(getPartitionDirectory().getChildren());
     }
+
+    public Directory getPartitionDirectory() {
+        return FileService.getDisk().getPartitionDirectory();
+    }
+
 
     public Fat getFat() {
         return FileService.getDisk().getFat();
@@ -199,12 +202,12 @@ public class FileController implements Module {
         System.out.println(C.getChildren());
         try {
             try {
-                getInstance().fileService.diskPartition("/C:", "/D:",50);
-                getInstance().fileService.diskPartition("/C:", "/D:",50);
-                getInstance().fileService.diskPartition("/C:", "/E:",50);
-                getInstance().fileService.diskPartition("/C:", "/D:",50);
+                getInstance().fileService.diskPartition("/C:", "/D:",10);
+                getInstance().fileService.diskPartition("/C:", "/D:",10);
+                getInstance().fileService.diskPartition("/C:", "/E:",10);
+                getInstance().fileService.diskPartition("/C:", "/D:",10);
 
-                getInstance().fileService.diskPartition("/E:", "/D:",49);
+                getInstance().fileService.diskPartition("/E:", "/D:",10);
             } catch (IllegalPathException | ItemNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (DiskSpaceInsufficientException e) {
@@ -218,7 +221,7 @@ public class FileController implements Module {
         } finally {
 
         }
-//        FileService.getDisk().test();
+        FileService.getDisk().test();
 
 
     }

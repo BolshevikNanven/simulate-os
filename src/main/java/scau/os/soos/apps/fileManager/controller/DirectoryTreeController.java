@@ -84,10 +84,10 @@ public class DirectoryTreeController implements Initializable {
 
     private void loadRoots() {
         // 获取系统中的所有逻辑驱动器
-        List<Item> allDrives = FileController.getInstance().getRoot();
+        List<Item> allDrives = FileController.getInstance().listRoot();
 
         // 创建根节点，第一个节点为系统中的第一个逻辑驱动器
-        TreeItem<Item> root = new TreeItem<>(allDrives.get(0));
+        TreeItem<Item> root = new TreeItem<>(FileController.getInstance().getPartitionDirectory());
         directoryTree.setRoot(root);
 
         // 遍历所有驱动器
@@ -216,7 +216,7 @@ public class DirectoryTreeController implements Initializable {
     }
 
     private void setCell() {
-        directoryTree.setShowRoot(false);
+//        directoryTree.setShowRoot(false);
         directoryTree.setFocusTraversable(false);
 
         // 自定义工厂
@@ -248,6 +248,9 @@ public class DirectoryTreeController implements Initializable {
                         }
                         // 设置图片和文本
                         label.setText(item.getName());
+                        if(item == directoryTree.getRoot().getValue()){
+                            label.setText("此电脑");
+                        }
                         URL resource = FileManagerApp.class.getResource("image/directoryTree/" +
                                 (getTreeItem().isExpanded() ? "open-folder.png" : "close-folder.png"));
                         if (resource != null) {
