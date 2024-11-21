@@ -119,11 +119,20 @@ public class Directory extends Item {
                 byte[] itemData = new byte[BYTES_PER_ITEM];
                 System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
                 Item item = FileService.getItemFromDisk(itemData);
-                if (item != null && disk.isItemExist(item)) {
+                if (item != null ) {
                     children.add(item);
                     item.setParent(this);
                     item.setPath();
-                    item.initFromDisk();
+                    if(disk.isItemExist(item)){
+                        if(this== disk.getPartitionDirectory()){
+                            Directory subDirectory = (Directory) item;
+                            subDirectory.setRoot(true);
+                        }
+                        item.initFromDisk();
+                    }else{
+                        children.remove(item);
+                        item.setParent(null);
+                    }
                 }
             }
         }

@@ -57,9 +57,7 @@ public class Disk {
 //        partitionDirectory.writeContentToDisk();
 //        disk2file();
         partitionDirectory.initFromDisk();
-        for(Item partition : partitionDirectory.getChildren()){
-            ((Directory)partition).setRoot(true);
-        }
+
     }
 
     public void test(){
@@ -78,7 +76,8 @@ public class Disk {
     }
 
     public boolean isItemExist(Item item) {
-        int rootBlockNum = item.getRootDirectory().getStartBlockNum();
+        Item rootDirectory = item.getRootDirectory();
+        int rootBlockNum = rootDirectory.getStartBlockNum();
         return !fat.isFreeBlock(item.getStartBlockNum(),rootBlockNum);
     }
 
