@@ -41,15 +41,6 @@ public class Exe extends Item {
         setSize(instructions.size());
     }
 
-    public void initFromString(String instructions) {
-        this.instructions = Arrays.stream(instructions.split("\\s+")) // 分割字符串
-                .map(String::trim) // 去除可能的前后空格
-                .filter(s -> !s.isEmpty()) // 过滤掉空字符串
-                .map(Byte::parseByte) // 将每个字符串转换为Byte
-                .collect(Collectors.toList()); // 收集到List中
-        setSize(this.instructions.size());
-    }
-
     public void initFromDisk() {
         this.instructions = new ArrayList<>();
         byte[][] content = super.readContentFromDisk();
@@ -101,6 +92,7 @@ public class Exe extends Item {
                 0,
                 0);
         newItem.getInstructions().addAll(this.getInstructions());
+        newItem.updateSize();
         return newItem;
     }
 

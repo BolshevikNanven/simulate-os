@@ -248,8 +248,6 @@ public abstract class Item {
 
     public abstract void updateSize();
 
-    public abstract void initFromString(String content);
-
     public abstract void initFromDisk();
 
     public abstract boolean writeContentToDisk();

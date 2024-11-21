@@ -429,7 +429,7 @@ public class FileService {
         fat.setNextBlockIndex(endDisk, Fat.TERMINATED);
         fat.writeFatToDisk();
 
-        item.initFromString(content);
+//        item.initFromString(content);
         updateItemSize(item);
         writeItemAndParentsToDisk(item);
 
@@ -462,6 +462,11 @@ public class FileService {
         Item item = findItem(path);
         item.setAttribute(readOnly, systemFile, regularFile, isDirectory);
         writeItemAndParentsToDisk(item);
+    }
+
+    public String typeFile(String path) {
+
+        return "";
     }
 
     public static Item getItemFromDisk(byte[] data) {
@@ -559,4 +564,5 @@ public class FileService {
         }
         return item;
     }
+
 }

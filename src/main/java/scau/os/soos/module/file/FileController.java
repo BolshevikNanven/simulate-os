@@ -130,7 +130,7 @@ public class FileController implements Module {
 
     // 待写 返回文件内容
     public String typeFile(String path) {
-        return "";
+        return fileService.typeFile(path);
     }
 
     public int getFileSize(Item file) {

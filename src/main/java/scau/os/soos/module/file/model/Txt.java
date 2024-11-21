@@ -18,6 +18,10 @@ public class Txt extends Item {
         this.context = new StringBuilder();
     }
 
+    public void setContext(String context){
+        this.context = new StringBuilder(context);
+    }
+
     public String getContext() {
         return context.toString();
     }
@@ -32,12 +36,6 @@ public class Txt extends Item {
 
     public void updateSize(){
         setSize(context.length());
-    }
-
-    public void initFromString(String content) {
-        this.context = new StringBuilder();
-        this.context.append(content);
-        setSize(content.length());
     }
 
     public void initFromDisk() {
@@ -83,7 +81,8 @@ public class Txt extends Item {
                 this.isDirectory(),
                 0,
                 0);
-        newItem.initFromString(this.getContext());
+        newItem.setContext(this.getContext());
+        newItem.updateSize();
         return newItem;
     }
 

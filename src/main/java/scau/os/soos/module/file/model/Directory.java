@@ -106,10 +106,6 @@ public class Directory extends Item {
         setSize(size);
     }
 
-    public void initFromString(String content) {
-
-    }
-
     public void initFromDisk() {
         Disk disk = FileService.getDisk();
         byte[][] content = super.readContentFromDisk();

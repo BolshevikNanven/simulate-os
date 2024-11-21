@@ -229,9 +229,6 @@ public class DirectoryTreeController implements Initializable {
                     private final HBox hbox = new HBox();
                     private final Label label = new Label();
                     private final ImageView imageView = new ImageView();
-                    private static final String FOLDER_OPEN_FOR_COPY_PATH = String.valueOf(FileManagerApp.class.getResource("image/directoryTree/folder-open-for-copy.png"));
-                    private static final String OPEN_FOLDER_PATH = String.valueOf(FileManagerApp.class.getResource("image/directoryTree/open-folder.png"));
-                    private static final String CLOSE_FOLDER_PATH = String.valueOf(FileManagerApp.class.getResource("image/directoryTree/close-folder.png"));
 
                     {
                         imageView.setPreserveRatio(true);
