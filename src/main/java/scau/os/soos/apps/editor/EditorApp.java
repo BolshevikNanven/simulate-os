@@ -48,7 +48,7 @@ public class EditorApp extends Window {
     private void save(Item item){
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
-            txtItem.setContext(display.getText());
+            txtItem.initFromString(display.getText());
         }
         else{
             Exe exeItem = (Exe) item;

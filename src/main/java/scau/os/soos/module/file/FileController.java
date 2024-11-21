@@ -7,7 +7,6 @@ import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Item;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,51 +96,42 @@ public class FileController implements Module {
         }
     }
 
-    public void reName(Item item, String newName) throws ItemAlreadyExistsException, IllegalNameException {
-        fileService.reName(item, newName);
+    /**
+     * 分区
+     */
+    public void partitionDisk(String src, String dec, int size) throws IllegalPathException, DiskSpaceInsufficientException, MaxCapacityExceededException, ItemNotFoundException {
+        fileService.diskPartition(src, dec, size);
     }
 
-    public void reAttribute(Item item, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
-        fileService.reAttribute(item, readOnly, systemFile, regularFile, isDirectory);
+    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalNameException, IllegalPathException, ItemNotFoundException {
+        fileService.reName(path, newName);
+    }
+
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalPathException, ItemNotFoundException {
+        fileService.reAttribute(path, readOnly, systemFile, regularFile, isDirectory);
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        // 获取后缀
+        return fileService.findItem(path,type);
+    }
 
-        return fileService.findItem(path, type);
+    public Item findItem(String path) throws IllegalPathException, ItemNotFoundException {
+        return fileService.findItem(path);
     }
 
     public boolean isExistedDirectory(String path) throws ItemNotFoundException {
         return findItem(path, FILE_TYPE.DIRECTORY) != null;
     }
 
-    // 待写
-    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
-    }
-
     // 待写 格式化硬盘
-    public void formatDisk(Path path) {
+    public void formatDisk(String path) throws IllegalPathException, ItemNotFoundException {
+        fileService.formatDisk(path);
     }
 
     // 待写 返回文件内容
     public String typeFile(String path) {
         return "";
     }
-
-    // 待写
-    public Item findItem(String path) {
-        return null;
-    }
-
-    // 待写 分区
-    private void partitionDisk(String src, String dec, int size) {
-        // 磁盘分区 从src 抽取size 分配到dec
-        // 判断src 是否有足够空闲空间
-        // 判断dec 是否存在，不存在则创建
-        // 从src转移size到dec
-        // 判断src是否变为0，是则删除src
-    }
-
 
     public int getFileSize(Item file) {
         return fileService.getSize(file);
@@ -155,7 +145,6 @@ public class FileController implements Module {
         return FileService.getDisk().getPartitionDirectory();
     }
 
-
     public Fat getFat() {
         return FileService.getDisk().getFat();
     }
@@ -167,18 +156,6 @@ public class FileController implements Module {
 
     public static void main(String[] args) {
         FileController.getInstance();
-//        getInstance().fileService.getDisk().disk2file();
-
-
-//        try {
-//            getInstance().createDirectory("/C:");
-//        } catch (ItemAlreadyExistsException e) {
-//            throw new RuntimeException(e);
-//        } catch (ItemNotFoundException e) {
-//            throw new RuntimeException(e);
-//        } catch (DiskSpaceInsufficientException e) {
-//            throw new RuntimeException(e);
-//        }
 
         Directory root = (Directory) getInstance().fileService.find("/", FILE_TYPE.DIRECTORY);
 //        FileService.getDisk().test();
@@ -192,9 +169,8 @@ public class FileController implements Module {
             Directory b = (Directory)  getInstance().fileService.find("/C:/b", FILE_TYPE.DIRECTORY);
             System.out.println(a.getPath());
             System.out.println(b.getPath());
-        } catch (ItemAlreadyExistsException | ItemNotFoundException | DiskSpaceInsufficientException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalPathException e) {
+        } catch (ItemAlreadyExistsException | ItemNotFoundException | DiskSpaceInsufficientException |
+                 IllegalPathException e) {
             throw new RuntimeException(e);
         }
         System.out.println(root.getPath());
@@ -208,11 +184,8 @@ public class FileController implements Module {
                 getInstance().fileService.diskPartition("/C:", "/D:",10);
 
                 getInstance().fileService.diskPartition("/E:", "/D:",10);
-            } catch (IllegalPathException | ItemNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (DiskSpaceInsufficientException e) {
-                throw new RuntimeException(e);
-            } catch (MaxCapacityExceededException e) {
+            } catch (IllegalPathException | ItemNotFoundException | DiskSpaceInsufficientException |
+                     MaxCapacityExceededException e) {
                 throw new RuntimeException(e);
             }
 

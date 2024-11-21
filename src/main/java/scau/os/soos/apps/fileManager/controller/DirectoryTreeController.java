@@ -218,6 +218,7 @@ public class DirectoryTreeController implements Initializable {
     private void setCell() {
 //        directoryTree.setShowRoot(false);
         directoryTree.setFocusTraversable(false);
+        directoryTree.getRoot().setExpanded(true);
 
         // 自定义工厂
         directoryTree.setCellFactory(new Callback<>() {

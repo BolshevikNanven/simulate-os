@@ -69,6 +69,17 @@ public class FileService {
         return Directory.find(root, pathParts, 0, isDirectory, type);
     }
 
+    public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
+        Item item = find(path, type);
+        if (item == null)
+            throw new ItemNotFoundException("文件不存在！");
+        return item;
+    }
+
+    public Item findItem(String path) throws IllegalPathException, ItemNotFoundException {
+        return findItem(path,check(path));
+    }
+
     /**
      * 创建
      *
@@ -366,6 +377,20 @@ public class FileService {
         fat.writeFatToDisk();
     }
 
+    public void formatDisk(String targetPath) throws IllegalPathException, ItemNotFoundException {
+        // 1.验证路径格式：必须以斜杠开头，单个大小写字母，冒号结尾
+        String regex = "/[a-zA-Z]:";
+        if (!targetPath.matches(regex)) {
+            throw new IllegalPathException("磁盘命名格式: '/[a-zA-Z]:'!");
+        }
+        // 2.查找目标根目录
+        Directory targetRoot = (Directory) find(targetPath, DIRECTORY);
+        if (targetRoot == null) {
+            throw new ItemNotFoundException(targetPath + " 盘不存在!");
+        }
+        int sourceStartBlockNum = targetRoot.getStartBlockNum();
+    }
+
     public int getSize(Item item) {
         return item.getSize();
     }
@@ -424,7 +449,8 @@ public class FileService {
         System.out.println("写入成功!");
     }
 
-    public void reName(Item item, String newName) throws ItemAlreadyExistsException, IllegalNameException {
+    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalNameException, IllegalPathException, ItemNotFoundException {
+        Item item = findItem(path);
         if (newName.isEmpty() || newName.length() > 3) {
             throw new IllegalNameException(newName);
         }
@@ -441,20 +467,16 @@ public class FileService {
         }
 
         item.setName(newName);
+        item.setPath();
         writeItemAndParentsToDisk(item);
     }
 
-    public void reAttribute(Item item, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) {
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalPathException, ItemNotFoundException {
+        Item item = findItem(path);
         item.setAttribute(readOnly, systemFile, regularFile, isDirectory);
         writeItemAndParentsToDisk(item);
     }
 
-    public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        Item item = find(path, type);
-        if (item == null)
-            throw new ItemNotFoundException("文件不存在！");
-        return item;
-    }
 
     public static Item getItemFromDisk(byte[] data) {
         // 获取数据中的类型字节

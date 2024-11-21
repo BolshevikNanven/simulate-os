@@ -22,10 +22,6 @@ public class Txt extends Item {
         return context.toString();
     }
 
-    public void setContext(String context) {
-        this.context = new StringBuilder(context);
-    }
-
     public void setOpened(boolean opened) {
         isOpened = opened;
     }

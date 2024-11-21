@@ -14,7 +14,9 @@ import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.util.TipUtil;
 import scau.os.soos.common.exception.IllegalNameException;
+import scau.os.soos.common.exception.IllegalPathException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
+import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
@@ -254,12 +256,12 @@ public class ThumbnailBox extends VBox {
         String newName = textField.getText().trim();
 
         try {
-            FileController.getInstance().reName(item, newName);
+            FileController.getInstance().reName(item.getPath(), newName);
             DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         } catch (ItemAlreadyExistsException e) {
             handleFileAlreadyExistsException(e);
-        } catch (IllegalNameException e) {
+        } catch (IllegalNameException | IllegalPathException | ItemNotFoundException e) {
             cancelRenaming();
         }
     }

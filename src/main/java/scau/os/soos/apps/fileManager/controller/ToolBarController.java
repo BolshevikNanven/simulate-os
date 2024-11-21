@@ -179,6 +179,11 @@ public class ToolBarController implements Initializable {
 
         // 初始化提示
         initTooltip();
+
+        /**
+         * 不知道可以移动到什么地方，更新目录树选中 此电脑 的前提是 ToolBarController 加载完毕
+         */
+        DirectoryTreeController.getInstance().directoryTree.getSelectionModel().select(DirectoryTreeController.getInstance().directoryTree.getRoot());
     }
 
 
@@ -249,7 +254,7 @@ public class ToolBarController implements Initializable {
             if (!newValue && !goToBtn.isFocused()) {
                 // 根据当前目录项更新currentDirectory的文本内容
                 Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
-                currentDirectory.setText(directory == null ? null : directory.getPath());
+                currentDirectory.setText(directory == null ? null : directory.getPath().substring(1));
             }
         });
         // 回车跳转到指定目录
@@ -269,6 +274,9 @@ public class ToolBarController implements Initializable {
 
     private void handleGoToButtonClick() {
         String path = currentDirectory.getText();
+        if (!path.startsWith("/")){
+            path = "/"+path;
+        }
 
         Item target = null;
 
@@ -286,9 +294,9 @@ public class ToolBarController implements Initializable {
                     true,
                     false,
                     confirm -> currentDirectory.setText(
-                            directory == null ? null : directory.getPath()),
+                            directory == null ? null : directory.getPath().substring(1)),
                     cancelOrClose -> currentDirectory.setText(
-                            directory == null ? null : directory.getPath()),
+                            directory == null ? null : directory.getPath().substring(1)),
                     label).show();
         }
     }
@@ -296,7 +304,7 @@ public class ToolBarController implements Initializable {
     public void showCurrentDirectory(String directory) {
         // 目录树调用
         // 显示当前目录
-        currentDirectory.setText(directory); // 绝对路径
+        currentDirectory.setText(directory.substring(1)); // 绝对路径
     }
 
     /**
