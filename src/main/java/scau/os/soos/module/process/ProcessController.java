@@ -2,6 +2,7 @@ package scau.os.soos.module.process;
 
 import scau.os.soos.common.OS;
 import scau.os.soos.module.Module;
+import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.model.Txt;
 import scau.os.soos.module.process.model.Process;
 import scau.os.soos.module.process.view.ProcessOverviewReadView;
@@ -13,7 +14,7 @@ public class ProcessController implements Module {
     private static ProcessController instance;
     private final ProcessService processService;
 
-    public static ProcessController getInstance() {
+    public synchronized static ProcessController getInstance() {
         if (instance == null) {
             instance = new ProcessController();
         }
@@ -35,7 +36,7 @@ public class ProcessController implements Module {
      * @param file
      * @return Process
      */
-    public Process create(Txt file){
+    public Process create(Item file){
         return processService.create(file);
     }
 

@@ -1,8 +1,10 @@
-package scau.os.soos.ui.dialog;
+package scau.os.soos.ui.components;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -39,7 +41,7 @@ public class Dialog extends Window {
     };
 
     private Dialog(Window source, String title) {
-        this(title, "dialog.fxml", 400, 200);
+        this(title, "dialog.fxml", 360, 118);
         this.source = source;
     }
 
@@ -59,6 +61,7 @@ public class Dialog extends Window {
         cancelBtn = (Button) body.lookup("#cancel-btn");
         confirmBtn.setOnAction(e -> onConfirm());
         cancelBtn.setOnAction(e -> onCancel());
+        ((Label) body.lookup("#dialog-title")).textProperty().bind(super.title);
     }
 
     @Override
@@ -72,7 +75,9 @@ public class Dialog extends Window {
 
     public static Dialog getDialog(Window source, String title, boolean showConfirm, boolean showCancel, Consumer<Boolean> confirmAction, Consumer<Boolean> cancelAndCloseAction, Node content) {
         Dialog dialog = new Dialog(source, title);
-        dialog.setContent(content);
+        if (content != null) {
+            dialog.setContent(content);
+        }
         dialog.confirmBtn.setVisible(showConfirm);
         dialog.cancelBtn.setVisible(showCancel);
         dialog.confirmAction = confirmAction;
@@ -81,7 +86,7 @@ public class Dialog extends Window {
     }
 
     // 调试窗口
-    public static Dialog getEmptyDialog(Window source,String title) {
+    public static Dialog getEmptyDialog(Window source, String title) {
         return getDialog(source, title, true, false, null, null, null);
     }
 
@@ -102,5 +107,6 @@ public class Dialog extends Window {
 
     private void setContent(Node pane) {
         ((BorderPane) body).setCenter(pane);
+        BorderPane.setAlignment(pane, Pos.CENTER);
     }
 }

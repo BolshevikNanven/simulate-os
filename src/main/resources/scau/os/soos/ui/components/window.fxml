@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 
-<BorderPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="484.0" prefWidth="771.0" styleClass="window" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="window" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <BorderPane id="top-bar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="830.0" styleClass="window-topbar" BorderPane.alignment="CENTER">
+      <BorderPane id="top-bar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="window-topbar" BorderPane.alignment="CENTER">
          <right>
             <HBox prefHeight="100.0" BorderPane.alignment="CENTER">
                <children>
@@ -57,7 +57,7 @@
       </BorderPane>
    </top>
    <center>
-      <AnchorPane id="window-body" prefHeight="436.0" prefWidth="725.0" BorderPane.alignment="CENTER" />
+      <AnchorPane id="window-body" BorderPane.alignment="CENTER" />
    </center>
    <stylesheets>
       <URL value="@../../css/common.css" />

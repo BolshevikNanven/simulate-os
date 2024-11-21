@@ -92,7 +92,7 @@ public class MemoryService implements TaskManagerService {
         if (overviewSeries.getData().size() > 60) {
             overviewSeries.getData().removeFirst();
         }
-        overview.setText(String.format("%d/%dB (%d%%)", memoryData.usage(), memoryData.total(), memoryData.usage() / memoryData.total()));
+        overview.setText(String.format("%d/%dB (%.0f%%)", memoryData.usage(), memoryData.total(), memoryData.usage() * 100.0 / memoryData.total()));
     }
 
     private Region newBlock(boolean isFree, double percent) {

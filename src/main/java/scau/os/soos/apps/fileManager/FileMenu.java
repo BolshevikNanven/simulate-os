@@ -7,12 +7,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
-import scau.os.soos.module.file.FileController;
-import scau.os.soos.module.file.model.Item;
-import scau.os.soos.ui.dialog.Dialog;
 import scau.os.soos.ui.components.base.Popover;
 
 import java.io.IOException;
@@ -100,10 +96,10 @@ public class FileMenu extends Popover {
     private void addListener() {
         openBtn.setOnAction((e) -> {
             hide();
-//            List<ThumbnailBox> selectedList = FileManagerApp.getInstance().getSelectedList();
-//            for(ThumbnailBox selected : selectedList){
-//                FileManagerApp.getInstance().open(selected.getItem());
-//            }
+            List<ThumbnailBox> selectedList = FileManagerApp.getInstance().getSelectedList();
+            for(ThumbnailBox selected : selectedList){
+                FileManagerApp.getInstance().run(selected.getItem());
+            }
         });
         copyBtn.setOnAction(actionEvent -> {
             hide();

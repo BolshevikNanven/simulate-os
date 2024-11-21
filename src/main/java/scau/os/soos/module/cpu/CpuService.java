@@ -65,8 +65,9 @@ public class CpuService {
 
         int pc = reg.getPC();
         reg.setIR(MemoryController.getInstance().read(pc)); // 读取指令
-        decodeInstruction();                                // 指令译码
         reg.incPC();                                        // 更新PC
+        decodeInstruction();                                // 指令译码
+
 
         //TODO: 设计空闲进程
     }
@@ -212,11 +213,14 @@ public class CpuService {
                 int device = tmp & 0b0011;
                 DEVICE_TYPE deviceType = DEVICE_TYPE.ordinalToDeviceType(device);
                 currentInstruction = "!" + time + "," + deviceType;
+                // 保护cpu现场
+                runningProcess.getPCB().setPC(reg.getPC());
+                runningProcess.getPCB().setAX(reg.getAX());
+                ProcessController.getInstance().block(runningProcess);
+                DeviceController.getInstance().assign(deviceType, time, runningProcess);
 
                 unload();
 
-                ProcessController.getInstance().block(runningProcess);
-                DeviceController.getInstance().assign(deviceType, time, runningProcess);
                 ProcessController.getInstance().schedule();
             }
             case 0b0101 -> {

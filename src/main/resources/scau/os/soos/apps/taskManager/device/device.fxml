@@ -37,7 +37,7 @@
                   <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                </xAxis>
                <yAxis>
-                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="2.0" />
                </yAxis>
             </AreaChart>
          </center>
@@ -96,7 +96,7 @@
                   <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                </xAxis>
                <yAxis>
-                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="3.0" />
                </yAxis>
             </AreaChart>
          </center>
@@ -155,7 +155,7 @@
                   <CategoryAxis animated="false" endMargin="0.0" gapStartAndEnd="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="0.0" side="BOTTOM" startMargin="0.0" tickLabelsVisible="false" tickMarkVisible="false" />
                </xAxis>
                <yAxis>
-                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="512.0" />
+                  <NumberAxis animated="false" autoRanging="false" maxWidth="-Infinity" minWidth="-Infinity" minorTickVisible="false" prefWidth="0.0" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" upperBound="3.0" />
                </yAxis>
             </AreaChart>
          </center>

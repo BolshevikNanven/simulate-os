@@ -11,7 +11,7 @@ public class MemoryController implements Module {
     private static MemoryController instance;
     private final MemoryService memoryService;
 
-    public static MemoryController getInstance() {
+    public synchronized static MemoryController getInstance() {
         if (instance == null) {
             instance = new MemoryController();
         }
@@ -34,8 +34,8 @@ public class MemoryController implements Module {
         return memoryService.read(address);
     }
 
-    public boolean write(int address, Object content) {
-        return memoryService.write(address, (int) content);
+    public boolean write(int address, int content) {
+        return memoryService.write(address, content);
     }
 
     public MemoryReadView getData() {

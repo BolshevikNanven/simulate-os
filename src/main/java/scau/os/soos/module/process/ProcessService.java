@@ -18,6 +18,7 @@ import scau.os.soos.module.process.view.ProcessOverviewReadView;
 import scau.os.soos.module.process.view.ProcessReadView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -60,14 +61,14 @@ public class ProcessService {
         // 2.查询文件大小
         int fileSize = FileController.getInstance().getFileSize(file);
 
+        // 4.初始化进程控制块
+        Process process = new Process(newPCB, processCount++);
+
         // 3.申请内存空间,装入内存系统区
-        if (MemoryController.getInstance().allocate(newPCB, fileSize)) {
+        if (!MemoryController.getInstance().allocate(newPCB, fileSize)) {
             System.out.println("-------Process-------进程内存申请失败");
             return null;
         }
-
-        // 4.初始化进程控制块
-        Process process = new Process(newPCB, processCount++);
         // 设置进程为新建态
         process.getPCB().setStatus(PROCESS_STATES.NEW);
 
@@ -112,7 +113,7 @@ public class ProcessService {
             System.out.println("-------Process-------就绪队列为空");
             return false;
         }
-        Process process = readyQueue.pollPCB().getProcess();
+        Process process = pcb.getProcess();
 
         // 3.调度新进程上处理机
         if (!CpuController.getInstance().handleProcess(process)) {

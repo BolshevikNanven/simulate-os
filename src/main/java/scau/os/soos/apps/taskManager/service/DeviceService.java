@@ -115,10 +115,11 @@ public class DeviceService implements TaskManagerService {
         usage.setText(data.usage().toString());
         available.setText(data.available().toString());
         waiting.setText(String.join(";", data.waiting().stream().map(String::valueOf).toList()));
-        using.setText(String.join(";", data.waiting().stream().map(String::valueOf).toList()));
+        using.setText(String.join(";", data.using().stream().map(String::valueOf).toList()));
+
         series.getData().add(new XYChart.Data<>(String.valueOf(OS.clock.get()), data.usage()));
-        if (overviewSeries.getData().size() > 60) {
-            overviewSeries.getData().removeFirst();
+        if (series.getData().size() > 60) {
+            series.getData().removeFirst();
         }
     }
 }

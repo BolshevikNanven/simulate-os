@@ -90,8 +90,7 @@ public abstract class Window implements Initializable {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         window.setLayoutX(screenBounds.getWidth() / 2 - width / 2);
         window.setLayoutY(screenBounds.getHeight() / 2 - height / 2);
-        window.setPrefWidth(width);
-        window.setPrefHeight(height);
+
 
         // 初始化为隐藏
         setState(WINDOW_STATES.HIDE);
@@ -100,9 +99,13 @@ public abstract class Window implements Initializable {
         if (dialog.length == 0) {
             this.dialog = false;
             addResizeListener();
+            window.setPrefWidth(width);
+            window.setPrefHeight(height);
         } else {
             this.dialog = true;
-            ((Pane) scaleButton.getParent()).getChildren().remove(scaleButton);
+            window.getChildren().remove(topBar);
+            window.setMinWidth(width);
+            window.setMinHeight(height);
         }
 
         addListener();

@@ -22,7 +22,7 @@ import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.model.Txt;
-import scau.os.soos.ui.dialog.Dialog;
+import scau.os.soos.ui.components.Dialog;
 
 import java.util.List;
 
@@ -272,12 +272,12 @@ public class ThumbnailBox extends VBox {
 
         // 显示对话框, 将文本框内容设置为当前目录的路径
         Dialog.getDialog(FileManagerApp.getInstance(),
-                "重命名文件",
+                errorMessage,
                 true,
                 false,
                 confirm -> cancelRenaming(),
                 cancelOrClose -> cancelRenaming(),
-                label).show();
+                null).show();
     }
 
     private void cancelRenaming() {

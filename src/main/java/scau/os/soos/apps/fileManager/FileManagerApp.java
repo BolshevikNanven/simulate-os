@@ -19,9 +19,11 @@ import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.common.Clipboard;
-import scau.os.soos.module.file.FileService;
+import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
+import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
+import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.ui.TaskBarManager;
 import scau.os.soos.ui.components.base.Window;
 
@@ -120,7 +122,7 @@ public class FileManagerApp extends Window {
 
     @Override
     protected void close() {
-        FileService.getDisk().disk2file();
+        FileController.getInstance().save();
     }
 
     public void addListener() {
@@ -218,6 +220,12 @@ public class FileManagerApp extends Window {
             return String.format("\t\t%.0f Byte", size);
         else
             return String.format("\t\t%.0f KB", size / 1024);
+    }
+
+    public void run(Item item) {
+        if (item instanceof Exe) {
+            ProcessController.getInstance().create(item);
+        }
     }
 
     public void open(Item item) {
