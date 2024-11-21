@@ -166,6 +166,7 @@ public abstract class Item {
         Fat fat = disk.getFat();
 
         int blockCount = calculateTotalBlockNum(fat);
+        System.out.println(blockCount);
 
         byte[][] content = new byte[blockCount][Disk.BYTES_PER_BLOCK];
 

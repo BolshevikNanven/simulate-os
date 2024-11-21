@@ -24,21 +24,21 @@ public class FileService {
     }
 
     // 路径必须为/盘名/目录名/文件名.e
-    public FILE_TYPE check(String path) throws IllegalPathException {
+    private FILE_TYPE check(String path) throws IllegalOperationException {
         if (!path.contains(":")) {
-            throw new IllegalPathException(" 非法路径！");
+            throw new IllegalOperationException("请检查路径格式！");
         } else if (path.endsWith(".e")) {
             return EXE;
         } else if (path.endsWith(".t")) {
             return TXT;
         } else if (path.contains(".")) {
-            throw new IllegalPathException(" 非法路径！");
+            throw new IllegalOperationException("请检查路径格式！");
         } else {
             return DIRECTORY;
         }
     }
 
-    public Item find(String path, FILE_TYPE type) {
+    private Item find(String path, FILE_TYPE type) {
         switch (type) {
             case EXE -> {
                 return find(path, false, (byte) 'e');
@@ -53,7 +53,7 @@ public class FileService {
         return null;
     }
 
-    public Item find(String path, boolean isDirectory, byte type) {
+    private Item find(String path, boolean isDirectory, byte type) {
         Directory root = disk.getPartitionDirectory();
         if (path == null) {
             return null;
@@ -65,61 +65,49 @@ public class FileService {
             pathParts.add(pathPart);
         }
 
-        // 从根目录（即this）开始查找
+        // 从根目录开始查找
         return Directory.find(root, pathParts, 0, isDirectory, type);
     }
 
-    public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        Item item = find(path, type);
-        if (item == null)
-            throw new ItemNotFoundException("文件不存在！");
-        return item;
-    }
-
-    public Item findItem(String path) throws IllegalPathException, ItemNotFoundException {
-        return findItem(path,check(path));
+    public Item findItem(String path) throws IllegalOperationException, ItemNotFoundException {
+        return isItemNotFound(path,check(path));
     }
 
     /**
      * 创建
      *
      */
-
     private Item create(String path, FILE_TYPE type) throws DiskSpaceInsufficientException, ItemNotFoundException, ItemAlreadyExistsException {
-        //查重
-        Item existingItem = find(path, type);
-        if (existingItem != null) {
-            throw new ItemAlreadyExistsException(existingItem.getFullName() + " 已存在！");
-        }
+        //1. 判断文件/文件夹是否存在
+        isItemAlreadyExists(path,type);
 
-        //找父目录
-        Item file;
+        //2. 判断父目录是否存在
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) find(parentPath, DIRECTORY);
-        if (parent == null) {
-            throw new ItemNotFoundException(parentPath + " 不存在！");
-        }
-        int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
+        Directory parent = (Directory) isItemNotFound(parentPath,DIRECTORY);
 
-        //找空闲磁盘块
+        //3. 判断磁盘空间是否足够
+        int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
         int startDisk = disk.findFreeDiskBlock(rootStartDisk);
         if (startDisk == -1) {
             throw new DiskSpaceInsufficientException(path.charAt(1) + " 盘空间不足！");
         }
 
-        //创建文件/文件夹
-        String name = path.substring(path.lastIndexOf("/") + 1);// \u0000为空字符
+        //4. 创建文件/文件夹
+        String name = path.substring(path.lastIndexOf("/") + 1);
+        Item file;
         if (type == DIRECTORY) {
             file = getItemFromCreate(parent, name, (byte) 0, true, false, false, true, startDisk, 0);
         } else if (type == EXE) {
-            name = path.substring(0, path.lastIndexOf('.'));
+            name = name.substring(0, name.lastIndexOf('.'));
             file = getItemFromCreate(parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
-        } else {
-            name = path.substring(0, path.lastIndexOf('.'));
+        } else if (type == TXT){
+            name = name.substring(0, name.lastIndexOf('.'));
             file = getItemFromCreate(parent, name, (byte) 't', true, false, true, false, startDisk, 0);
+        }else {
+            return null;
         }
 
-        //修改fat表，父目录添加孩子
+        //5. 修改fat表，父目录添加孩子
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
         disk.getFat().writeFatToDisk();
         parent.addChildren(file);
@@ -129,22 +117,22 @@ public class FileService {
     }
 
     public Item createFile(String path) throws
-            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
+            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
 
         FILE_TYPE type = check(path);
         if (type == DIRECTORY) {
-            throw new IllegalPathException(" 非法路径！");
+            throw new IllegalOperationException("不能用于创建目录！");
         }
 
         return create(path, type);
     }
 
     public Item createDirectory(String path) throws
-            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalPathException {
+            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
 
         FILE_TYPE type = check(path);
         if (type != DIRECTORY) {
-            throw new IllegalPathException(" 非法路径！");
+            throw new IllegalOperationException("不能用于创建文件！");
         }
 
         return create(path, DIRECTORY);
@@ -155,32 +143,30 @@ public class FileService {
      * 删除
      *
      */
-
-
     public void delete(String path, boolean isDeleteDirectory, boolean isDeleteNotEmpty) throws
-            ItemNotFoundException, DirectoryNoEmptyException, IllegalPathException {
+            ItemNotFoundException, DirectoryNoEmptyException, IllegalOperationException {
 
         //1. 检查路径合法性
         FILE_TYPE type = check(path);
         if (isDeleteDirectory && type != DIRECTORY) {
-            throw new IllegalPathException(" 非法路径！");
+            throw new IllegalOperationException("不能用于删除文件！");
         }
 
         if (!isDeleteDirectory && type == DIRECTORY) {
-            throw new IllegalPathException(" 非法路径！");
+            throw new IllegalOperationException("不能用于删除目录！");
         }
 
         //2. 查找文件/文件夹 是否存在
-        Item item = find(path, type);
-        if (item == null) {
-            throw new ItemNotFoundException(path + " 不存在！");
-        }
+        Item item = isItemNotFound(path,type);
 
         if (!isDeleteNotEmpty && item.getSize() != 0) {
-            throw new IllegalPathException(item.getName()+" 非空！");
+            throw new IllegalOperationException("目录 "+item.getName()+" 非空！");
         }
 
+        //3. 删除文件/文件夹
         delete(item);
+
+        disk.test();
     }
 
     private void delete(Item item) {
@@ -223,7 +209,7 @@ public class FileService {
      *
      */
     public void copy(String sourcePath, String targetPath, boolean isMove) throws
-            DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalPathException {
+            DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalOperationException {
 
         //查重
         FILE_TYPE type = check(sourcePath);
@@ -235,7 +221,7 @@ public class FileService {
         FILE_TYPE targetType = check(targetPath);
 
         if (targetType!=DIRECTORY) {
-            throw new IllegalPathException("目标需为目录！");
+            throw new IllegalOperationException("目标需为目录！");
         }
 
         Directory parent = (Directory) find(targetPath, DIRECTORY);
@@ -294,11 +280,11 @@ public class FileService {
      * 分区
      *
      */
-    public void diskPartition(String sourcePath, String targetPath, int needDiskNum) throws IllegalPathException, DiskSpaceInsufficientException, MaxCapacityExceededException, ItemNotFoundException {
+    public void diskPartition(String sourcePath, String targetPath, int needDiskNum) throws IllegalOperationException, DiskSpaceInsufficientException, MaxCapacityExceededException, ItemNotFoundException {
         // 1.验证路径格式：必须以斜杠开头，单个大小写字母，冒号结尾
         String regex = "/[a-zA-Z]:";
         if (!sourcePath.matches(regex) || !targetPath.matches(regex)) {
-            throw new IllegalPathException("磁盘命名格式: '/[a-zA-Z]:'!");
+            throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'!");
         }
 
         // 2.查找源根目录
@@ -377,18 +363,18 @@ public class FileService {
         fat.writeFatToDisk();
     }
 
-    public void formatDisk(String targetPath) throws IllegalPathException, ItemNotFoundException {
+    public void formatDisk(String targetPath) throws IllegalOperationException, ItemNotFoundException {
         // 1.验证路径格式：必须以斜杠开头，单个大小写字母，冒号结尾
         String regex = "/[a-zA-Z]:";
         if (!targetPath.matches(regex)) {
-            throw new IllegalPathException("磁盘命名格式: '/[a-zA-Z]:'!");
+            throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'!");
         }
         // 2.查找目标根目录
         Directory targetRoot = (Directory) find(targetPath, DIRECTORY);
         if (targetRoot == null) {
             throw new ItemNotFoundException(targetPath + " 盘不存在!");
         }
-        int sourceStartBlockNum = targetRoot.getStartBlockNum();
+//        int sourceStartBlockNum = targetRoot.getStartBlockNum();
     }
 
     public int getSize(Item item) {
@@ -396,10 +382,11 @@ public class FileService {
     }
 
     /**
-     * 进程调用 cpu 读指令到内存
-     * @param file
-     * @return
-     * @throws ItemNotFoundException
+     * 从指定的文件项中读取指令到内存中。
+     *
+     * @param file 要读取的文件项。如果文件项为null，则抛出ItemNotFoundException异常。
+     * @return 返回一个字节数组，包含从文件中读取的指令。如果文件项不是Exe类型，则返回null。
+     * @throws ItemNotFoundException 如果指定的文件项为null，则抛出此异常。
      */
     public byte[] readFile(Item file) throws ItemNotFoundException {
         if (file == null) {
@@ -449,10 +436,10 @@ public class FileService {
         System.out.println("写入成功!");
     }
 
-    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalNameException, IllegalPathException, ItemNotFoundException {
+    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException {
         Item item = findItem(path);
         if (newName.isEmpty() || newName.length() > 3) {
-            throw new IllegalNameException(newName);
+            throw new IllegalOperationException(newName);
         }
 
         Directory parent = (Directory) item.getParent();
@@ -471,12 +458,11 @@ public class FileService {
         writeItemAndParentsToDisk(item);
     }
 
-    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalPathException, ItemNotFoundException {
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException {
         Item item = findItem(path);
         item.setAttribute(readOnly, systemFile, regularFile, isDirectory);
         writeItemAndParentsToDisk(item);
     }
-
 
     public static Item getItemFromDisk(byte[] data) {
         // 获取数据中的类型字节
@@ -542,5 +528,35 @@ public class FileService {
             parent.updateSize();
             parent = parent.getParent();
         }
+    }
+
+    /**
+     * 检查指定路径和类型的项是否已经存在。
+     *
+     * @param path 要检查的路径
+     * @param type 要检查的项类型（例如文件或目录）
+     * @throws ItemAlreadyExistsException 如果指定路径和类型的项已经存在，则抛出此异常
+     */
+    public void isItemAlreadyExists(String path, FILE_TYPE type) throws ItemAlreadyExistsException {
+        Item item = find(path, type);
+        if (item != null) {
+            throw new ItemAlreadyExistsException(item.getFullName() +" 已存在！");
+        }
+    }
+
+    /**
+     * 检查指定路径和类型的项是否存在，如果存在则返回该项，否则抛出异常。
+     *
+     * @param path 要检查的路径
+     * @param type 要检查的项类型（如文件或目录）
+     * @return 如果项存在，则返回该项的实例；否则抛出异常
+     * @throws ItemNotFoundException 如果指定路径和类型的项不存在，则抛出此异常
+     */
+    public Item isItemNotFound(String path, FILE_TYPE type) throws ItemNotFoundException {
+        Item item = find(path, type);
+        if (item == null) {
+            throw new ItemNotFoundException(path+" 不存在！");
+        }
+        return item;
     }
 }

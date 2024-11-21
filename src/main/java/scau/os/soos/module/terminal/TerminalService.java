@@ -110,7 +110,7 @@ public class TerminalService {
             return "删除成功";
         } catch (ItemNotFoundException e) {
             return "该文件不存在";
-        } catch (IllegalPathException e) {
+        } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         }
     }
@@ -133,7 +133,7 @@ public class TerminalService {
             return "目标文件已存在";
         }catch (DiskSpaceInsufficientException e){
             return "磁盘空间不足";
-        }catch (IllegalPathException e){
+        }catch (IllegalOperationException e){
             return "非法目标路径";
         }
     }
@@ -161,7 +161,7 @@ public class TerminalService {
             return "该目录不存在";
         } catch (DirectoryNoEmptyException e) {
             return "该目录不为空";
-        } catch (IllegalPathException e) {
+        } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         }
     }
@@ -174,7 +174,7 @@ public class TerminalService {
             return "删除成功";
         } catch (ItemNotFoundException e) {
             return "该目录不存在";
-        } catch (IllegalPathException e) {
+        } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         }
     }
@@ -192,7 +192,7 @@ public class TerminalService {
             return "目标文件已存在";
         }catch (DiskSpaceInsufficientException e){
             return "磁盘空间不足";
-        }catch (IllegalPathException e){
+        }catch (IllegalOperationException e){
             return "非法目标路径";
         }
     }

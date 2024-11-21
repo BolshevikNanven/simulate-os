@@ -18,7 +18,7 @@ import scau.os.soos.apps.fileManager.util.MatchUtil;
 import scau.os.soos.apps.fileManager.util.TipUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.common.exception.DiskSpaceInsufficientException;
-import scau.os.soos.common.exception.IllegalPathException;
+import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
@@ -443,7 +443,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         null);
-            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
@@ -473,7 +473,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         null);
-            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
@@ -504,7 +504,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         null);
-            } catch (ItemAlreadyExistsException | ItemNotFoundException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
@@ -614,7 +614,7 @@ public class ToolBarController implements Initializable {
                             true, false,
                             null, null,
                             null);
-                } catch (IllegalPathException ex) {
+                } catch (IllegalOperationException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "IllegalPathException!!!").show();
                 } catch (ItemNotFoundException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "ItemNotFoundException!!!").show();

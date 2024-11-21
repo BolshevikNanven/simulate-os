@@ -22,6 +22,10 @@ public class Disk {
         this.disk = new byte[BLOCKS_PER_DISK][BYTES_PER_BLOCK];
         this.file2disk();
         this.fat = new Fat(this);
+//        fat.init();
+//        fat.setNextBlockIndex(5,1);
+//        fat.writeFatToDisk();
+//        disk2file();
     }
 
     public void init() {
@@ -37,6 +41,21 @@ public class Disk {
                 0);
         partitionDirectory.setRoot(true);
         partitionDirectory.setPath();
+//        Directory c =new Directory(
+//                null,
+//                "C:",
+//                (byte)0,
+//                false,
+//                false,
+//                false,
+//                true,
+//                5,
+//                251);
+//        c.setRoot(true);
+//        c.setPath();
+//        partitionDirectory.addChildren(c);
+//        partitionDirectory.writeContentToDisk();
+//        disk2file();
         partitionDirectory.initFromDisk();
         for(Item partition : partitionDirectory.getChildren()){
             ((Directory)partition).setRoot(true);
