@@ -403,13 +403,13 @@ public class FileService {
         return null;
     }
 
-    public void writeFile(Item item, String content) throws
+    public void writeFile(Item item) throws
             DiskSpaceInsufficientException {
 
         //获取需要写入的字符串长度，计算需要多少个磁盘块
         Fat fat = disk.getFat();
         //需要的块数=文件总大小需要的磁盘块数-已占有的块数
-        int needDiskNum = (int) Math.ceil((double) content.length() / Disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
+        int needDiskNum = (int) Math.ceil((double) item.getSize() / Disk.BYTES_PER_BLOCK) - item.calculateTotalBlockNum(fat);
         List<Integer> list = disk.findFreeDiskBlock(needDiskNum, item.getRootDirectory().getStartBlockNum());
         int num = list.size();
 
@@ -419,21 +419,8 @@ public class FileService {
             throw new DiskSpaceInsufficientException("磁盘空间不足！");
         }
 
-        //更新fat表
-        int endDisk = disk.findLastDisk(item.getStartBlockNum());
-
-        for (Integer index : list) {
-            fat.setNextBlockIndex(endDisk, index);
-            endDisk = index;
-        }
-        fat.setNextBlockIndex(endDisk, Fat.TERMINATED);
-        fat.writeFatToDisk();
-
-//        item.initFromString(content);
         updateItemSize(item);
         writeItemAndParentsToDisk(item);
-
-        System.out.println("写入成功!");
     }
 
     public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException {

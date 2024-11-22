@@ -4,13 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import scau.os.soos.common.enums.DEVICE_TYPE;
-import scau.os.soos.common.enums.INTERRUPT;
-import scau.os.soos.module.device.DeviceController;
+
+import scau.os.soos.common.exception.DiskSpaceInsufficientException;
+import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.module.file.model.Txt;
-import scau.os.soos.module.process.ProcessController;
+
 import scau.os.soos.ui.components.Dialog;
 import scau.os.soos.ui.components.base.Window;
 
@@ -28,34 +28,39 @@ public class EditorApp extends Window {
     @FXML
     Button editor_save;
 
-    private Item item;
+    private final Item item;
     private boolean permitSave;
 
     public EditorApp(Item item) {
         super(item.getPath(), "main.fxml", 450, 520);
         this.item = item;
-        String initialText = getItemContext(item);
+        String initialText = getItemContext(item).trim();
         display.setText(initialText);
-        input.setText(String.valueOf(excludeWhitespace(initialText)));
+        input.setText(String.valueOf(initialText.length()));
         display.textProperty().addListener((observable, oldValue, newValue) -> {
             int length = newValue.length();
             input.setText(String.valueOf(length));
         });
-        editor_save.setOnAction(event -> {
-            save(item);
-        });
+        editor_save.setOnAction(event -> save(item));
     }
 
     @Override
     protected void initialize() {
 
     }
+
     private void save(Item item){
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
             txtItem.setContext(display.getText());
-            txtItem.updateSize();
-            txtItem.writeContentToDisk();
+            try {
+                FileController.getInstance().writeFile(txtItem);
+            } catch (DiskSpaceInsufficientException e) {
+                Dialog.getDialog(this,"保存失败！\n磁盘空间不足",
+                        true,false,
+                        null,null,
+                        null).show();
+            }
         }
         else if (item instanceof Exe) {
             Exe exeItem = (Exe) item;
@@ -64,8 +69,14 @@ public class EditorApp extends Window {
                 return;
             }
             exeItem.setInstructions(byteList);
-            exeItem.updateSize();
-            exeItem.writeContentToDisk();
+            try {
+                FileController.getInstance().writeFile(exeItem);
+            } catch (DiskSpaceInsufficientException e) {
+                Dialog.getDialog(this,"保存失败！\n磁盘空间不足",
+                        true,false,
+                        null,null,
+                        null).show();
+            }
         }
     }
 
@@ -150,7 +161,7 @@ public class EditorApp extends Window {
         return byteList;
     }
 
-    public String typeInstructions(List<Byte> instructions){
+    private String typeInstructions(List<Byte> instructions){
         StringBuilder content = new StringBuilder();
         for(byte instruction : instructions){
             int op = instruction >> 4;
@@ -177,7 +188,7 @@ public class EditorApp extends Window {
     }
 
 
-    public String getItemContext(Item item) {
+    private String getItemContext(Item item) {
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
             return txtItem.getContext();
@@ -187,10 +198,6 @@ public class EditorApp extends Window {
             List<Byte> byteList = exeItem.getInstructions();
             return typeInstructions(byteList);
         }
-    }
-
-    private int excludeWhitespace(String str) {
-        return str == null ? 0 : str.replaceAll("\\s", "").length();
     }
 
     @Override

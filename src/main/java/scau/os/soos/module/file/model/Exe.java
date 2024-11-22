@@ -53,7 +53,7 @@ public class Exe extends Item {
             }
         }
 
-        setSize(instructions.size());
+        updateSize();
     }
 
     public boolean writeContentToDisk() {

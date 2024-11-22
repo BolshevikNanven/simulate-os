@@ -46,8 +46,8 @@ public class FileController implements Module {
     /**
      * 写文件
      */
-    public void writeFile(Item file, String content) throws DiskSpaceInsufficientException {
-        fileService.writeFile(file, content);
+    public void writeFile(Item file) throws DiskSpaceInsufficientException {
+        fileService.writeFile(file);
     }
 
     /**
@@ -193,7 +193,15 @@ public class FileController implements Module {
 //                 MaxCapacityExceededException e) {
 //            throw new RuntimeException(e);
 //        }
-//        FileService.getDisk().test();
+//        try {
+//            Item itm = getInstance().fileService.findItem("/C:/t0.t");
+//            System.out.println(itm.getStartBlockNum());
+//        } catch (IllegalOperationException e) {
+//            throw new RuntimeException(e);
+//        } catch (ItemNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+        FileService.getDisk().test();
 //        getInstance().save();
     }
 }

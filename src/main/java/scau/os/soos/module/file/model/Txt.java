@@ -35,19 +35,22 @@ public class Txt extends Item {
     }
 
     public void updateSize(){
-        setSize(context.length());
+        setSize(context.toString().trim().getBytes().length);
     }
 
     public void initFromDisk() {
         this.context = new StringBuilder();
 
+
         byte[][] content = super.readContentFromDisk();
+        byte[] contentBytes = new byte[content.length*Disk.BYTES_PER_BLOCK];
 
-        for (byte[] block : content) {
-            context.append(new String(block, StandardCharsets.UTF_8).trim());
+        for(int i=0;i<content.length;i++){
+            System.arraycopy(content[i],0,contentBytes,(i*Disk.BYTES_PER_BLOCK),Disk.BYTES_PER_BLOCK);
         }
+        context.append(new String(contentBytes, StandardCharsets.UTF_8));
 
-        setSize(context.length());
+        updateSize();
     }
 
     public boolean writeContentToDisk() {

@@ -166,7 +166,6 @@ public abstract class Item {
         Fat fat = disk.getFat();
 
         int blockCount = calculateTotalBlockNum(fat);
-        System.out.println(blockCount);
 
         byte[][] content = new byte[blockCount][Disk.BYTES_PER_BLOCK];
 
@@ -223,6 +222,11 @@ public abstract class Item {
                 fat.setNextBlockIndex(cur, Fat.TERMINATED);
             }
             disk.setDiskBlock(cur, bytes);
+            pre = cur;
+            cur = fat.getNextBlockIndex(cur);
+        }
+        while(cur!=Fat.TERMINATED){
+            fat.setNextBlockIndex(pre,Fat.TERMINATED);
             pre = cur;
             cur = fat.getNextBlockIndex(cur);
         }
