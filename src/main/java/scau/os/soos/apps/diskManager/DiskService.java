@@ -1,11 +1,8 @@
 package scau.os.soos.apps.diskManager;
 
-
-
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
@@ -16,14 +13,25 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.Notifier;
 import scau.os.soos.module.file.model.Fat;
+import scau.os.soos.module.file.model.Item;
 
 
-
-public class DiskService {
+public class DiskService implements Notifier {
 
     Fat fatTable = FileController.getInstance().getFat();
+
+    public DiskService(){
+        FileController.getInstance().bind(this);
+    }
+
+    @Override
+    public void update(Item item) {
+
+    }
 
     public class DiskBlock {
         private final IntegerProperty blockNumber = new SimpleIntegerProperty(this, "blockNumber");

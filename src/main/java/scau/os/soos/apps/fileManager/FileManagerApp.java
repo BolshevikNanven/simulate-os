@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FileManagerApp extends Window {
+public class FileManagerApp extends Window  {
     @FXML
     public ScrollPane scrollPane;
     @FXML

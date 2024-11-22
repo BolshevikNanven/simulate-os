@@ -14,6 +14,8 @@ public class FileController implements Module {
     private static FileController instance;
     private final FileService fileService;
 
+    private final List<Notifier> listeners;
+
     public static FileController getInstance() {
         if (instance == null) {
             instance = new FileController();
@@ -23,6 +25,21 @@ public class FileController implements Module {
 
     private FileController() {
         fileService = new FileService();
+        listeners = new ArrayList<>();
+    }
+
+    public void bind(Notifier notifier) {
+        listeners.add(notifier);
+    }
+
+    public void unBind(Notifier notifier) {
+        listeners.remove(notifier);
+    }
+
+    public void notify(Item item){
+        for(Notifier notifier : listeners) {
+            notifier.update(item);
+        }
     }
 
     /**
@@ -112,7 +129,7 @@ public class FileController implements Module {
     }
 
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
-        return fileService.isItemNotFound(path,type);
+        return fileService.findItem(path,type);
     }
 
     public Item findItem(String path) throws IllegalOperationException, ItemNotFoundException {
@@ -123,12 +140,12 @@ public class FileController implements Module {
         return findItem(path, FILE_TYPE.DIRECTORY) != null;
     }
 
-    // 待写 格式化硬盘
+    // 格式化硬盘
     public void formatDisk(String path) throws IllegalOperationException, ItemNotFoundException {
         fileService.formatDisk(path);
     }
 
-    // 待写 返回文件内容
+    // 返回文件内容
     public String typeFile(String path) {
         return fileService.typeFile(path);
     }
@@ -160,48 +177,6 @@ public class FileController implements Module {
 
     public static void main(String[] args) {
         FileController.getInstance();
-//        Directory root;
-//        Directory C;
-//        try {
-//        root = (Directory) getInstance().findItem("/", FILE_TYPE.DIRECTORY);
-////        FileService.getDisk().test();
-//        C = (Directory)  getInstance().findItem("/C:", FILE_TYPE.DIRECTORY);
-//        System.out.println("---");
-////        System.out.println(getInstance().fileService.getDisk().);
-//
-//            getInstance().createDirectory("/C:/a");
-//            getInstance().createDirectory("/C:/b");
-//            Directory a = (Directory)  getInstance().findItem("/C:/a", FILE_TYPE.DIRECTORY);
-//            Directory b = (Directory)  getInstance().findItem("/C:/b", FILE_TYPE.DIRECTORY);
-//            System.out.println(a.getPath());
-//            System.out.println(b.getPath());
-//        } catch (ItemAlreadyExistsException | ItemNotFoundException | DiskSpaceInsufficientException |
-//                 IllegalOperationException e) {
-//            throw new RuntimeException(e);
-//        }
-//        System.out.println(root.getPath());
-//        System.out.println(root.getChildren());
-//        System.out.println(C.getChildren());
-//        try {
-//            getInstance().fileService.diskPartition("/C:", "/D:",10);
-//            getInstance().fileService.diskPartition("/C:", "/D:",10);
-//            getInstance().fileService.diskPartition("/C:", "/E:",10);
-//            getInstance().fileService.diskPartition("/C:", "/D:",10);
-//
-//            getInstance().fileService.diskPartition("/E:", "/D:",10);
-//        } catch (IllegalOperationException | ItemNotFoundException | DiskSpaceInsufficientException |
-//                 MaxCapacityExceededException e) {
-//            throw new RuntimeException(e);
-//        }
-//        try {
-//            Item itm = getInstance().fileService.findItem("/C:/t0.t");
-//            System.out.println(itm.getStartBlockNum());
-//        } catch (IllegalOperationException e) {
-//            throw new RuntimeException(e);
-//        } catch (ItemNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
         FileService.getDisk().test();
-//        getInstance().save();
     }
 }

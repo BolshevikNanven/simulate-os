@@ -2,29 +2,25 @@ package scau.os.soos.apps.fileManager.controller;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.module.file.FileController;
-import scau.os.soos.module.file.FileService;
+import scau.os.soos.module.file.Notifier;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Item;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
 
-public class DirectoryTreeController implements Initializable {
+public class DirectoryTreeController implements Initializable, Notifier {
     @FXML
     public TreeView<Item> directoryTree;
     // 路径指针，用于前进和后退
@@ -71,6 +67,7 @@ public class DirectoryTreeController implements Initializable {
         itemMap = new HashMap<>();
 
         init();
+        FileController.getInstance().bind(this);
     }
 
     private void init() {
@@ -83,12 +80,14 @@ public class DirectoryTreeController implements Initializable {
     }
 
     private void loadRoots() {
+        Directory partitionDirectory = FileController.getInstance().getPartitionDirectory();
         // 获取系统中的所有逻辑驱动器
         List<Item> allDrives = FileController.getInstance().listRoot();
 
         // 创建根节点，第一个节点为系统中的第一个逻辑驱动器
-        TreeItem<Item> root = new TreeItem<>(FileController.getInstance().getPartitionDirectory());
+        TreeItem<Item> root = new TreeItem<>(partitionDirectory);
         directoryTree.setRoot(root);
+        itemMap.put(partitionDirectory, root);
 
         // 遍历所有驱动器
         for (Item drive : allDrives) {
@@ -107,15 +106,20 @@ public class DirectoryTreeController implements Initializable {
         }
     }
 
-    public void refreshCurrentDirectory() {
-        if (currentDirectory.get() != null) {
-            loadDirectory(itemMap.get(currentDirectory.get()));
-        }
-        directoryTree.refresh();
-    }
+//    public void refreshCurrentDirectory() {
+//        if (currentDirectory.get() == null || itemMap.get(currentDirectory.get()) == null) {
+//            return;
+//        }
+//        loadDirectory(itemMap.get(currentDirectory.get()));
+//        directoryTree.refresh();
+//    }
 
-    public void refreshCurrentDirectory(Item item) {
-        deleteDirectory(item);
+    public void refreshDirectory(Item item) {
+        if (item == null || !item.isDirectory()|| itemMap.get(item)==null) {
+            return;
+        }
+        loadDirectory(itemMap.get(item));
+        directoryTree.refresh();
     }
 
     private void loadDirectory(TreeItem<Item> directoryItem) {
@@ -136,11 +140,35 @@ public class DirectoryTreeController implements Initializable {
 
         // 将当前项转换为Directory类型
         Directory dir = (Directory) curItem;
-        // 获取当前目录下的所有子项
-        List<Item> childItems = dir.getChildren();
+        // 获取当前目录下的所有子项（从文件系统中）
+        List<Item> childItemsFromFileSystem = dir.getChildren();
+
+        // 获取当前目录项的所有子节点（从TreeView中）
+        ObservableList<TreeItem<Item>> currentChildren = directoryItem.getChildren();
+        Set<Item> itemsToRemove = new HashSet<>();
+
+        // 找出需要移除的项
+        Item root = directoryTree.getRoot().getValue();
+        for (Item item : itemMap.keySet()) {
+            if (item.getParent() != null || item == root) {
+                continue;
+            }
+            // 由于我们稍后将从itemMap中移除这个项，我们需要先获取对应的TreeItem
+            TreeItem<Item> treeItem = itemMap.get(item);
+            // 检查这个TreeItem是否确实在当前目录项的子节点列表中
+            if (currentChildren.contains(treeItem)) {
+                itemsToRemove.add(item);
+            }
+        }
+
+        // 移除需要移除的项
+        for (Item item : itemsToRemove) {
+            currentChildren.remove(itemMap.get(item));
+            itemMap.remove(item);
+        }
 
         // 遍历所有子项
-        for (Item childItem : childItems) {
+        for (Item childItem : childItemsFromFileSystem) {
             // 跳过已经存在的项或非目录项
             if (itemMap.containsKey(childItem) || !childItem.isDirectory()) {
                 continue;
@@ -161,26 +189,6 @@ public class DirectoryTreeController implements Initializable {
             // 为每个子项加载其直接子项
             loadImmediateChildren(item);
         }
-    }
-
-    private void deleteDirectory(Item directory) {
-        // 从文件与节点映射中获取要删除的目录对应的TreeItem
-        TreeItem<Item> treeItem = itemMap.get(directory);
-        // 如果未找到对应的TreeItem，则直接返回
-        if (treeItem == null) {
-            return;
-        }
-        // 获取要删除的TreeItem的父节点
-        TreeItem<Item> parentItem = treeItem.getParent();
-        // 如果要删除的目录是根目录（即没有父节点），则打印提示信息并返回
-        if (parentItem == null) {
-            System.out.println("Cannot delete root directory.");
-            return;
-        }
-        // 从父节点的子节点列表中移除要删除的TreeItem
-        parentItem.getChildren().remove(treeItem);
-        // 从文件与节点映射中移除对应的条目
-        itemMap.remove(directory);
     }
 
     private void addListener() {
@@ -246,7 +254,7 @@ public class DirectoryTreeController implements Initializable {
                         }
                         // 设置图片和文本
                         label.setText(item.getName());
-                        if(item == directoryTree.getRoot().getValue()){
+                        if (item == directoryTree.getRoot().getValue()) {
                             label.setText("此电脑");
                         }
                         URL resource = FileManagerApp.class.getResource("image/directoryTree/" +
@@ -332,5 +340,10 @@ public class DirectoryTreeController implements Initializable {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void update(Item item) {
+        refreshDirectory(item.getParent());
     }
 }

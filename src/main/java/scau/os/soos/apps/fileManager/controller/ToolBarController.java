@@ -238,7 +238,7 @@ public class ToolBarController implements Initializable {
     private void addListenerForRefreshButton() {
         refreshBtn.setOnAction(e -> {
             // 刷新目录树
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             // 刷新文件列表
             FileManagerApp.getInstance().refreshCurrentDirectory();
         });
@@ -494,6 +494,7 @@ public class ToolBarController implements Initializable {
                 String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.DIRECTORY, "d", "");
                 FileController.getInstance().createDirectory(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
+//                DirectoryTreeController.getInstance().refreshCurrentDirectory();
             } catch (RuntimeException ex) {
                 Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件!",
                         true, false,
@@ -621,7 +622,7 @@ public class ToolBarController implements Initializable {
                 }
             }
 
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
@@ -725,7 +726,7 @@ public class ToolBarController implements Initializable {
         try {
             if (item instanceof Directory) {
                 FileController.getInstance().deleteDirectory(item.getPath());
-                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
+//                DirectoryTreeController.getInstance().refreshCurrentDirectory();
             } else if (item instanceof Txt || item instanceof Exe) {
                 FileController.getInstance().deleteFile(item.getPath());
             }

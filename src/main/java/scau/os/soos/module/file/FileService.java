@@ -70,7 +70,15 @@ public class FileService {
     }
 
     public Item findItem(String path) throws IllegalOperationException, ItemNotFoundException {
-        return isItemNotFound(path,check(path));
+        return findItem(path,check(path));
+    }
+
+    public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
+        Item item = find(path, type);
+        if (item == null) {
+            throw new ItemNotFoundException(path+" 不存在！");
+        }
+        return item;
     }
 
     /**
@@ -83,7 +91,7 @@ public class FileService {
 
         //2. 判断父目录是否存在
         String parentPath = path.substring(0, path.lastIndexOf("/"));
-        Directory parent = (Directory) isItemNotFound(parentPath,DIRECTORY);
+        Directory parent = (Directory) findItem(parentPath,DIRECTORY);
 
         //3. 判断磁盘空间是否足够
         int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
@@ -157,7 +165,7 @@ public class FileService {
         }
 
         //2. 查找文件/文件夹 是否存在
-        Item item = isItemNotFound(path,type);
+        Item item = findItem(path,type);
 
         if (!isDeleteNotEmpty && item.getSize() != 0) {
             throw new IllegalOperationException("目录 "+item.getName()+" 非空！");
@@ -165,8 +173,6 @@ public class FileService {
 
         //3. 删除文件/文件夹
         delete(item);
-
-        disk.test();
     }
 
     private void delete(Item item) {
@@ -284,9 +290,6 @@ public class FileService {
                 copy(childSourcePath, childTargetPath);
             }
         }
-
-
-
     }
 
     public void move(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, IllegalOperationException, ItemNotFoundException {
@@ -384,7 +387,6 @@ public class FileService {
         sourceRoot.setSize(sourceRoot.getSize() - needDiskNum);
         updateItemSize(sourceRoot);
         updateItemSize(targetRoot);
-        writeItemAndParentsToDisk(targetRoot);
 
         // 5.修改FAT表
         for (int i : needDiskBlocks) {
@@ -392,6 +394,8 @@ public class FileService {
         }
         fat.setNextBlockIndex(targetStartBlockNum, Fat.TERMINATED);
         fat.writeFatToDisk();
+
+        writeItemAndParentsToDisk(targetRoot);
     }
 
     public void formatDisk(String targetPath) throws IllegalOperationException, ItemNotFoundException {
@@ -537,6 +541,9 @@ public class FileService {
             }
             parent = parent.getParent();
         }
+
+        // 通知文件系统
+        FileController.getInstance().notify(item);
     }
 
     private void updateItemSize(Item item) {
@@ -566,21 +573,4 @@ public class FileService {
             throw new ItemAlreadyExistsException(item.getFullName() +" 已存在！");
         }
     }
-
-    /**
-     * 检查指定路径和类型的项是否存在，如果存在则返回该项，否则抛出异常。
-     *
-     * @param path 要检查的路径
-     * @param type 要检查的项类型（如文件或目录）
-     * @return 如果项存在，则返回该项的实例；否则抛出异常
-     * @throws ItemNotFoundException 如果指定路径和类型的项不存在，则抛出此异常
-     */
-    public Item isItemNotFound(String path, FILE_TYPE type) throws ItemNotFoundException {
-        Item item = find(path, type);
-        if (item == null) {
-            throw new ItemNotFoundException(path+" 不存在！");
-        }
-        return item;
-    }
-
 }
