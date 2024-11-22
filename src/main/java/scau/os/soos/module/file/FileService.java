@@ -231,7 +231,13 @@ public class FileService {
 
         // 获取需要复制的磁盘块数
         Fat fat = disk.getFat();
-        int needDiskNum = srcItem.calculateTotalBlockNum(fat);
+        int needDiskNum = 0;
+        if(srcItem.isDirectory()){
+            needDiskNum = getDirectoryTotalDiskBlocks((Directory) srcItem);
+        }else{
+            needDiskNum = srcItem.calculateTotalBlockNum(fat);
+        }
+
 
         int rootStartBlockNum = parent.getRootDirectory().getStartBlockNum();
         List<Integer> needDiskBlocks = disk.findFreeDiskBlock(needDiskNum, rootStartBlockNum);
@@ -267,13 +273,37 @@ public class FileService {
         newItem.setPath();
 
         parent.addChildren(newItem);
+        updateItemSize(newItem);
+        writeItemAndParentsToDisk(newItem);
+
+        if (srcItem.isDirectory()) {
+            Directory srcDir = (Directory) srcItem;
+            for (Item child : srcDir.getChildren()) {
+                String childSourcePath = child.getPath();
+                String childTargetPath = targetItem;
+                copy(childSourcePath, childTargetPath, isMove);
+            }
+        }
+
+
 
         if (isMove) {
             delete(srcItem);
         }
 
-        updateItemSize(newItem);
-        writeItemAndParentsToDisk(newItem);
+
+    }
+
+    public int getDirectoryTotalDiskBlocks(Directory directory){
+        int totalDiskBlocks = 0;
+        for (Item item : directory.getChildren()) {
+            if (item.isDirectory()) {
+                totalDiskBlocks += getDirectoryTotalDiskBlocks((Directory) item);
+            } else {
+                totalDiskBlocks += item.calculateTotalBlockNum(disk.getFat());
+            }
+        }
+        return totalDiskBlocks+directory.calculateTotalBlockNum(disk.getFat());
     }
 
     /**
