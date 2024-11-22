@@ -208,7 +208,7 @@ public class FileService {
      * 复制
      *
      */
-    public void copy(String sourcePath, String targetPath, boolean isMove) throws
+    public void copy(String sourcePath, String targetPath) throws
             DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalOperationException {
 
         //查重
@@ -281,17 +281,17 @@ public class FileService {
             for (Item child : srcDir.getChildren()) {
                 String childSourcePath = child.getPath();
                 String childTargetPath = targetItem;
-                copy(childSourcePath, childTargetPath, isMove);
+                copy(childSourcePath, childTargetPath);
             }
         }
 
 
 
-        if (isMove) {
-            delete(srcItem);
-        }
+    }
 
-
+    public void move(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, IllegalOperationException, ItemNotFoundException {
+        copy(sourcePath,targetPath);
+        delete(find(sourcePath,check(sourcePath)));
     }
 
     public int getDirectoryTotalDiskBlocks(Directory directory){
@@ -334,7 +334,8 @@ public class FileService {
             if(!sourceRoot.getChildren().isEmpty()){
                 throw new DiskSpaceInsufficientException(sourceRoot + " 盘空间不足!");
             }
-            needDiskBlocks.addFirst(sourceRoot.getStartBlockNum());
+            // TODO: 2024/11/22  记得改回
+            //needDiskBlocks.addFirst(sourceRoot.getStartBlockNum());
         }
 
         // 4.查找或创建目标根目录
