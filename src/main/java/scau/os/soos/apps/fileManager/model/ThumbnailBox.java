@@ -13,8 +13,9 @@ import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.util.TipUtil;
-import scau.os.soos.common.exception.IllegalNameException;
+import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
+import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
@@ -86,13 +87,15 @@ public class ThumbnailBox extends VBox {
      * @return 图片路径，如果不需要图片则返回 null
      */
     private String determineImagePath() {
-        return switch (item) {
-            case Exe exe -> EXE_IMAGE_PATH;
-            case Txt txt -> TXT_IMAGE_PATH;
-            case Directory directoryItem ->
-                    directoryItem.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
-            case null, default -> null;
-        };
+        if (item instanceof Txt) {
+            return TXT_IMAGE_PATH;
+        } else if (item instanceof Exe) {
+            return EXE_IMAGE_PATH;
+        } else if (item instanceof Directory) {
+            return item.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -254,18 +257,18 @@ public class ThumbnailBox extends VBox {
         String newName = textField.getText().trim();
 
         try {
-            FileController.getInstance().reName(item, newName);
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+            FileController.getInstance().reName(item.getPath(), newName);
+//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         } catch (ItemAlreadyExistsException e) {
             handleFileAlreadyExistsException(e);
-        } catch (IllegalNameException e) {
+        } catch (IllegalOperationException | ItemNotFoundException e) {
             cancelRenaming();
         }
     }
 
     private void handleFileAlreadyExistsException(Exception e) {
-        String errorMessage = "文件名 "+ e.getMessage() +" 已存在";
+        String errorMessage = "文件名 " + e.getMessage() + " 已存在";
         Label label = new Label(errorMessage);
 
         // 显示对话框, 将文本框内容设置为当前目录的路径

@@ -18,7 +18,7 @@ import scau.os.soos.apps.fileManager.util.MatchUtil;
 import scau.os.soos.apps.fileManager.util.TipUtil;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.common.exception.DiskSpaceInsufficientException;
-import scau.os.soos.common.exception.IllegalPathException;
+import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
@@ -179,6 +179,11 @@ public class ToolBarController implements Initializable {
 
         // 初始化提示
         initTooltip();
+
+        /**
+         * 不知道可以移动到什么地方，更新目录树选中 此电脑 的前提是 ToolBarController 加载完毕
+         */
+        DirectoryTreeController.getInstance().directoryTree.getSelectionModel().select(DirectoryTreeController.getInstance().directoryTree.getRoot());
     }
 
 
@@ -233,7 +238,7 @@ public class ToolBarController implements Initializable {
     private void addListenerForRefreshButton() {
         refreshBtn.setOnAction(e -> {
             // 刷新目录树
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             // 刷新文件列表
             FileManagerApp.getInstance().refreshCurrentDirectory();
         });
@@ -249,7 +254,7 @@ public class ToolBarController implements Initializable {
             if (!newValue && !goToBtn.isFocused()) {
                 // 根据当前目录项更新currentDirectory的文本内容
                 Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
-                currentDirectory.setText(directory == null ? null : directory.getPath());
+                currentDirectory.setText(directory == null ? null : directory.getPath().substring(1));
             }
         });
         // 回车跳转到指定目录
@@ -269,6 +274,9 @@ public class ToolBarController implements Initializable {
 
     private void handleGoToButtonClick() {
         String path = currentDirectory.getText();
+        if (!path.startsWith("/")){
+            path = "/"+path;
+        }
 
         Item target = null;
 
@@ -286,7 +294,7 @@ public class ToolBarController implements Initializable {
                     true,
                     false,
                     confirm -> currentDirectory.setText(
-                            directory == null ? null : directory.getPath()),
+                            directory == null ? null : directory.getPath().substring(1)),
                     cancelOrClose -> currentDirectory.setText(
                             directory == null ? null : directory.getPath()),
                     null).show();
@@ -296,7 +304,7 @@ public class ToolBarController implements Initializable {
     public void showCurrentDirectory(String directory) {
         // 目录树调用
         // 显示当前目录
-        currentDirectory.setText(directory); // 绝对路径
+        currentDirectory.setText(directory.substring(1)); // 绝对路径
     }
 
     /**
@@ -435,7 +443,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         null);
-            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
@@ -465,7 +473,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         null);
-            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalPathException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
@@ -486,6 +494,7 @@ public class ToolBarController implements Initializable {
                 String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.DIRECTORY, "d", "");
                 FileController.getInstance().createDirectory(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
+//                DirectoryTreeController.getInstance().refreshCurrentDirectory();
             } catch (RuntimeException ex) {
                 Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件!",
                         true, false,
@@ -496,7 +505,7 @@ public class ToolBarController implements Initializable {
                         true, false,
                         null, null,
                         null);
-            } catch (ItemAlreadyExistsException | ItemNotFoundException ex) {
+            } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
             }
         });
@@ -606,14 +615,14 @@ public class ToolBarController implements Initializable {
                             true, false,
                             null, null,
                             null);
-                } catch (IllegalPathException ex) {
+                } catch (IllegalOperationException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "IllegalPathException!!!").show();
                 } catch (ItemNotFoundException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), "ItemNotFoundException!!!").show();
                 }
             }
 
-            DirectoryTreeController.getInstance().refreshCurrentDirectory();
+//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
@@ -717,7 +726,7 @@ public class ToolBarController implements Initializable {
         try {
             if (item instanceof Directory) {
                 FileController.getInstance().deleteDirectory(item.getPath());
-                DirectoryTreeController.getInstance().refreshCurrentDirectory(item);
+//                DirectoryTreeController.getInstance().refreshCurrentDirectory();
             } else if (item instanceof Txt || item instanceof Exe) {
                 FileController.getInstance().deleteFile(item.getPath());
             }

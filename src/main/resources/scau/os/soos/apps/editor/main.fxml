@@ -11,16 +11,16 @@
 <?import javafx.scene.layout.Region?>
 <BorderPane fx:id="body" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="container" stylesheets="@main.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <TextArea id="terminal-display" fx:id="display" editable="true" text="cd ../" wrapText="true" BorderPane.alignment="CENTER">
+      <TextArea id="display" fx:id="display" text="cd ../" wrapText="true" BorderPane.alignment="CENTER">
          <font>
-            <Font name="JetBrains Mono Bold" size="13.0" />
+            <Font name="JetBrains Mono Bold"/>
          </font>
       </TextArea>
    </center>
    <bottom>
-      <TextField id="terminal-input" fx:id="input" maxWidth="1.7976931348623157E308" prefHeight="36.0" BorderPane.alignment="CENTER">
+      <TextField id="terminal-input" fx:id="input" editable="false" disable="true" maxWidth="1.7976931348623157E308" prefHeight="36.0" BorderPane.alignment="CENTER">
          <font>
-            <Font name="JetBrains Mono Bold" size="13.0" />
+            <Font name="JetBrains Mono Bold"/>
          </font>
       </TextField>
    </bottom>
