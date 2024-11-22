@@ -61,14 +61,14 @@ public class FileController implements Module {
      * 拷贝文件
      */
     public void copyFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
-        fileService.copy(sourcePath, targetPath, false);
+        fileService.copy(sourcePath, targetPath);
     }
 
     /**
      * 移动文件
      */
     public void moveFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
-        fileService.copy(sourcePath, targetPath, true);
+        fileService.move(sourcePath, targetPath);
     }
 
     /**
