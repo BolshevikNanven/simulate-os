@@ -212,10 +212,8 @@ public class ThumbnailBox extends VBox {
     }
 
     private void setTipEvent() {
-        this.setOnMouseEntered(event -> {
-            TipUtil.setTooltip(this,
-                    "类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize());
-        });
+        this.setOnMouseEntered(event -> TipUtil.setTooltip(this,
+                "类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize()));
     }
 
 

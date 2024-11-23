@@ -247,7 +247,7 @@ public class ToolBarController implements Initializable {
         currentDirectory.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // 如果currentDirectory失去了焦点，并且goToBtn也没有获得焦点
             if (!newValue && !goToBtn.isFocused()) {
-                // 根据当前目录项更新currentDirectory的文本内容
+                // 根据当前目录项更新 currentDirectory 的文本内容
                 Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
                 currentDirectory.setText(directory == null ? null : directory.getPath().substring(1));
             }
@@ -282,6 +282,7 @@ public class ToolBarController implements Initializable {
         } catch (ItemNotFoundException e) {
             String errorMessage = "找不到:\"" + (path == null ? "" : path) + "\", 请检查拼写并重试";
             Label label = new Label(errorMessage);
+
             Item directory = DirectoryTreeController.getInstance().getCurrentDirectory();
             // 显示对话框, 将文本框内容设置为当前目录的路径
             Dialog.getDialog(FileManagerApp.getInstance(),
@@ -439,7 +440,7 @@ public class ToolBarController implements Initializable {
                         null, null,
                         null);
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
-                Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
+                Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
             }
         });
     }
@@ -469,7 +470,7 @@ public class ToolBarController implements Initializable {
                         null, null,
                         null);
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
-                Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
+                Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
             }
         });
     }
@@ -489,7 +490,6 @@ public class ToolBarController implements Initializable {
                 String filePath = generateUniqueFilePath(cur.getPath(), FILE_TYPE.DIRECTORY, "d", "");
                 FileController.getInstance().createDirectory(filePath);
                 FileManagerApp.getInstance().refreshCurrentDirectory();
-//                DirectoryTreeController.getInstance().refreshCurrentDirectory();
             } catch (RuntimeException ex) {
                 Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件!",
                         true, false,
@@ -501,7 +501,7 @@ public class ToolBarController implements Initializable {
                         null, null,
                         null);
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
-                Dialog.getEmptyDialog(FileManagerApp.getInstance(), "error!!!");
+                Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
             }
         });
     }
@@ -593,15 +593,18 @@ public class ToolBarController implements Initializable {
                     Dialog.getDialog(FileManagerApp.getInstance(), sb.toString(),
                             true, true,
                             confirm -> {
-                                try {
-                                    FileController.getInstance().deleteFile(target + "/" + source.getFullName());
-                                    if (isShear) {
-                                        FileController.getInstance().moveFile(source.getPath(), target);
-                                    } else {
-                                        FileController.getInstance().copyFile(source.getPath(), target);
+                                if (!Objects.equals(source.getParent().getPath(), DirectoryTreeController.getInstance().getCurrentDirectory().getPath())) {
+                                    try {
+                                        FileController.getInstance().deleteFile(target + "/" + source.getFullName());
+                                        if (isShear) {
+                                            FileController.getInstance().moveFile(source.getPath(), target);
+                                            Clipboard.getInstance().clear();
+                                        } else {
+                                            FileController.getInstance().copyFile(source.getPath(), target);
+                                        }
+                                    } catch (Exception exc) {
+                                        Dialog.getEmptyDialog(FileManagerApp.getInstance(), exc.getMessage()).show();
                                     }
-                                } catch (Exception exc) {
-                                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), "Error!!!").show();
                                 }
                             }, null,
                             null).show();
@@ -610,14 +613,11 @@ public class ToolBarController implements Initializable {
                             true, false,
                             null, null,
                             null);
-                } catch (IllegalOperationException ex) {
-                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), "IllegalPathException!!!").show();
-                } catch (ItemNotFoundException ex) {
-                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), "ItemNotFoundException!!!").show();
+                } catch (IllegalOperationException | ItemNotFoundException ex) {
+                    Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
                 }
             }
 
-//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
             FileManagerApp.getInstance().refreshCurrentDirectory();
         });
     }
@@ -726,7 +726,7 @@ public class ToolBarController implements Initializable {
                 FileController.getInstance().deleteFile(item.getPath());
             }
         } catch (Exception e) {
-            Dialog.getEmptyDialog(FileManagerApp.getInstance(), "ItemNotFoundException").show();
+            Dialog.getEmptyDialog(FileManagerApp.getInstance(), e.getMessage()).show();
         }
     }
 

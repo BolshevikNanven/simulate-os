@@ -105,13 +105,13 @@ public class FileService {
         String name = path.substring(path.lastIndexOf("/") + 1);
         Item file;
         if (type == DIRECTORY) {
-            file = getItemFromCreate(parent, name, (byte) 0, true, false, false, true, startDisk, 0);
+            file = getItemFromCreate(parent, name, (byte) 0, false, false, false, true, startDisk, 0);
         } else if (type == EXE) {
             name = name.substring(0, name.lastIndexOf('.'));
-            file = getItemFromCreate(parent, name, (byte) 'e', true, false, true, false, startDisk, 0);
+            file = getItemFromCreate(parent, name, (byte) 'e', false, false, true, false, startDisk, 0);
         } else if (type == TXT){
             name = name.substring(0, name.lastIndexOf('.'));
-            file = getItemFromCreate(parent, name, (byte) 't', true, false, true, false, startDisk, 0);
+            file = getItemFromCreate(parent, name, (byte) 't', false, false, true, false, startDisk, 0);
         }else {
             return null;
         }
@@ -486,6 +486,15 @@ public class FileService {
 
     public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException {
         Item item = findItem(path);
+        if(item instanceof Directory){
+            if(regularFile){
+                throw new IllegalOperationException("目录不能是文件!");
+            }
+        }else{
+            if(isDirectory){
+                throw new IllegalOperationException("文件不能是目录!");
+            }
+        }
         item.setAttribute(readOnly, systemFile, regularFile, isDirectory);
         writeItemAndParentsToDisk(item);
     }
