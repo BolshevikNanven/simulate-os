@@ -277,8 +277,6 @@ public class ThumbnailBox extends VBox {
 
         try {
             FileController.getInstance().reName(item.getPath(), newName);
-//            DirectoryTreeController.getInstance().refreshCurrentDirectory();
-            FileManagerApp.getInstance().refreshCurrentDirectory();
         } catch (ItemAlreadyExistsException e) {
             handleFileAlreadyExistsException(e);
         } catch (IllegalOperationException | ItemNotFoundException e) {

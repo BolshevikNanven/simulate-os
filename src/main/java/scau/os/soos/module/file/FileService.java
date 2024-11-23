@@ -495,6 +495,8 @@ public class FileService {
         item.setName(newName);
         item.setPath();
         writeItemAndParentsToDisk(item);
+        // 通知文件系统
+        FileController.getInstance().notify(item);
     }
 
     public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException {

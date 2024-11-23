@@ -211,8 +211,6 @@ public class DirectoryTreeController implements Initializable, Notifier {
                     //更新当前目录显示
                     ToolBarController.getInstance().showCurrentDirectory(newValue.getValue().getPath());
                     ToolBarController.getInstance().resetSearchButton();
-                    ToolBarController.getInstance().resetSortMenu();
-                    ToolBarController.getInstance().resetSelectMenu();
 
                     //重新设置imageModelList 并展示image
                     FileManagerApp.getInstance().loadDirectory(newValue.getValue());

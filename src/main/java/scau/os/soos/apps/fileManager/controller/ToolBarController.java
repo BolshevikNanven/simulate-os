@@ -172,6 +172,8 @@ public class ToolBarController implements Initializable {
 
         // 初始化映射
         initializeMaps();
+        // 初始化菜单
+        resetMenu();
         // 添加排序菜单的监听器
         addListenerForSortMenu();
         // 添加选择菜单的监听器
@@ -756,15 +758,17 @@ public class ToolBarController implements Initializable {
         selectItemMap.put(selectDirectoryItem, FILE_TYPE.DIRECTORY);
     }
 
-    public void resetSortMenu() {
+    public void resetMenu() {
         sortByNameItem.setSelected(true);
         sortByTypeItem.setSelected(false);
         sortBySizeItem.setSelected(false);
         sortAscendingItem.setSelected(true);
         sortDescendingItem.setSelected(false);
+
+        selectAllItem.setSelected(true);
     }
 
-    private void applySort() {
+    public void applySort() {
         RadioMenuItem selectedSortRule = (RadioMenuItem) sortRuleGroup.getSelectedToggle();
         RadioMenuItem selectedSortOrder = (RadioMenuItem) sortOrderGroup.getSelectedToggle();
         if (selectedSortRule == null || selectedSortOrder == null) {
@@ -821,23 +825,19 @@ public class ToolBarController implements Initializable {
                 applySelectionFilter());
     }
 
-    public void resetSelectMenu() {
-        selectAllItem.setSelected(true);
-    }
-
-    private void applySelectionFilter() {
+    public void applySelectionFilter() {
         RadioMenuItem selectedItem = (RadioMenuItem) selectItemGroup.getSelectedToggle();
         if (selectedItem == null)
             return;
         if (selectedItem == selectAllItem) {
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().recoverItemList();
             return;
         }
 
         FILE_TYPE filterType = selectItemMap.get(selectedItem);
 
         if (filterType != null) {
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().recoverItemList();
             filterItemList(filterType);
         }
     }
