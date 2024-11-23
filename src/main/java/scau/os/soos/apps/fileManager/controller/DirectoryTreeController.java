@@ -67,6 +67,7 @@ public class DirectoryTreeController implements Initializable, Notifier {
         itemMap = new HashMap<>();
 
         init();
+
         FileController.getInstance().bind(this);
     }
 

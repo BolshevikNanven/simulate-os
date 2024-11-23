@@ -120,6 +120,9 @@ public class FileService {
         disk.getFat().setNextBlockIndex(startDisk, Fat.TERMINATED);
         disk.getFat().writeFatToDisk();
         parent.addChildren(file);
+        // 通知文件系统
+        FileController.getInstance().notify(file);
+
         parent.updateSize();
         writeItemAndParentsToDisk(file);
         return file;
@@ -186,7 +189,11 @@ public class FileService {
             return;
         }
 
+
         parent.removeChild(item);
+        // 通知文件系统
+        FileController.getInstance().notify(item);
+
         deleteItem(item);
 
         // 更新父目录的大小
@@ -280,6 +287,9 @@ public class FileService {
         newItem.setPath();
 
         parent.addChildren(newItem);
+        // 通知文件系统
+        FileController.getInstance().notify(newItem);
+
         updateItemSize(newItem);
         writeItemAndParentsToDisk(newItem);
 
@@ -397,6 +407,9 @@ public class FileService {
         fat.writeFatToDisk();
 
         writeItemAndParentsToDisk(targetRoot);
+
+        // 通知文件系统
+        FileController.getInstance().notify(targetRoot);
     }
 
     public void formatDisk(String targetPath) throws IllegalOperationException, ItemNotFoundException {
@@ -561,9 +574,6 @@ public class FileService {
             }
             parent = parent.getParent();
         }
-
-        // 通知文件系统
-        FileController.getInstance().notify(item);
     }
 
     private void updateItemSize(Item item) {

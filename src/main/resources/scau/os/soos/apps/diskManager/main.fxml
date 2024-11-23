@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="body" prefHeight="403.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="body" prefHeight="403.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <right>
         <BorderPane fx:id="detailDisplay" BorderPane.alignment="CENTER">
          <center>
@@ -88,28 +87,11 @@
     <top>
       <VBox prefHeight="34.0" prefWidth="812.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-border-width: 0.5; -fx-border-style: solid; -fx-border-color: gray;">
-               <children>
-                  <Label fx:id="ReFresh" text="刷新(F)">
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label text="查看(V)">
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label text="帮助(H)">
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-            </HBox>
               <HBox fx:id="states" alignment="CENTER" prefHeight="35.0" prefWidth="812.0" style="-fx-border-color: gray; -fx-border-width: 0.5; -fx-border-style: solid;">
                   <children>
-                      <Label fx:id="title" style="/* Light Salmon */: ;" text="盘块使用详情" />
+                      <Label fx:id="title" text="盘块使用详情" >
+                          <style>/* Light Salmon */: ;</style>
+                      </Label>
                   </children>
             </HBox>
          </children>

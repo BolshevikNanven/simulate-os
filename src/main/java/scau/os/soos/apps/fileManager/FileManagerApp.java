@@ -21,6 +21,7 @@ import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.common.Clipboard;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.Notifier;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FileManagerApp extends Window  {
+public class FileManagerApp extends Window  implements Notifier {
     @FXML
     public ScrollPane scrollPane;
     @FXML
@@ -107,6 +108,8 @@ public class FileManagerApp extends Window  {
 
         ToolBarController.getInstance().initAfterInitialize();
         DirectoryTreeController.getInstance().initAfterInitialize();
+
+        FileController.getInstance().bind(this);
     }
 
     private void initBinding() {
@@ -117,6 +120,15 @@ public class FileManagerApp extends Window  {
     @Override
     protected void close() {
         FileController.getInstance().save();
+    }
+
+
+    @Override
+    public void update(Item item) {
+        Item currentDirectory = DirectoryTreeController.getInstance().getCurrentDirectory();
+        if(item.getParent()==currentDirectory){
+            loadDirectory(currentDirectory);
+        }
     }
 
     public void addListener() {
