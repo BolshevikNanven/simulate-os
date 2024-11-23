@@ -161,20 +161,22 @@ public class MemoryService {
 
         MemoryBlock preBlock = target.getPre();
         MemoryBlock nextBlock = target.getNext();
-        // 合并上一块
+        // 合并为前块
         if (preBlock != null && preBlock.isFree()) {
-            target.setSize(target.getSize() + preBlock.getSize());
-            target.setAddress(preBlock.getAddress());
-            target.setPre(preBlock.getPre());
+            preBlock.setSize(preBlock.getSize() + target.getSize());
+            preBlock.setNext(target.getNext());
 
-            if (preBlock.getPre() != null) {
-                preBlock.getPre().setNext(target);
+            if (target.getNext() != null) {
+                target.getNext().setPre(preBlock);
             }
 
-            preBlock.setNext(null);
-            preBlock.setPre(null);
+            target.setNext(null);
+            target.setPre(null);
+
+            target = preBlock;
         }
-        // 合并下一块
+
+        // 合并后块
         if (nextBlock != null && nextBlock.isFree()) {
             target.setSize(target.getSize() + nextBlock.getSize());
             target.setNext(nextBlock.getNext());

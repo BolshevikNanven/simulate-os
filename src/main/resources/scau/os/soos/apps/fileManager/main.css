@@ -8,6 +8,10 @@
     -fx-background-color: #dadada;
 }
 
+.tool-bar .button,.tool-bar .menu-button{
+    -fx-background-radius: 4px;
+}
+
 .tool-bar .text-field {
     -fx-background-color: #fbfbfb; /* 淡白色背景 */
     -fx-text-fill: #000000; /* 普通黑色文本 */
@@ -64,3 +68,14 @@
     -fx-text-fill: -text-color;
 }
 
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #c8c8c8;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #ffffff;
+
+}

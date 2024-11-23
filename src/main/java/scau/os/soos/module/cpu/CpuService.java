@@ -132,10 +132,9 @@ public class CpuService {
         runningProcess.getPCB().setPC(reg.getPC());
         runningProcess.getPCB().setAX(reg.getAX());
 
-        unload();
-
         if (runningProcess != null) {
             ProcessController.getInstance().handoff(runningProcess);
+            unload();
         }
         ProcessController.getInstance().schedule();
 

@@ -69,14 +69,22 @@ public class MemoryService implements TaskManagerService {
         MemoryReadView memoryData = MemoryController.getInstance().getData();
         boolean isBlockChange = checkBlockChange(memoryData);
 
+        StringBuilder stringBuilder = new StringBuilder();
+        for (MemoryBlock block : memoryData.memoryBlockList()) {
+            stringBuilder.append(block.getSize());
+            stringBuilder.append(" ");
+        }
+
         Platform.runLater(() -> {
             memoryUsage.setText(memoryData.usage() + "B");
-            memoryAvailable.setText(memoryData.available() + "B");
+            memoryAvailable.setText(stringBuilder.toString());
             memoryPCB.setText(String.valueOf(memoryData.pcb()));
             if (isBlockChange) {
                 memoryBlockChart.getChildren().clear();
                 for (MemoryBlock block : memoryData.memoryBlockList()) {
-                    memoryBlockChart.getChildren().add(newBlock(block.isFree(), (double) block.getSize() / memoryData.total()));
+                    memoryBlockChart.getChildren().add(
+                            newBlock(block.isFree(), (double) block.getSize() / memoryData.total())
+                    );
                 }
             }
         });
@@ -115,7 +123,7 @@ public class MemoryService implements TaskManagerService {
             for (int i = 0; i < memoryData.memoryBlockList().size(); i++) {
                 MemoryBlock block = memoryData.memoryBlockList().get(i);
                 MemoryBlock preBlock = preData.memoryBlockList().get(i);
-                if (block.isFree() != preBlock.isFree() && block.getSize() != preBlock.getSize()) {
+                if (block.isFree() != preBlock.isFree() || block.getSize() != preBlock.getSize()) {
                     isBlockChange = true;
                     break;
                 }

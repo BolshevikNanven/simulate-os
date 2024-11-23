@@ -5,12 +5,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.StackPane?>
-<BorderPane fx:id="body" prefHeight="522.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+
+<BorderPane fx:id="body" prefHeight="522.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER">
          <content>
@@ -23,13 +23,13 @@
                      </Insets>
                   </padding>
                </FlowPane>
-               <Pane fx:id="selectedArea" style="-fx-background-color: #000"/>
+               <Pane fx:id="selectedArea" />
             </StackPane>
          </content>
       </ScrollPane>
    </center>
    <left>
-      <fx:include source="components/directory_tree.fxml"/>
+      <fx:include source="components/directory_tree.fxml" />
    </left>
    <top>
       <fx:include source="components/tool_bar.fxml" />
