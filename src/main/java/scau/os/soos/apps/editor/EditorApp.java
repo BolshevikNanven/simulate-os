@@ -161,7 +161,7 @@ public class EditorApp extends Window {
         return byteList;
     }
 
-    private String typeInstructions(List<Byte> instructions){
+    private static String typeInstructions(List<Byte> instructions){
         StringBuilder content = new StringBuilder();
         for(byte instruction : instructions){
             int op = instruction >> 4;
@@ -188,7 +188,7 @@ public class EditorApp extends Window {
     }
 
 
-    private String getItemContext(Item item) {
+    public static String getItemContext(Item item) {
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
             return txtItem.getContext();

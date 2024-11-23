@@ -116,7 +116,14 @@ public class TerminalService {
     }
 
     private String typeFile(String arg) {
-        return FileController.getInstance().typeFile(arg);
+        try {
+            String path = currentDirectory + "/" + arg;
+            return FileController.getInstance().typeFile(path);
+        } catch (IllegalOperationException e) {
+            return "非法路径";
+        } catch (ItemNotFoundException e) {
+            return "该文件不存在";
+        }
     }
 
     private String copyFile(String arg) {

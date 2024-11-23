@@ -1,5 +1,6 @@
 package scau.os.soos.module.file;
 
+import scau.os.soos.apps.editor.EditorApp;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.common.exception.*;
 import scau.os.soos.module.file.model.*;
@@ -409,7 +410,10 @@ public class FileService {
         if (targetRoot == null) {
             throw new ItemNotFoundException(targetPath + " 盘不存在!");
         }
-//        int sourceStartBlockNum = targetRoot.getStartBlockNum();
+        // 3.格式化目标根目录
+        for(Item item:targetRoot.getChildren()){
+            delete(item);
+        }
     }
 
     public int getSize(Item item) {
@@ -486,9 +490,16 @@ public class FileService {
         writeItemAndParentsToDisk(item);
     }
 
-    public String typeFile(String path) {
-
-        return "";
+    public String typeFile(String path) throws IllegalOperationException, ItemNotFoundException {
+        Item item = findItem(path);
+        if(item instanceof Directory){
+            StringBuilder sb = new StringBuilder();
+            for(Item child : ((Directory) item).getChildren()){
+                sb.append(child.getFullName()).append("\n");
+            }
+            return sb.toString();
+        }
+        return EditorApp.getItemContext(item);
     }
 
     public static Item getItemFromDisk(byte[] data) {

@@ -146,7 +146,7 @@ public class FileController implements Module {
     }
 
     // 返回文件内容
-    public String typeFile(String path) {
+    public String typeFile(String path) throws IllegalOperationException, ItemNotFoundException {
         return fileService.typeFile(path);
     }
 
