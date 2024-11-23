@@ -89,13 +89,6 @@ public class FileManagerApp extends Window  implements Notifier {
         itemCount.set(itemList.size());
     }
 
-    public void recoverItemList(){
-        Directory currentDirectory = (Directory) DirectoryTreeController.getInstance().getCurrentDirectory();
-        this.itemList = new ArrayList<>(currentDirectory.getChildren());
-        itemCount.set(itemList.size());
-        displayItem();
-    }
-
     @Override
     public void initialize() {
         instance = this;
@@ -160,7 +153,13 @@ public class FileManagerApp extends Window  implements Notifier {
         });
     }
 
-    public void refreshCurrentDirectory() {
+    public void recoverCurrentItemList(){
+        Directory currentDirectory = (Directory) DirectoryTreeController.getInstance().getCurrentDirectory();
+        this.itemList = new ArrayList<>(currentDirectory.getChildren());
+        itemCount.set(itemList.size());
+    }
+
+    public void loadCurrentDirectory() {
         loadDirectory(DirectoryTreeController.getInstance().getCurrentDirectory());
     }
 
@@ -174,7 +173,6 @@ public class FileManagerApp extends Window  implements Notifier {
         itemList = ((Directory) directory).getChildren();
         itemCount.set(itemList.size());
 
-        displayItem();
         ToolBarController.getInstance().applySort();
         ToolBarController.getInstance().applySelectionFilter();
     }

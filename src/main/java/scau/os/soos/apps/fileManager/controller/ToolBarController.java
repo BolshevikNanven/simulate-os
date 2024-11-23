@@ -235,7 +235,7 @@ public class ToolBarController implements Initializable {
     private void addListenerForRefreshButton() {
         refreshBtn.setOnAction(e -> {
             // 刷新文件列表
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().loadCurrentDirectory();
         });
     }
 
@@ -396,7 +396,7 @@ public class ToolBarController implements Initializable {
     private void unSearch(boolean isRefresh) {
         if (isRefresh) {
             // 取消搜索--重新加载当前目录
-            FileManagerApp.getInstance().refreshCurrentDirectory();
+            FileManagerApp.getInstance().loadCurrentDirectory();
         }
         // 按钮变成搜索（图标）图标后续更改 2024/3/25 css
         searchState = false;
@@ -829,17 +829,11 @@ public class ToolBarController implements Initializable {
         RadioMenuItem selectedItem = (RadioMenuItem) selectItemGroup.getSelectedToggle();
         if (selectedItem == null)
             return;
-        if (selectedItem == selectAllItem) {
-            FileManagerApp.getInstance().recoverItemList();
-            return;
-        }
 
         FILE_TYPE filterType = selectItemMap.get(selectedItem);
 
-        if (filterType != null) {
-            FileManagerApp.getInstance().recoverItemList();
-            filterItemList(filterType);
-        }
+        FileManagerApp.getInstance().recoverCurrentItemList();
+        filterItemList(filterType);
     }
 
     private void filterItemList(FILE_TYPE filterType) {
@@ -868,6 +862,8 @@ public class ToolBarController implements Initializable {
                     }
                 }
                 break;
+            case null:
+                filteredItemList.addAll(itemList);
         }
         // 加载搜索结果列表
         FileManagerApp.getInstance().setItemList(filteredItemList);
