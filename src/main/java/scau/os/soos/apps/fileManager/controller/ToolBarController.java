@@ -15,7 +15,7 @@ import scau.os.soos.apps.fileManager.enums.SORT_TYPE;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.common.Clipboard;
 import scau.os.soos.apps.fileManager.util.MatchUtil;
-import scau.os.soos.apps.fileManager.util.TipUtil;
+import scau.os.soos.ui.components.Tooltip;
 import scau.os.soos.common.enums.FILE_TYPE;
 import scau.os.soos.common.exception.DiskSpaceInsufficientException;
 import scau.os.soos.common.exception.IllegalOperationException;
@@ -390,7 +390,7 @@ public class ToolBarController implements Initializable {
         searchIcon.getStyleClass().remove("search-icon");
         searchIcon.getStyleClass().add("cancel-icon");
 
-        TipUtil.setTooltip(searchBtn, "cancel");
+        Tooltip.setTooltip(searchBtn, "cancel");
     }
 
     private void unSearch(boolean isRefresh) {
@@ -407,7 +407,7 @@ public class ToolBarController implements Initializable {
         searchIcon.getStyleClass().remove("cancel-icon");
         searchIcon.getStyleClass().add("search-icon");
 
-        TipUtil.setTooltip(searchBtn, "search");
+        Tooltip.setTooltip(searchBtn, "search");
     }
 
     private void addListenerForCreateButton() {
@@ -899,7 +899,7 @@ public class ToolBarController implements Initializable {
         buttonToTooltipMap.put(deleteBtn, "Delete");
 
         for (HashMap.Entry<Button, String> entry : buttonToTooltipMap.entrySet()) {
-            TipUtil.setTooltip(entry.getKey(), entry.getValue());
+            Tooltip.setTooltip(entry.getKey(), entry.getValue());
         }
     }
 }

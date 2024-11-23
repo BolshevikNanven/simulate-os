@@ -23,6 +23,23 @@ public class Directory extends Item {
         this.children = new ArrayList<>();
     }
 
+    public int getSize(){
+        int size = super.getSize();
+        if(isRoot){
+            size = 0;
+            for(Item child:children){
+                size += child.getSize();
+            }
+        }
+        return size;
+    }
+
+    public int getTotalPartitionSize(){
+        if(isRoot)
+            return super.getSize()*Disk.BYTES_PER_BLOCK;
+        return 0;
+    }
+
     public void setRoot(boolean isRoot) {
         this.isRoot = isRoot;
     }

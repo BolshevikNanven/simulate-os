@@ -12,8 +12,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
-import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
-import scau.os.soos.apps.fileManager.util.TipUtil;
+import scau.os.soos.ui.components.Tooltip;
 import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
 import scau.os.soos.common.exception.ItemNotFoundException;
@@ -212,10 +211,46 @@ public class ThumbnailBox extends VBox {
     }
 
     private void setTipEvent() {
-        this.setOnMouseEntered(event -> TipUtil.setTooltip(this,
-                "类型：" + (char) item.getType() + '\n' + "大小：" + item.getSize()));
+        this.setOnMouseEntered(event -> {
+            if (item == null) {
+                Tooltip.setTooltip(this, "无项目信息");
+                return;
+            }
+
+            StringBuilder tipBuilder = new StringBuilder();
+            String type = getItemType(item);
+            tipBuilder.append("类型\t\t：").append(type).append('\n');
+            tipBuilder.append("起始盘块\t：").append(item.getStartBlockNum()).append('\n');
+            tipBuilder.append("占用\t\t：").append(item.getSize()).append(" Bytes").append('\n');
+
+            if (item instanceof Directory) {
+                double block = ((Directory) item).getTotalPartitionSize();
+                if (block > 0) {
+                    tipBuilder.append(formatBlockSize(block));
+                }
+            }
+
+            Tooltip.setTooltip(this, tipBuilder.toString());
+        });
     }
 
+    private String getItemType(Object item) {
+        if (item instanceof Directory) {
+            return "Dir";
+        } else if (item instanceof Txt) {
+            return "Txt";
+        } else if (item instanceof Exe) {
+            return "Exe";
+        }
+        return "未知";
+    }
+
+    private String formatBlockSize(double block) {
+        if (block > 1024) {
+            return String.format("总大小\t：%.2f KB", block / 1024);
+        }
+        return String.format("总大小\t：%.0f Byte", block);
+    }
 
     public void startRenaming() {
         textField.setEditable(true);
