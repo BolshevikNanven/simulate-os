@@ -69,15 +69,9 @@ public class MemoryService implements TaskManagerService {
         MemoryReadView memoryData = MemoryController.getInstance().getData();
         boolean isBlockChange = checkBlockChange(memoryData);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (MemoryBlock block : memoryData.memoryBlockList()) {
-            stringBuilder.append(block.getSize());
-            stringBuilder.append(" ");
-        }
-
         Platform.runLater(() -> {
             memoryUsage.setText(memoryData.usage() + "B");
-            memoryAvailable.setText(stringBuilder.toString());
+            memoryAvailable.setText(memoryData.available() + "B");
             memoryPCB.setText(String.valueOf(memoryData.pcb()));
             if (isBlockChange) {
                 memoryBlockChart.getChildren().clear();
