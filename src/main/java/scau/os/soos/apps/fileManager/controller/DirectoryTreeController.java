@@ -79,6 +79,12 @@ public class DirectoryTreeController implements Initializable, Notifier {
         addListener();
     }
 
+    public void initAfterInitialize(){
+        directoryTree.getSelectionModel().select(directoryTree.getRoot());
+        pathPointer.set(pathPointer.get() + 1);
+        pathList.add(directoryTree.getSelectionModel().getSelectedItem());
+    }
+
     private void loadRoots() {
         Directory partitionDirectory = FileController.getInstance().getPartitionDirectory();
         // 获取系统中的所有逻辑驱动器
@@ -106,15 +112,7 @@ public class DirectoryTreeController implements Initializable, Notifier {
         }
     }
 
-//    public void refreshCurrentDirectory() {
-//        if (currentDirectory.get() == null || itemMap.get(currentDirectory.get()) == null) {
-//            return;
-//        }
-//        loadDirectory(itemMap.get(currentDirectory.get()));
-//        directoryTree.refresh();
-//    }
-
-    public void refreshDirectory(Item item) {
+    private void refreshDirectory(Item item) {
         if (item == null || !item.isDirectory()|| itemMap.get(item)==null) {
             return;
         }
@@ -224,7 +222,6 @@ public class DirectoryTreeController implements Initializable, Notifier {
     }
 
     private void setCell() {
-//        directoryTree.setShowRoot(false);
         directoryTree.setFocusTraversable(false);
         directoryTree.getRoot().setExpanded(true);
 

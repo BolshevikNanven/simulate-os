@@ -1,5 +1,6 @@
 package scau.os.soos.apps.fileManager.model;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -193,15 +194,7 @@ public class ThumbnailBox extends VBox {
 
             // 双击打开
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-                FileManagerApp.getInstance().open(item);
-
-                /***
-                 *
-                 * 本应在 FileAreaSelect 类中执行的鼠标释放事件，被不知名原因被吞掉，
-                 * 不加这一行，selectedArea就无法隐藏
-                 *
-                 */
-                FileManagerApp.getInstance().getSelectedArea().setVisible(false);
+                Platform.runLater(() -> FileManagerApp.getInstance().open(item));
             }
         });
     }
@@ -213,14 +206,7 @@ public class ThumbnailBox extends VBox {
         // 添加焦点监听器，当失去焦点时触发重命名逻辑
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // 失去焦点
-                completeRenaming();
-                /***
-                 *
-                 * 本应在 FileAreaSelect 类中执行的鼠标释放事件，被不知名原因被吞掉，
-                 * 不加这一行，selectedArea就无法隐藏
-                 *
-                 */
-                FileManagerApp.getInstance().getSelectedArea().setVisible(false);
+                Platform.runLater(this::completeRenaming);
             }
         });
     }

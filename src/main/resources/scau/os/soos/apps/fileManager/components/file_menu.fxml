@@ -16,6 +16,11 @@
                   <Font size="14.0" />
                </font>
             </Button>
+            <Button id="operate-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="运行">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Button>
             <Region id="separator-1" prefHeight="1.0" />
                 <Button id="copy-btn" alignment="BASELINE_LEFT" graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="复制">
                     <font>

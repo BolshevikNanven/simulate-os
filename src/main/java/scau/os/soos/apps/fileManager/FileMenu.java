@@ -9,6 +9,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
+import scau.os.soos.ui.components.Dialog;
 import scau.os.soos.ui.components.base.Popover;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.List;
 public class FileMenu extends Popover {
     private final VBox menu;
     private final Button openBtn;
+    private final Button operateBtn;
     private final Region separator1;
     private final Button copyBtn;
     private final Button pasteBtn;
@@ -34,6 +36,7 @@ public class FileMenu extends Popover {
 
         menu = (VBox) this.container.lookup("#menu");
         openBtn = (Button) this.container.lookup("#open-btn");
+        operateBtn = (Button) this.container.lookup("#operate-btn");
         separator1 = (Region) this.container.lookup("#separator-1");
         copyBtn = (Button) this.container.lookup("#copy-btn");
         pasteBtn = (Button) this.container.lookup("#paste-btn");
@@ -49,13 +52,14 @@ public class FileMenu extends Popover {
         addListener();
     }
 
-    private void updateMenuVisibility(boolean openBtn, boolean separator1,
+    private void updateMenuVisibility(boolean openBtn, boolean operateBtn,boolean separator1,
                           boolean copyBtn,boolean pasteBtn, boolean deleteBtn,
                           boolean separator2,boolean createTxtBtn, boolean createExeBtn,
                           boolean createDirectoryBtn, boolean separator3, boolean reNameBtn,boolean reAttributeBtn
                          ){
         menu.getChildren().clear();
         setMenuItemVisibility(this.openBtn,openBtn);
+        setMenuItemVisibility(this.operateBtn,operateBtn);
         setMenuItemVisibility(this.separator1,separator1);
         setMenuItemVisibility(this.copyBtn,copyBtn);
         setMenuItemVisibility(this.pasteBtn,pasteBtn);
@@ -78,7 +82,7 @@ public class FileMenu extends Popover {
     }
 
     public void renderOverPane(MouseEvent e,boolean isRenderPasteBtn){
-        updateMenuVisibility(false,false,
+        updateMenuVisibility(false,false,false,
                 false,isRenderPasteBtn,false,
                 isRenderPasteBtn,true,true,
                 true,false,false,false);
@@ -86,7 +90,7 @@ public class FileMenu extends Popover {
     }
 
     public void renderOverItem(MouseEvent e){
-        updateMenuVisibility(true,true,
+        updateMenuVisibility(true,true,true,
                 true,false,true,
                 true,false,false,
                 false,false,true,true);
@@ -95,6 +99,13 @@ public class FileMenu extends Popover {
 
     private void addListener() {
         openBtn.setOnAction((e) -> {
+            hide();
+            List<ThumbnailBox> selectedList = FileManagerApp.getInstance().getSelectedList();
+            for(ThumbnailBox selected : selectedList){
+                FileManagerApp.getInstance().open(selected.getItem());
+            }
+        });
+        operateBtn.setOnAction((e) -> {
             hide();
             List<ThumbnailBox> selectedList = FileManagerApp.getInstance().getSelectedList();
             for(ThumbnailBox selected : selectedList){
@@ -132,8 +143,8 @@ public class FileMenu extends Popover {
         reAttributeBtn.setOnAction(actionEvent -> {
             hide();
 //            Dialog dialog = Dialog.getDialog(FileManagerApp.getInstance(),"属性",
-//                    null,
-//                    null,
+//                    true, true,
+//                    null,null,
 //                    new Button("确定"));
 //            dialog.show();
         });

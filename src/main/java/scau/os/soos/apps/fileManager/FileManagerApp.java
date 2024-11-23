@@ -1,5 +1,6 @@
 package scau.os.soos.apps.fileManager;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -70,10 +71,6 @@ public class FileManagerApp extends Window  {
         return selectedCount;
     }
 
-    public Pane getSelectedArea() {
-        return selectedArea;
-    }
-
     public List<ThumbnailBox> getSelectedList() {
         return selectedList;
     }
@@ -89,10 +86,6 @@ public class FileManagerApp extends Window  {
     public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
         itemCount.set(itemList.size());
-    }
-
-    public FileMenu getFileMenu() {
-        return fileMenu;
     }
 
     @Override
@@ -112,7 +105,8 @@ public class FileManagerApp extends Window  {
         addListener();
         initBottomBar();
 
-        ToolBarController.getInstance().init();
+        ToolBarController.getInstance().initAfterInitialize();
+        DirectoryTreeController.getInstance().initAfterInitialize();
     }
 
     private void initBinding() {
@@ -201,10 +195,6 @@ public class FileManagerApp extends Window  {
         selectedSize.set(0);
     }
 
-    public void showContent(Item item) {
-        System.out.println(item);
-    }
-
     private void initBottomBar() {
         itemNumber.textProperty().bind(Bindings.createStringBinding(() -> String.format("%d 个项目",
                 itemCount.get()), itemCount));
@@ -230,7 +220,7 @@ public class FileManagerApp extends Window  {
 
     public void open(Item item) {
         if (item instanceof Directory) {
-            DirectoryTreeController.getInstance().goToDirectory(item);
+            Platform.runLater(() -> DirectoryTreeController.getInstance().goToDirectory(item));
         } else {
             TaskBarManager.getInstance().addTask(new EditorApp(item));
         }

@@ -129,7 +129,7 @@ public class ToolBarController implements Initializable {
         instance = this;
     }
 
-    public void init() {
+    public void initAfterInitialize() {
         // 为后退按钮添加监听器
         addListenerForBackwardButton();
         // 为前进按钮添加监听器
@@ -179,11 +179,6 @@ public class ToolBarController implements Initializable {
 
         // 初始化提示
         initTooltip();
-
-        /**
-         * 不知道可以移动到什么地方，更新目录树选中 此电脑 的前提是 ToolBarController 加载完毕
-         */
-        DirectoryTreeController.getInstance().directoryTree.getSelectionModel().select(DirectoryTreeController.getInstance().directoryTree.getRoot());
     }
 
 
@@ -397,7 +392,7 @@ public class ToolBarController implements Initializable {
         TipUtil.setTooltip(searchBtn, "cancel");
     }
 
-    public void unSearch(boolean isRefresh) {
+    private void unSearch(boolean isRefresh) {
         if (isRefresh) {
             // 取消搜索--重新加载当前目录
             FileManagerApp.getInstance().refreshCurrentDirectory();
