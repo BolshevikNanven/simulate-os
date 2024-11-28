@@ -45,14 +45,14 @@ public class FileController implements Module {
     /**
      * 创建文件
      */
-    public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalOperationException {
+    public Item createFile(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalOperationException, ReadOnlyFileModifiedException {
         return fileService.createFile(path);
     }
 
     /**
      * 删除文件
      */
-    public void deleteFile(String path) throws ItemNotFoundException, IllegalOperationException {
+    public void deleteFile(String path) throws ItemNotFoundException, IllegalOperationException, SystemFileDeleteException, ConcurrentAccessException {
         try {
             fileService.delete(path, false, true);
         } catch (DirectoryNoEmptyException ignored) {
@@ -63,7 +63,7 @@ public class FileController implements Module {
     /**
      * 写文件
      */
-    public void writeFile(Item file) throws DiskSpaceInsufficientException {
+    public void writeFile(Item file) throws DiskSpaceInsufficientException, ReadOnlyFileModifiedException {
         fileService.writeFile(file);
     }
 
@@ -77,38 +77,38 @@ public class FileController implements Module {
     /**
      * 拷贝文件
      */
-    public void copyFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
+    public void copyFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException, ReadOnlyFileModifiedException, ConcurrentAccessException {
         fileService.copy(sourcePath, targetPath);
     }
 
     /**
      * 移动文件
      */
-    public void moveFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
+    public void moveFile(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException, ReadOnlyFileModifiedException, ConcurrentAccessException {
         fileService.move(sourcePath, targetPath);
     }
 
     /**
      * 建立目录
      */
-    public Item createDirectory(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalOperationException {
+    public Item createDirectory(String path) throws ItemAlreadyExistsException, ItemNotFoundException, DiskSpaceInsufficientException, IllegalOperationException, ReadOnlyFileModifiedException {
         return fileService.createDirectory(path);
     }
 
     /**
      * 删除空目录
      */
-    public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException, IllegalOperationException {
+    public void deleteEmptyDirectory(String path) throws ItemNotFoundException, DirectoryNoEmptyException, IllegalOperationException, SystemFileDeleteException, ConcurrentAccessException {
         fileService.delete(path, true, false);
     }
 
     /**
      * 删除目录
      */
-    public void deleteDirectory(String path) throws ItemNotFoundException, IllegalOperationException {
+    public void deleteDirectory(String path) throws ItemNotFoundException, IllegalOperationException, SystemFileDeleteException {
         try {
             fileService.delete(path, true, true);
-        } catch (DirectoryNoEmptyException ignored) {
+        } catch (DirectoryNoEmptyException | ConcurrentAccessException ignored) {
 
         }
     }
@@ -120,11 +120,11 @@ public class FileController implements Module {
         fileService.diskPartition(src, dec, size);
     }
 
-    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException {
+    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
         fileService.reName(path, newName);
     }
 
-    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException {
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
         fileService.reAttribute(path, readOnly, systemFile, regularFile, isDirectory);
     }
 

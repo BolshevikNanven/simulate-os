@@ -86,13 +86,17 @@ public class FileService {
      * 创建
      *
      */
-    private Item create(String path, FILE_TYPE type) throws DiskSpaceInsufficientException, ItemNotFoundException, ItemAlreadyExistsException {
+    private Item create(String path, FILE_TYPE type) throws DiskSpaceInsufficientException, ItemNotFoundException, ItemAlreadyExistsException, ReadOnlyFileModifiedException {
         //1. 判断文件/文件夹是否存在
         isItemAlreadyExists(path,type);
 
         //2. 判断父目录是否存在
         String parentPath = path.substring(0, path.lastIndexOf("/"));
         Directory parent = (Directory) findItem(parentPath,DIRECTORY);
+
+        if(parent.isReadOnly()){
+            throw new ReadOnlyFileModifiedException("不允许在只读目录下创建文件/目录!");
+        }
 
         //3. 判断磁盘空间是否足够
         int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
@@ -129,7 +133,7 @@ public class FileService {
     }
 
     public Item createFile(String path) throws
-            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
+            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException, ReadOnlyFileModifiedException {
 
         FILE_TYPE type = check(path);
         if (type == DIRECTORY) {
@@ -140,7 +144,7 @@ public class FileService {
     }
 
     public Item createDirectory(String path) throws
-            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException {
+            ItemAlreadyExistsException, DiskSpaceInsufficientException, ItemNotFoundException, IllegalOperationException, ReadOnlyFileModifiedException {
 
         FILE_TYPE type = check(path);
         if (type != DIRECTORY) {
@@ -156,7 +160,7 @@ public class FileService {
      *
      */
     public void delete(String path, boolean isDeleteDirectory, boolean isDeleteNotEmpty) throws
-            ItemNotFoundException, DirectoryNoEmptyException, IllegalOperationException {
+            ItemNotFoundException, DirectoryNoEmptyException, IllegalOperationException, SystemFileDeleteException, ConcurrentAccessException {
 
         //1. 检查路径合法性
         FILE_TYPE type = check(path);
@@ -170,6 +174,15 @@ public class FileService {
 
         //2. 查找文件/文件夹 是否存在
         Item item = findItem(path,type);
+
+
+        if(item.isSystemFile()){
+            throw new SystemFileDeleteException("不允许删除系统文件/目录！");
+        }
+
+        if(item.isOpened()){
+            throw new ConcurrentAccessException("无法删除正在打开的文件!");
+        }
 
         if (!isDeleteNotEmpty && item.getSize() != 0) {
             throw new IllegalOperationException("目录 "+item.getName()+" 非空！");
@@ -188,7 +201,6 @@ public class FileService {
         if (parent == null) {
             return;
         }
-
 
         parent.removeChild(item);
         // 通知文件系统
@@ -223,13 +235,17 @@ public class FileService {
      *
      */
     public void copy(String sourcePath, String targetPath) throws
-            DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalOperationException {
+            DiskSpaceInsufficientException, ItemAlreadyExistsException, ItemNotFoundException, IllegalOperationException, ReadOnlyFileModifiedException, ConcurrentAccessException {
 
         //查重
         FILE_TYPE type = check(sourcePath);
         Item srcItem = find(sourcePath, type);
         if (srcItem == null) {
             throw new ItemNotFoundException(sourcePath + " 不存在！");
+        }
+
+        if(srcItem.isOpened()){
+            throw new ConcurrentAccessException("无法复制正在打开的文件!");
         }
 
         FILE_TYPE targetType = check(targetPath);
@@ -241,6 +257,9 @@ public class FileService {
         Directory parent = (Directory) find(targetPath, DIRECTORY);
         if (parent == null) {
             throw new ItemNotFoundException(targetPath + " 不存在！");
+        }
+        if(parent.isReadOnly()){
+            throw new ReadOnlyFileModifiedException("不允许在只读目录下创建文件/目录!");
         }
 
         // 获取需要复制的磁盘块数
@@ -303,7 +322,7 @@ public class FileService {
         }
     }
 
-    public void move(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, IllegalOperationException, ItemNotFoundException {
+    public void move(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, IllegalOperationException, ItemNotFoundException, ReadOnlyFileModifiedException, ConcurrentAccessException {
         copy(sourcePath,targetPath);
         delete(find(sourcePath,check(sourcePath)));
     }
@@ -456,7 +475,11 @@ public class FileService {
     }
 
     public void writeFile(Item item) throws
-            DiskSpaceInsufficientException {
+            DiskSpaceInsufficientException, ReadOnlyFileModifiedException {
+
+        if(item.isReadOnly()){
+            throw new ReadOnlyFileModifiedException("不允许修改只读文件!");
+        }
 
         //获取需要写入的字符串长度，计算需要多少个磁盘块
         Fat fat = disk.getFat();
@@ -475,10 +498,14 @@ public class FileService {
         writeItemAndParentsToDisk(item);
     }
 
-    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException {
+    public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
         Item item = findItem(path);
         if (newName.isEmpty() || newName.length() > 3) {
             throw new IllegalOperationException(newName);
+        }
+
+        if(item.isOpened()){
+            throw new ConcurrentAccessException("无法重命名正在打开的文件!");
         }
 
         Directory parent = (Directory) item.getParent();
@@ -499,8 +526,11 @@ public class FileService {
         FileController.getInstance().notify(item);
     }
 
-    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException {
+    public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
         Item item = findItem(path);
+        if(item.isOpened()){
+            throw new ConcurrentAccessException("无允许为正在打开的文件设置属性!");
+        }
         if(item instanceof Directory){
             if(regularFile){
                 throw new IllegalOperationException("目录不能是文件!");

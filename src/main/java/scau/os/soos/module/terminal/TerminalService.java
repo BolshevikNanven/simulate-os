@@ -112,6 +112,10 @@ public class TerminalService {
             return "该文件不存在";
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
+        } catch (SystemFileDeleteException e) {
+            throw new RuntimeException(e);
+        } catch (ConcurrentAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -142,6 +146,10 @@ public class TerminalService {
             return "磁盘空间不足";
         }catch (IllegalOperationException e){
             return "非法目标路径";
+        } catch (ReadOnlyFileModifiedException e) {
+            throw new RuntimeException(e);
+        } catch (ConcurrentAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -170,6 +178,10 @@ public class TerminalService {
             return "该目录不为空";
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
+        } catch (SystemFileDeleteException e) {
+            throw new RuntimeException(e);
+        } catch (ConcurrentAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -183,6 +195,10 @@ public class TerminalService {
             return "该目录不存在";
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
+        } catch (SystemFileDeleteException e) {
+            throw new RuntimeException(e);
+        } catch (ConcurrentAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -201,6 +217,10 @@ public class TerminalService {
             return "磁盘空间不足";
         }catch (IllegalOperationException e){
             return "非法目标路径";
+        } catch (ReadOnlyFileModifiedException e) {
+            throw new RuntimeException(e);
+        } catch (ConcurrentAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

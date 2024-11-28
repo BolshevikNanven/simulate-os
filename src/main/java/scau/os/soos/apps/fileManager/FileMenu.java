@@ -13,8 +13,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
+import scau.os.soos.common.exception.ConcurrentAccessException;
 import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemNotFoundException;
+import scau.os.soos.common.exception.ReadOnlyFileModifiedException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Item;
 import scau.os.soos.ui.components.Dialog;
@@ -180,6 +182,11 @@ public class FileMenu extends Popover {
                                     directoryCheckBox.isSelected());
                         } catch (IllegalOperationException | ItemNotFoundException e) {
                             Dialog.getEmptyDialog(FileManagerApp.getInstance(), e.getMessage()).show();
+                        } catch (ConcurrentAccessException e) {
+                            Dialog.getDialog(FileManagerApp.getInstance(), "不允许为正在打开的文件设置属性",
+                                    true, false,
+                                    null, null,
+                                    null).show();
                         }
                     }, null,
                     hBox);

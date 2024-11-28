@@ -15,12 +15,9 @@ import scau.os.soos.apps.fileManager.enums.SORT_TYPE;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.common.Clipboard;
 import scau.os.soos.apps.fileManager.util.MatchUtil;
+import scau.os.soos.common.exception.*;
 import scau.os.soos.ui.components.Tooltip;
 import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.common.exception.DiskSpaceInsufficientException;
-import scau.os.soos.common.exception.IllegalOperationException;
-import scau.os.soos.common.exception.ItemAlreadyExistsException;
-import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Exe;
@@ -269,8 +266,8 @@ public class ToolBarController implements Initializable {
 
     private void handleGoToButtonClick() {
         String path = currentDirectory.getText();
-        if (!path.startsWith("/")){
-            path = "/"+path;
+        if (!path.startsWith("/")) {
+            path = "/" + path;
         }
 
         Item target = null;
@@ -432,12 +429,20 @@ public class ToolBarController implements Initializable {
                 Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件",
                         true, false,
                         null, null,
-                        null);
+                        null).show();
+                ;
             } catch (DiskSpaceInsufficientException ex) {
                 Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                         true, false,
                         null, null,
-                        null);
+                        null).show();
+                ;
+            } catch (ReadOnlyFileModifiedException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "不允许在只读目录下创建文件",
+                        true, false,
+                        null, null,
+                        null).show();
+                ;
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
             }
@@ -461,12 +466,20 @@ public class ToolBarController implements Initializable {
                 Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件",
                         true, false,
                         null, null,
-                        null);
+                        null).show();
+                ;
             } catch (DiskSpaceInsufficientException ex) {
                 Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                         true, false,
                         null, null,
-                        null);
+                        null).show();
+                ;
+            } catch (ReadOnlyFileModifiedException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "不允许在只读目录下创建文件",
+                        true, false,
+                        null, null,
+                        null).show();
+                ;
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
             }
@@ -491,12 +504,20 @@ public class ToolBarController implements Initializable {
                 Dialog.getDialog(FileManagerApp.getInstance(), "请重命名部分文件!",
                         true, false,
                         null, null,
-                        null);
+                        null).show();
+                ;
             } catch (DiskSpaceInsufficientException ex) {
                 Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                         true, false,
                         null, null,
-                        null);
+                        null).show();
+                ;
+            } catch (ReadOnlyFileModifiedException ex) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "不允许在只读目录下创建目录",
+                        true, false,
+                        null, null,
+                        null).show();
+                ;
             } catch (ItemAlreadyExistsException | ItemNotFoundException | IllegalOperationException ex) {
                 Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
             }
@@ -599,7 +620,17 @@ public class ToolBarController implements Initializable {
                                         } else {
                                             FileController.getInstance().copyFile(source.getPath(), target);
                                         }
-                                    } catch (Exception exc) {
+                                    } catch (ReadOnlyFileModifiedException exc) {
+                                        Dialog.getDialog(FileManagerApp.getInstance(), "不允许粘贴到只读目录",
+                                                true, false,
+                                                null, null,
+                                                null).show();
+                                    } catch (ConcurrentAccessException exc) {
+                                        Dialog.getDialog(FileManagerApp.getInstance(), "不允许复制/移动正在打开的文件",
+                                                true, false,
+                                                null, null,
+                                                null).show();
+                                    }catch (Exception exc) {
                                         Dialog.getEmptyDialog(FileManagerApp.getInstance(), exc.getMessage()).show();
                                     }
                                 }
@@ -609,7 +640,18 @@ public class ToolBarController implements Initializable {
                     Dialog.getDialog(FileManagerApp.getInstance(), "磁盘空间不足，请清理部分空间后重试",
                             true, false,
                             null, null,
-                            null);
+                            null).show();
+                    ;
+                } catch (ReadOnlyFileModifiedException ex) {
+                    Dialog.getDialog(FileManagerApp.getInstance(), "不允许粘贴到只读目录",
+                            true, false,
+                            null, null,
+                            null).show();
+                } catch (ConcurrentAccessException ex) {
+                    Dialog.getDialog(FileManagerApp.getInstance(), "不允许复制/移动正在打开的文件",
+                            true, false,
+                            null, null,
+                            null).show();
                 } catch (IllegalOperationException | ItemNotFoundException ex) {
                     Dialog.getEmptyDialog(FileManagerApp.getInstance(), ex.getMessage()).show();
                 }
@@ -717,7 +759,17 @@ public class ToolBarController implements Initializable {
             } else if (item instanceof Txt || item instanceof Exe) {
                 FileController.getInstance().deleteFile(item.getPath());
             }
-        } catch (Exception e) {
+        } catch (SystemFileDeleteException e) {
+            Dialog.getDialog(FileManagerApp.getInstance(), "不允许删除系统文件",
+                    true, false,
+                    null, null,
+                    null).show();
+        } catch (ConcurrentAccessException e) {
+            Dialog.getDialog(FileManagerApp.getInstance(), "不允许删除正在打开的文件",
+                    true, false,
+                    null, null,
+                    null).show();
+        } catch (IllegalOperationException | ItemNotFoundException e) {
             Dialog.getEmptyDialog(FileManagerApp.getInstance(), e.getMessage()).show();
         }
     }

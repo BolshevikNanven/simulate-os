@@ -5,7 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.common.exception.DiskSpaceInsufficientException;
+import scau.os.soos.common.exception.ReadOnlyFileModifiedException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Exe;
 import scau.os.soos.module.file.model.Item;
@@ -34,6 +36,7 @@ public class EditorApp extends Window {
     public EditorApp(Item item) {
         super(item.getPath(), "main.fxml", 450, 520);
         this.item = item;
+        item.setOpened(true);
         String initialText = getItemContext(item).trim();
         display.setText(initialText);
         input.setText(String.valueOf(initialText.length()));
@@ -49,9 +52,14 @@ public class EditorApp extends Window {
 
     }
 
+    public String getItemPath(){
+        return item.getPath();
+    }
+
     private void save(Item item){
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
+            String content = txtItem.getContext();
             txtItem.setContext(display.getText());
             try {
                 FileController.getInstance().writeFile(txtItem);
@@ -60,10 +68,18 @@ public class EditorApp extends Window {
                         true,false,
                         null,null,
                         null).show();
+            } catch (ReadOnlyFileModifiedException e) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "不允许修改只读文件",
+                        true, false,
+                        null, null,
+                        null).show();
+            }finally {
+                txtItem.setContext(content);
             }
         }
         else if (item instanceof Exe) {
             Exe exeItem = (Exe) item;
+            List<Byte> instructions = exeItem.getInstructions();
             List<Byte> byteList = parseInstructions(display.getText());
             if(!permitSave){
                 return;
@@ -76,6 +92,13 @@ public class EditorApp extends Window {
                         true,false,
                         null,null,
                         null).show();
+            } catch (ReadOnlyFileModifiedException e) {
+                Dialog.getDialog(FileManagerApp.getInstance(), "不允许修改只读文件",
+                        true, false,
+                        null, null,
+                        null).show();
+            }finally {
+                exeItem.setInstructions(instructions);
             }
         }
     }
@@ -202,6 +225,6 @@ public class EditorApp extends Window {
 
     @Override
     protected void close() {
-
+        item.setOpened(false);
     }
 }

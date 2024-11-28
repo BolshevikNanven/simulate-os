@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 public class Exe extends Item {
     private List<Byte> instructions;
-    private boolean isOpened;
 
     public Exe( byte[] data) {
         super( data);
@@ -27,14 +26,6 @@ public class Exe extends Item {
 
     public List<Byte> getInstructions() {
         return instructions;
-    }
-
-    public void setOpened(boolean opened) {
-        isOpened = opened;
-    }
-
-    public boolean isOpened() {
-        return isOpened;
     }
 
     public void updateSize(){

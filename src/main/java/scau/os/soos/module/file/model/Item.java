@@ -13,6 +13,7 @@ public abstract class Item {
     private byte startBlockNum;
     private final byte[] size = new byte[2];
     private String path;
+    private boolean isOpened;
 
     public Item(byte[] data) {
         System.arraycopy(data, 0, name, 0, 3);
@@ -144,6 +145,14 @@ public abstract class Item {
 
     public String getPath() {
         return path;
+    }
+
+    public void setOpened(boolean opened) {
+        isOpened = opened;
+    }
+
+    public boolean isOpened() {
+        return isOpened;
     }
 
     public String getFullName() {

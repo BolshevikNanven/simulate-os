@@ -4,8 +4,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import scau.os.soos.apps.editor.EditorApp;
 import scau.os.soos.common.GlobalUI;
 import scau.os.soos.common.enums.WINDOW_STATES;
+import scau.os.soos.module.file.model.Item;
 import scau.os.soos.ui.components.TaskButton;
 import scau.os.soos.ui.components.WindowsMenu;
 import scau.os.soos.ui.components.base.Popover;
@@ -83,6 +85,17 @@ public class TaskBarManager {
 
         // 始终保持任务栏在最前
         taskBar.toFront();
+    }
+
+    public void selectTask(Item item){
+        for(Window window:windowsList){
+            if(window instanceof EditorApp){
+                EditorApp editor = (EditorApp) window;
+                if(editor.getItemPath().equals(item.getPath())){
+                    selectTask(window);
+                }
+            }
+        }
     }
 
     private void addListener() {

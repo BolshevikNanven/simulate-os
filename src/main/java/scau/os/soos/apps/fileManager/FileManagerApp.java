@@ -241,7 +241,11 @@ public class FileManagerApp extends Window  implements Notifier {
         if (item instanceof Directory) {
             Platform.runLater(() -> DirectoryTreeController.getInstance().goToDirectory(item));
         } else {
-            TaskBarManager.getInstance().addTask(new EditorApp(item));
+            if(item.isOpened()){
+                TaskBarManager.getInstance().selectTask(item);
+            }else{
+                TaskBarManager.getInstance().addTask(new EditorApp(item));
+            }
         }
     }
 }

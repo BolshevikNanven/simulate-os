@@ -12,6 +12,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
+import scau.os.soos.common.exception.ConcurrentAccessException;
 import scau.os.soos.ui.components.Tooltip;
 import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
@@ -279,7 +280,7 @@ public class ThumbnailBox extends VBox {
             FileController.getInstance().reName(item.getPath(), newName);
         } catch (ItemAlreadyExistsException e) {
             handleFileAlreadyExistsException(e);
-        } catch (IllegalOperationException | ItemNotFoundException e) {
+        } catch (IllegalOperationException | ItemNotFoundException | ConcurrentAccessException e) {
             cancelRenaming();
         }
     }

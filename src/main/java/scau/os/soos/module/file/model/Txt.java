@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 
 public class Txt extends Item {
     private StringBuilder context;
-    private boolean isOpened = false;
 
     public Txt(byte[] data) {
         super(data);
@@ -24,14 +23,6 @@ public class Txt extends Item {
 
     public String getContext() {
         return context.toString();
-    }
-
-    public void setOpened(boolean opened) {
-        isOpened = opened;
-    }
-
-    public boolean isOpened() {
-        return isOpened;
     }
 
     public void updateSize(){
