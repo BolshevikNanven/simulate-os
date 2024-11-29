@@ -70,7 +70,7 @@ public class FileController implements Module {
     /**
      * 读文件
      */
-    public byte[] readFile(Item file) throws ItemNotFoundException {
+    public byte[] readFile(Item file) {
         return fileService.readFile(file);
     }
 

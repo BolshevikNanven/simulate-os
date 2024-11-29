@@ -27,13 +27,13 @@ public class FileService {
     // 路径必须为/盘名/目录名/文件名.e
     private FILE_TYPE check(String path) throws IllegalOperationException {
         if (!path.contains(":")) {
-            throw new IllegalOperationException("请检查路径格式！");
+            throw new IllegalOperationException("请检查路径格式");
         } else if (path.endsWith(".e")) {
             return EXE;
         } else if (path.endsWith(".t")) {
             return TXT;
         } else if (path.contains(".")) {
-            throw new IllegalOperationException("请检查路径格式！");
+            throw new IllegalOperationException("请检查路径格式");
         } else {
             return DIRECTORY;
         }
@@ -77,7 +77,7 @@ public class FileService {
     public Item findItem(String path, FILE_TYPE type) throws ItemNotFoundException {
         Item item = find(path, type);
         if (item == null) {
-            throw new ItemNotFoundException(path+" 不存在！");
+            throw new ItemNotFoundException(path+" 不存在");
         }
         return item;
     }
@@ -95,14 +95,14 @@ public class FileService {
         Directory parent = (Directory) findItem(parentPath,DIRECTORY);
 
         if(parent.isReadOnly()){
-            throw new ReadOnlyFileModifiedException("不允许在只读目录下创建文件/目录!");
+            throw new ReadOnlyFileModifiedException("不允许在只读目录下创建文件/目录");
         }
 
         //3. 判断磁盘空间是否足够
         int rootStartDisk = parent.getRootDirectory().getStartBlockNum();
         int startDisk = disk.findFreeDiskBlock(rootStartDisk);
         if (startDisk == -1) {
-            throw new DiskSpaceInsufficientException(path.charAt(1) + " 盘空间不足！");
+            throw new DiskSpaceInsufficientException(path.charAt(1) + " 盘空间不足");
         }
 
         //4. 创建文件/文件夹
@@ -137,7 +137,7 @@ public class FileService {
 
         FILE_TYPE type = check(path);
         if (type == DIRECTORY) {
-            throw new IllegalOperationException("不能用于创建目录！");
+            throw new IllegalOperationException("请检查路径格式");
         }
 
         return create(path, type);
@@ -148,7 +148,7 @@ public class FileService {
 
         FILE_TYPE type = check(path);
         if (type != DIRECTORY) {
-            throw new IllegalOperationException("不能用于创建文件！");
+            throw new IllegalOperationException("请检查路径格式");
         }
 
         return create(path, DIRECTORY);
@@ -165,11 +165,11 @@ public class FileService {
         //1. 检查路径合法性
         FILE_TYPE type = check(path);
         if (isDeleteDirectory && type != DIRECTORY) {
-            throw new IllegalOperationException("不能用于删除文件！");
+            throw new IllegalOperationException("请检查路径格式");
         }
 
         if (!isDeleteDirectory && type == DIRECTORY) {
-            throw new IllegalOperationException("不能用于删除目录！");
+            throw new IllegalOperationException("请检查路径格式");
         }
 
         //2. 查找文件/文件夹 是否存在
@@ -177,15 +177,15 @@ public class FileService {
 
 
         if(item.isSystemFile()){
-            throw new SystemFileDeleteException("不允许删除系统文件/目录！");
+            throw new SystemFileDeleteException("不允许删除系统文件/目录");
         }
 
         if(item.isOpened()){
-            throw new ConcurrentAccessException("无法删除正在打开的文件!");
+            throw new ConcurrentAccessException("不允许操作正在打开的文件");
         }
 
         if (!isDeleteNotEmpty && item.getSize() != 0) {
-            throw new IllegalOperationException("目录 "+item.getName()+" 非空！");
+            throw new DirectoryNoEmptyException("不允许删除非空目录");
         }
 
         //3. 删除文件/文件夹
@@ -243,25 +243,25 @@ public class FileService {
         FILE_TYPE type = check(sourcePath);
         Item srcItem = find(sourcePath, type);
         if (srcItem == null) {
-            throw new ItemNotFoundException(sourcePath + " 不存在！");
+            throw new ItemNotFoundException(sourcePath + " 不存在");
         }
 
         if(srcItem.isOpened()){
-            throw new ConcurrentAccessException("无法复制正在打开的文件!");
+            throw new ConcurrentAccessException("不允许操作正在打开的文件");
         }
 
         FILE_TYPE targetType = check(targetPath);
 
         if (targetType!=DIRECTORY) {
-            throw new IllegalOperationException("目标需为目录！");
+            throw new IllegalOperationException("请检查路径格式");
         }
 
         Directory parent = (Directory) find(targetPath, DIRECTORY);
         if (parent == null) {
-            throw new ItemNotFoundException(targetPath + " 不存在！");
+            throw new ItemNotFoundException(targetPath + " 不存在");
         }
         if(parent.isReadOnly()){
-            throw new ReadOnlyFileModifiedException("不允许在只读目录下创建文件/目录!");
+            throw new ReadOnlyFileModifiedException("不允许在只读目录下创建文件/目录");
         }
 
         // 获取需要复制的磁盘块数
@@ -277,7 +277,7 @@ public class FileService {
         int rootStartBlockNum = parent.getRootDirectory().getStartBlockNum();
         List<Integer> needDiskBlocks = disk.findFreeDiskBlock(needDiskNum, rootStartBlockNum);
         if (needDiskBlocks.size() < needDiskNum) {
-            throw new DiskSpaceInsufficientException(targetPath.charAt(1) + " 盘空间不足！");
+            throw new DiskSpaceInsufficientException(targetPath.charAt(1) + " 盘空间不足");
         }
 
 
@@ -287,7 +287,7 @@ public class FileService {
         String targetItem = targetPath + "/" + srcItem.getName();
         Item existingItem = find(targetItem, type);
         if (existingItem != null) {
-            throw new ItemAlreadyExistsException(existingItem.getFullName());
+            throw new ItemAlreadyExistsException(existingItem.getFullName() + " 已存在");
         }
 
         int cur = needDiskBlocks.get(0);
@@ -349,13 +349,13 @@ public class FileService {
         // 1.验证路径格式：必须以斜杠开头，单个大小写字母，冒号结尾
         String regex = "/[a-zA-Z]:";
         if (!sourcePath.matches(regex) || !targetPath.matches(regex)) {
-            throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'!");
+            throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'");
         }
 
         // 2.查找源根目录
         Directory sourceRoot = (Directory) find(sourcePath, DIRECTORY);
         if (sourceRoot == null) {
-            throw new ItemNotFoundException(sourcePath + " 盘不存在!");
+            throw new ItemNotFoundException(sourcePath.charAt(1) + " 盘不存在");
         }
         int sourceStartBlockNum = sourceRoot.getStartBlockNum();
 
@@ -363,11 +363,11 @@ public class FileService {
         Fat fat = disk.getFat();
         List<Integer> needDiskBlocks = disk.findFreeDiskBlockFromTail(needDiskNum, sourceStartBlockNum);
         if (needDiskBlocks.size() < needDiskNum && sourceRoot.getSize()!=needDiskNum) {
-            throw new DiskSpaceInsufficientException(sourceRoot + " 盘空间不足!");
+            throw new DiskSpaceInsufficientException(sourceRoot.getPath().charAt(1) + " 盘空间不足");
         }
         if(sourceRoot.getSize()==needDiskNum){
             if(!sourceRoot.getChildren().isEmpty()){
-                throw new DiskSpaceInsufficientException(sourceRoot + " 盘空间不足!");
+                throw new DiskSpaceInsufficientException(sourceRoot.getPath().charAt(1) + " 盘空间不足");
             }
 
             needDiskBlocks.add(0,sourceRoot.getStartBlockNum());
@@ -409,7 +409,7 @@ public class FileService {
                     needDiskNum);
             if (!disk.getPartitionDirectory().addChildren(targetRoot)) {
                 targetRoot.setParent(null);
-                throw new MaxCapacityExceededException("已达到最大分区，最多创建 8 个分区！");
+                throw new MaxCapacityExceededException("已达到最大分区，最多创建 8 个分区");
             }
             targetRoot.setRoot(true);
         }
@@ -440,12 +440,12 @@ public class FileService {
         // 1.验证路径格式：必须以斜杠开头，单个大小写字母，冒号结尾
         String regex = "/[a-zA-Z]:";
         if (!targetPath.matches(regex)) {
-            throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'!");
+            throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'");
         }
         // 2.查找目标根目录
         Directory targetRoot = (Directory) find(targetPath, DIRECTORY);
         if (targetRoot == null) {
-            throw new ItemNotFoundException(targetPath + " 盘不存在!");
+            throw new ItemNotFoundException(targetPath.charAt(1) + " 盘不存在");
         }
         // 3.格式化目标根目录
         for(Item item:targetRoot.getChildren()){
@@ -460,14 +460,10 @@ public class FileService {
     /**
      * 从指定的文件项中读取指令到内存中。
      *
-     * @param file 要读取的文件项。如果文件项为null，则抛出ItemNotFoundException异常。
+     * @param file 要读取的文件项。
      * @return 返回一个字节数组，包含从文件中读取的指令。如果文件项不是Exe类型，则返回null。
-     * @throws ItemNotFoundException 如果指定的文件项为null，则抛出此异常。
      */
-    public byte[] readFile(Item file) throws ItemNotFoundException {
-        if (file == null) {
-            throw new ItemNotFoundException("没有该文件");
-        }
+    public byte[] readFile(Item file) {
         if (file instanceof Exe exe) {
             List<Byte> instructions = exe.getInstructions();
             byte[] instructionsArray = new byte[instructions.size()];
@@ -483,7 +479,7 @@ public class FileService {
             DiskSpaceInsufficientException, ReadOnlyFileModifiedException {
 
         if(item.isReadOnly()){
-            throw new ReadOnlyFileModifiedException("不允许修改只读文件!");
+            throw new ReadOnlyFileModifiedException("不允许修改只读文件");
         }
 
         //获取需要写入的字符串长度，计算需要多少个磁盘块
@@ -496,7 +492,7 @@ public class FileService {
 
         //如果磁盘块不足，则无法写入文件
         if (num < needDiskNum) {
-            throw new DiskSpaceInsufficientException("磁盘空间不足！");
+            throw new DiskSpaceInsufficientException(item.getPath().charAt(1)+" 盘空间不足");
         }
 
         updateItemSize(item);
@@ -506,11 +502,11 @@ public class FileService {
     public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
         Item item = findItem(path);
         if (newName.isEmpty() || newName.length() > 3) {
-            throw new IllegalOperationException(newName);
+            throw new IllegalOperationException("文件名称长度应在1~3之间");
         }
 
         if(item.isOpened()){
-            throw new ConcurrentAccessException("无法重命名正在打开的文件!");
+            throw new ConcurrentAccessException("不允许操作正在打开的文件");
         }
 
         Directory parent = (Directory) item.getParent();
@@ -520,7 +516,7 @@ public class FileService {
                 continue;
             }
             if (child.getName().equals(newName) && child.getType() == curType) {
-                throw new ItemAlreadyExistsException(child.getFullName());
+                throw new ItemAlreadyExistsException(child.getFullName() +" 已存在");
             }
         }
 
@@ -534,15 +530,15 @@ public class FileService {
     public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
         Item item = findItem(path);
         if(item.isOpened()){
-            throw new ConcurrentAccessException("无允许为正在打开的文件设置属性!");
+            throw new ConcurrentAccessException("不允许操作正在打开的文件");
         }
         if(item instanceof Directory){
             if(regularFile){
-                throw new IllegalOperationException("目录不能是文件!");
+                throw new IllegalOperationException("目录不能是文件");
             }
         }else{
             if(isDirectory){
-                throw new IllegalOperationException("文件不能是目录!");
+                throw new IllegalOperationException("文件不能是目录");
             }
         }
         item.setAttribute(readOnly, systemFile, regularFile, isDirectory);
@@ -637,7 +633,7 @@ public class FileService {
     public void isItemAlreadyExists(String path, FILE_TYPE type) throws ItemAlreadyExistsException {
         Item item = find(path, type);
         if (item != null) {
-            throw new ItemAlreadyExistsException(item.getFullName() +" 已存在！");
+            throw new ItemAlreadyExistsException(item.getFullName() +" 已存在");
         }
     }
 }

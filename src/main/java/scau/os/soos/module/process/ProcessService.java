@@ -74,12 +74,10 @@ public class ProcessService {
 
         // 5.将文件装入内存用户区
         // 获取文件数据
-        byte[] instructions = new byte[0];
-        try {
-            instructions = FileController.getInstance().readFile(file);
-        } catch (ItemNotFoundException e) {
-            System.out.println("文件未找到");
-        }
+        byte[] instructions;
+
+        instructions = FileController.getInstance().readFile(file);
+
         int address = newPCB.getPC();
         // 写入内存用户区
         for (byte instruction : instructions) {
