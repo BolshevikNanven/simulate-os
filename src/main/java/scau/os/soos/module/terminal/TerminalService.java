@@ -308,7 +308,8 @@ public class TerminalService {
                     移动文件：move <src> <dec>
                     修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>
                     格式化磁盘：format <path>
-                    磁盘分区：fdisk <src> <dec> <size>""");
+                    磁盘分区：fdisk <src> <dec> <size>
+                    单指令查询：help <operation>""");
         }
         return switch (arg) {
             case "create" -> "创建文件：create <path>";
@@ -320,8 +321,7 @@ public class TerminalService {
             case "chdir" -> "切换目录：chdir <path>";
             case "deldir" -> "删除目录：deldir <path>";
             case "move" -> "移动文件：move <src> <dec>";
-            case "change" ->
-                    "修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>";
+            case "change" -> "修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>";
             case "format" -> "格式化磁盘：format <path>";
             case "fdisk" -> "磁盘分区：fdisk <src> <dec> <size>";
             default -> "未知命令：" + arg;
