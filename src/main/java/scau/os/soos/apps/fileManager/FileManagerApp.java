@@ -20,6 +20,8 @@ import scau.os.soos.apps.fileManager.controller.DirectoryTreeController;
 import scau.os.soos.apps.fileManager.controller.ToolBarController;
 import scau.os.soos.apps.fileManager.model.ThumbnailBox;
 import scau.os.soos.common.Clipboard;
+import scau.os.soos.common.exception.IllegalOperationException;
+import scau.os.soos.common.exception.ItemNotFoundException;
 import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.Notifier;
 import scau.os.soos.module.file.model.Directory;
@@ -31,6 +33,7 @@ import scau.os.soos.ui.components.base.Window;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class FileManagerApp extends Window  implements Notifier {
@@ -54,6 +57,7 @@ public class FileManagerApp extends Window  implements Notifier {
     private List<ThumbnailBox> selectedList;
     private IntegerProperty selectedCount;
     private DoubleProperty selectedSize;
+
 
     public FileManagerApp() {
         super("文件管理器", "main.fxml", 900, 600);

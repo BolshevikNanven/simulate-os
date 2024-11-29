@@ -19,6 +19,7 @@ import scau.os.soos.module.terminal.TerminalController;
 
 
 import java.io.IOException;
+import java.util.Random;
 
 public class MainApplication extends Application {
     @Override
@@ -72,6 +73,15 @@ public class MainApplication extends Application {
                 }
                 System.out.println("clock:" + OS.clock.get());
                 OS.clock.inc();
+
+
+                // 有异常是因为有些组件未初始化完成，可忽略
+                if(new Random().nextInt(10) < 2){
+                    try{
+                        OS.simulateSchedule();
+                    }catch (Exception ignored){
+                    }
+                }
             }
         });
     }

@@ -131,9 +131,9 @@ public class EditorApp extends Window {
                     break;
 
                 case "!":
-                    if (operands.matches("\\d[A-Za-z]")) { // 数字后跟设备类型 A/B/C
-                        int time = Integer.parseInt(operands.substring(0, 1)); // 提取使用时间（这里假设是单个数字，即0-9）
-                        char deviceType = operands.charAt(1); // 提取设备类型
+                    if (operands.matches("[A-Za-z]\\d")) { // 数字后跟设备类型 A/B/C
+                        int time = Integer.parseInt(operands.substring(1, 2)); // 提取使用时间（这里假设是单个数字，即0-9）
+                        char deviceType = operands.charAt(0); // 提取设备类型
 
                         // 设备类型映射为二进制（这里简单映射为 00, 01, 10）
                         int deviceTypeBinary = (deviceType == 'A') ? 0b00 : (deviceType == 'B') ? 0b01 : (deviceType == 'C') ? 0b10 : -1;
@@ -196,7 +196,7 @@ public class EditorApp extends Window {
                         case 2 -> 'C';
                         default -> ' ';
                     };
-                    content.append("!").append(time).append(deviceType).append("\n");
+                    content.append("!").append(deviceType).append(time).append("\n");
                 }
                 case 0b0101 -> content.append("end").append("\n");
             }
