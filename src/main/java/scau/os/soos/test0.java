@@ -3,6 +3,8 @@ package scau.os.soos;
 public class test0 {
     public static void main(String[] args) {
         String str = p();
+        String[] parts = str.split(" ",3);
+        System.out.println(parts[2]);
         boolean isTrue = Boolean.parseBoolean(str);
         boolean isBoolean = str.matches("^(true|false)$");
         int size = Integer.parseInt("12");
@@ -12,6 +14,6 @@ public class test0 {
     }
 
     public static String p() {
-        return "true";
+        return "true flase";
     }
 }
