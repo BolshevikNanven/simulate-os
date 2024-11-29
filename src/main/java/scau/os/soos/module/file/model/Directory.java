@@ -24,14 +24,7 @@ public class Directory extends Item {
     }
 
     public int getSize(){
-        int size = super.getSize();
-        if(isRoot){
-            size = 0;
-            for(Item child:children){
-                size += child.getSize();
-            }
-        }
-        return size;
+        return super.getSize();
     }
 
     public int getTotalPartitionSize(){
