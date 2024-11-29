@@ -35,6 +35,7 @@ public class TerminalService {
         commandMap.put("change", this::changeFileAttribute);
         commandMap.put("format", this::formatDisk);
         commandMap.put("fdisk", this::partitionDisk);
+        commandMap.put("help", this::help);
     }
 
     public String executeCommand(String command) {
@@ -113,9 +114,9 @@ public class TerminalService {
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         } catch (SystemFileDeleteException e) {
-            throw new RuntimeException(e);
+            return "系统文件不能删除";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -147,9 +148,9 @@ public class TerminalService {
         }catch (IllegalOperationException e){
             return "非法目标路径";
         } catch (ReadOnlyFileModifiedException e) {
-            throw new RuntimeException(e);
+            return "只读文件不能修改";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -179,9 +180,9 @@ public class TerminalService {
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         } catch (SystemFileDeleteException e) {
-            throw new RuntimeException(e);
+            return "系统文件不能删除";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -196,9 +197,9 @@ public class TerminalService {
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         } catch (SystemFileDeleteException e) {
-            throw new RuntimeException(e);
+            return "系统文件不能删除";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -218,25 +219,114 @@ public class TerminalService {
         }catch (IllegalOperationException e){
             return "非法目标路径";
         } catch (ReadOnlyFileModifiedException e) {
-            throw new RuntimeException(e);
+            return "只读文件不能修改";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
     private String changeFileAttribute(String arg) {
         // 改变文件属性
-        return "暂不支持该命令";
+        String[] parts = arg.split(" ", 5);
+        String path = currentDirectory + "/" + parts[0];
+        boolean readOnly, systemFile, regularFile, isDirectory;
+        for(int i = 1; i <=4; ++i)
+        {
+            if(!parts[i].matches("^(true|false)$"))
+                return "输入格式错误";
+        }
+        // 判断输入是否合法
+        readOnly = Boolean.parseBoolean(parts[1]);
+        systemFile = Boolean.parseBoolean(parts[2]);
+        regularFile = Boolean.parseBoolean(parts[3]);
+        isDirectory = Boolean.parseBoolean(parts[4]);
+        try {
+            FileController.getInstance().reAttribute(path, readOnly, systemFile, regularFile, isDirectory);
+            return "修改成功";
+        } catch (IllegalOperationException e) {
+            return "非法操作";
+        } catch (ItemNotFoundException e) {
+            return "该文件不存在";
+        } catch (ConcurrentAccessException e) {
+            return "文件正在被使用";
+        }
+
     }
 
     private String formatDisk(String arg) {
         // 磁盘格式化
-        return "暂不支持该命令";
+        String[] parts = arg.split(" ", 2);
+        String path = currentDirectory + "/" + parts[0];
+        try {
+            FileController.getInstance().formatDisk(path);
+            return "格式化成功";
+        } catch (IllegalOperationException e) {
+            return "非法操作";
+        } catch (ItemNotFoundException e) {
+            return "该文件不存在";
+        }
     }
 
     private String partitionDisk(String arg) {
         // 磁盘分区
-        return "暂不支持该命令";
+        String[] parts = arg.split(" ", 3);
+        String src = parts[0];
+        String dec = parts[1];
+        int size;
+        try {
+            size = Integer.parseInt(parts[2]);
+        } catch (NumberFormatException e) {
+            return "输入格式错误";
+        }
+
+        try{
+            FileController.getInstance().partitionDisk(src, dec, size);
+            return "分区成功";
+        }catch (IllegalOperationException e){
+            return "非法操作";
+        }catch (DiskSpaceInsufficientException e){
+            return "磁盘空间不足";
+        }catch (MaxCapacityExceededException e){
+            return "磁盘容量已满";
+        }catch (ItemNotFoundException e){
+            return "源磁盘不存在";
+        }
+
+    }
+
+    private String help(String arg){
+        if(arg.isEmpty()) {
+            return("""
+                    创建文件：create <path>
+                    删除文件：delete <path>
+                    显示文件内容：type <path>
+                    拷贝文件：copy <src> <dec>
+                    创建目录：mkdir <path>
+                    删除空目录：rmdir <path>
+                    切换目录：chdir <path>
+                    删除目录：deldir <path>
+                    移动文件：move <src> <dec>
+                    修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>
+                    格式化磁盘：format <path>
+                    磁盘分区：fdisk <src> <dec> <size>
+                    单指令查询：help <operation>""");
+        }
+        return switch (arg) {
+            case "create" -> "创建文件：create <path>";
+            case "delete" -> "删除文件：delete <path>";
+            case "type" -> "显示文件内容：type <path>";
+            case "copy" -> "拷贝文件：copy <src> <dec>";
+            case "mkdir" -> "创建目录：mkdir <path>";
+            case "rmdir" -> "删除空目录：rmdir <path>";
+            case "chdir" -> "切换目录：chdir <path>";
+            case "deldir" -> "删除目录：deldir <path>";
+            case "move" -> "移动文件：move <src> <dec>";
+            case "change" -> "修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>";
+            case "format" -> "格式化磁盘：format <path>";
+            case "fdisk" -> "磁盘分区：fdisk <src> <dec> <size>";
+            case "help" -> "单指令查询：help <operation>";
+            default -> "未知命令：" + arg;
+        };
     }
 
 
