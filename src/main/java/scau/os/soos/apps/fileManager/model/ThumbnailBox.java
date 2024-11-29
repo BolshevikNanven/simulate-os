@@ -32,6 +32,8 @@ public class ThumbnailBox extends VBox {
     private static final String TXT_IMAGE_PATH = String.valueOf(FileManagerApp.class.getResource("image/thumbnailBox/txt.png"));
     private static final String DIRECTORY_IMAGE_PATH = String.valueOf(FileManagerApp.class.getResource("image/thumbnailBox/directory.png"));
     private static final String EMPTY_DIRECTORY_IMAGE_PATH = String.valueOf(FileManagerApp.class.getResource("image/thumbnailBox/empty_directory.png"));
+    private static final String MAIN_DISK_PATH = String.valueOf(FileManagerApp.class.getResource("image/thumbnailBox/main_disk.png"));
+    private static final String DISK_PATH = String.valueOf(FileManagerApp.class.getResource("image/thumbnailBox/disk.png"));
 
     private final Item item;
     private TextField textField;
@@ -94,6 +96,11 @@ public class ThumbnailBox extends VBox {
         } else if (item instanceof Exe) {
             return EXE_IMAGE_PATH;
         } else if (item instanceof Directory) {
+            if(((Directory) item).isRoot()){
+                if(item.getName().equals("C:"))
+                    return MAIN_DISK_PATH;
+                return DISK_PATH;
+            }
             return item.getSize() > 0 ? DIRECTORY_IMAGE_PATH : EMPTY_DIRECTORY_IMAGE_PATH;
         } else {
             return null;

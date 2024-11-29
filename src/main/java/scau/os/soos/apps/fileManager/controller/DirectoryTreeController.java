@@ -248,11 +248,16 @@ public class DirectoryTreeController implements Initializable, Notifier {
                         }
                         // 设置图片和文本
                         label.setText(item.getName());
+                        URL resource;
                         if (item == directoryTree.getRoot().getValue()) {
                             label.setText("此电脑");
+                            resource= FileManagerApp.class.getResource("image/directoryTree/computer.png");
+                        }else if(item.getParent()==directoryTree.getRoot().getValue()){
+                            resource= FileManagerApp.class.getResource("image/directoryTree/hard-drive.png");
+                        }else{
+                            resource = FileManagerApp.class.getResource("image/directoryTree/" +
+                                    (getTreeItem().isExpanded() ? "open-folder.png" : "close-folder.png"));
                         }
-                        URL resource = FileManagerApp.class.getResource("image/directoryTree/" +
-                                (getTreeItem().isExpanded() ? "open-folder.png" : "close-folder.png"));
                         if (resource != null) {
                             imageView.setImage(new Image(resource.toExternalForm()));
                         }
