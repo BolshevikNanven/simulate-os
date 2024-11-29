@@ -35,6 +35,7 @@ public class TerminalService {
         commandMap.put("change", this::changeFileAttribute);
         commandMap.put("format", this::formatDisk);
         commandMap.put("fdisk", this::partitionDisk);
+        commandMap.put("help", this::help);
     }
 
     public String executeCommand(String command) {
@@ -291,6 +292,41 @@ public class TerminalService {
             return "源磁盘不存在";
         }
 
+    }
+
+    private String help(String arg){
+        if(arg.isEmpty()) {
+            return("""
+                    命令列表:
+                    创建文件：create <path>
+                    删除文件：delete <path>
+                    显示文件内容：type <path>
+                    拷贝文件：copy <src> <dec>
+                    创建目录：mkdir <path>
+                    删除空目录：rmdir <path>
+                    切换目录：chdir <path>
+                    删除目录：deldir <path>
+                    移动文件：move <src> <dec>
+                    修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>
+                    格式化磁盘：format <path>
+                    磁盘分区：partition <src> <dec> <size>""");
+        }
+        return switch (arg) {
+            case "create" -> "创建文件：create <path>";
+            case "delete" -> "删除文件：delete <path>";
+            case "type" -> "显示文件内容：type <path>";
+            case "copy" -> "拷贝文件：copy <src> <dec>";
+            case "mkdir" -> "创建目录：mkdir <path>";
+            case "rmdir" -> "删除空目录：rmdir <path>";
+            case "chdir" -> "切换目录：chdir <path>";
+            case "deldir" -> "删除目录：deldir <path>";
+            case "move" -> "移动文件：move <src> <dec>";
+            case "change" ->
+                    "修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>";
+            case "format" -> "格式化磁盘：format <path>";
+            case "partition" -> "磁盘分区：partition <src> <dec> <size>";
+            default -> "未知命令：" + arg;
+        };
     }
 
 
