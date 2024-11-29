@@ -323,7 +323,7 @@ public class TerminalService {
             case "change" ->
                     "修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>";
             case "format" -> "格式化磁盘：format <path>";
-            case "fdisk" -> "磁盘分区：partition <src> <dec> <size>";
+            case "fdisk" -> "磁盘分区：fdisk <src> <dec> <size>";
             default -> "未知命令：" + arg;
         };
     }
