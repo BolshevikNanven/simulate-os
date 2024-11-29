@@ -113,9 +113,9 @@ public class TerminalService {
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         } catch (SystemFileDeleteException e) {
-            throw new RuntimeException(e);
+            return "系统文件不能删除";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -147,9 +147,9 @@ public class TerminalService {
         }catch (IllegalOperationException e){
             return "非法目标路径";
         } catch (ReadOnlyFileModifiedException e) {
-            throw new RuntimeException(e);
+            return "只读文件不能修改";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -179,9 +179,9 @@ public class TerminalService {
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         } catch (SystemFileDeleteException e) {
-            throw new RuntimeException(e);
+            return "系统文件不能删除";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -196,9 +196,9 @@ public class TerminalService {
         } catch (IllegalOperationException e) {
             return "非法路径";           // ?????
         } catch (SystemFileDeleteException e) {
-            throw new RuntimeException(e);
+            return "系统文件不能删除";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
@@ -218,15 +218,38 @@ public class TerminalService {
         }catch (IllegalOperationException e){
             return "非法目标路径";
         } catch (ReadOnlyFileModifiedException e) {
-            throw new RuntimeException(e);
+            return "只读文件不能修改";
         } catch (ConcurrentAccessException e) {
-            throw new RuntimeException(e);
+            return "文件正在被使用";
         }
     }
 
     private String changeFileAttribute(String arg) {
         // 改变文件属性
-        return "暂不支持该命令";
+        String[] parts = arg.split(" ", 5);
+        String path = currentDirectory + "/" + parts[0];
+        boolean readOnly, systemFile, regularFile, isDirectory;
+        for(int i = 1; i <=4; ++i)
+        {
+            if(!parts[i].matches("^(true|false)$"))
+                return "输入格式错误";
+        }
+        // 判断输入是否合法
+        readOnly = Boolean.parseBoolean(parts[1]);
+        systemFile = Boolean.parseBoolean(parts[2]);
+        regularFile = Boolean.parseBoolean(parts[3]);
+        isDirectory = Boolean.parseBoolean(parts[4]);
+        try {
+            FileController.getInstance().reAttribute(path, readOnly, systemFile, regularFile, isDirectory);
+            return "修改成功";
+        } catch (IllegalOperationException e) {
+            return "非法操作";
+        } catch (ItemNotFoundException e) {
+            return "该文件不存在";
+        } catch (ConcurrentAccessException e) {
+            return "文件正在被使用";
+        }
+
     }
 
     private String formatDisk(String arg) {
@@ -236,7 +259,29 @@ public class TerminalService {
 
     private String partitionDisk(String arg) {
         // 磁盘分区
-        return "暂不支持该命令";
+        String[] parts = arg.split(" ", 3);
+        String src = parts[0];
+        String dec = parts[1];
+        int size;
+        try {
+            size = Integer.parseInt(parts[2]);
+        } catch (NumberFormatException e) {
+            return "输入格式错误";
+        }
+
+        try{
+            FileController.getInstance().partitionDisk(src, dec, size);
+            return "分区成功";
+        }catch (IllegalOperationException e){
+            return "非法操作";
+        }catch (DiskSpaceInsufficientException e){
+            return "磁盘空间不足";
+        }catch (MaxCapacityExceededException e){
+            return "磁盘容量已满";
+        }catch (ItemNotFoundException e){
+            return "源磁盘不存在";
+        }
+
     }
 
 
