@@ -28,6 +28,7 @@ public class TerminalApp extends Window {
 
     @Override
     protected void initialize() {
+        textArea.appendText("Enter \"help\" to query the list of commands..." + "\n");
         //获取根目录
         String directory = TerminalController.getInstance().getCurrentDirectory();
         textArea.appendText(directory + prompt);
