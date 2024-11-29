@@ -207,6 +207,8 @@ public class FileService {
         FileController.getInstance().notify(item);
 
         deleteItem(item);
+        // 通知文件系统
+        FileController.getInstance().notify(item);
 
         // 更新父目录的大小
         updateItemSize(parent);
@@ -367,8 +369,8 @@ public class FileService {
             if(!sourceRoot.getChildren().isEmpty()){
                 throw new DiskSpaceInsufficientException(sourceRoot + " 盘空间不足!");
             }
-            // TODO: 2024/11/22  记得改回
-            //needDiskBlocks.addFirst(sourceRoot.getStartBlockNum());
+
+            needDiskBlocks.add(0,sourceRoot.getStartBlockNum());
         }
 
         // 4.查找或创建目标根目录
@@ -413,8 +415,10 @@ public class FileService {
         }
         if(sourceRoot.getSize()==needDiskNum){
             disk.getPartitionDirectory().removeChild(sourceRoot);
+            delete(sourceRoot);
         }
         sourceRoot.setSize(sourceRoot.getSize() - needDiskNum);
+
         updateItemSize(sourceRoot);
         updateItemSize(targetRoot);
 
@@ -426,6 +430,7 @@ public class FileService {
         fat.writeFatToDisk();
 
         writeItemAndParentsToDisk(targetRoot);
+
 
         // 通知文件系统
         FileController.getInstance().notify(targetRoot);

@@ -139,34 +139,32 @@ public class DirectoryTreeController implements Initializable, Notifier {
 
         // 将当前项转换为Directory类型
         Directory dir = (Directory) curItem;
-        // 获取当前目录下的所有子项（从文件系统中）
+        // 获取当前目录下的所有子项
         List<Item> childItemsFromFileSystem = dir.getChildren();
 
         // 获取当前目录项的所有子节点（从TreeView中）
         ObservableList<TreeItem<Item>> currentChildren = directoryItem.getChildren();
-        Set<Item> itemsToRemove = new HashSet<>();
 
-        // 找出需要移除的项
-        Item root = directoryTree.getRoot().getValue();
-        for (Item item : itemMap.keySet()) {
-            if (item.getParent() != null || item == root) {
-                continue;
-            }
-            // 由于我们稍后将从itemMap中移除这个项，我们需要先获取对应的TreeItem
-            TreeItem<Item> treeItem = itemMap.get(item);
-            // 检查这个TreeItem是否确实在当前目录项的子节点列表中
-            if (currentChildren.contains(treeItem)) {
-                itemsToRemove.add(item);
+        // 用于存储需要移除的TreeItem
+        List<TreeItem<Item>> itemsToRemove = new ArrayList<>();
+
+        // 遍历TreeView中的当前子项
+        for (TreeItem<Item> treeItem : currentChildren) {
+            Item item = treeItem.getValue();
+            // 检查该项是否仍然存在于文件系统中
+            if (!childItemsFromFileSystem.contains(item)) {
+                // 如果不存在，则标记为需要移除
+                itemsToRemove.add(treeItem);
             }
         }
 
-        // 移除需要移除的项
-        for (Item item : itemsToRemove) {
-            currentChildren.remove(itemMap.get(item));
-            itemMap.remove(item);
+        // 移除TreeView和映射中不再需要的项
+        for (TreeItem<Item> treeItem : itemsToRemove) {
+            currentChildren.remove(treeItem);
+            itemMap.remove(treeItem.getValue());
         }
 
-        // 遍历所有子项
+        // 遍历文件系统中的所有子项
         for (Item childItem : childItemsFromFileSystem) {
             // 跳过已经存在的项或非目录项
             if (itemMap.containsKey(childItem) || !childItem.isDirectory()) {
@@ -176,7 +174,7 @@ public class DirectoryTreeController implements Initializable, Notifier {
             // 为每个子项创建一个新的TreeItem
             TreeItem<Item> childTreeItem = new TreeItem<>(childItem);
             // 将子项添加到当前项的子节点列表中
-            directoryItem.getChildren().add(childTreeItem);
+            currentChildren.add(childTreeItem);
             // 将项与树形视图节点关联起来，存入映射中
             itemMap.put(childItem, childTreeItem);
         }

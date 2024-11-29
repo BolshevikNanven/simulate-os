@@ -59,7 +59,6 @@ public class EditorApp extends Window {
     private void save(Item item){
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
-            String content = txtItem.getContext();
             txtItem.setContext(display.getText());
             try {
                 FileController.getInstance().writeFile(txtItem);
@@ -73,13 +72,10 @@ public class EditorApp extends Window {
                         true, false,
                         null, null,
                         null).show();
-            }finally {
-                txtItem.setContext(content);
             }
         }
         else if (item instanceof Exe) {
             Exe exeItem = (Exe) item;
-            List<Byte> instructions = exeItem.getInstructions();
             List<Byte> byteList = parseInstructions(display.getText());
             if(!permitSave){
                 return;
@@ -97,8 +93,6 @@ public class EditorApp extends Window {
                         true, false,
                         null, null,
                         null).show();
-            }finally {
-                exeItem.setInstructions(instructions);
             }
         }
     }
