@@ -80,7 +80,7 @@ public class TerminalService {
 
 
     private String changeDirectory(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             if(FileController.getInstance().isExistedDirectory(arg)){
                 currentDirectory = arg;
@@ -92,7 +92,7 @@ public class TerminalService {
     }
 
     private String createFile(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         String path = currentDirectory + "/" + arg;
         try {
             FileController.getInstance().createFile(path);
@@ -107,7 +107,7 @@ public class TerminalService {
     }
 
     private String deleteFile(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().deleteFile(path);
@@ -124,7 +124,7 @@ public class TerminalService {
     }
 
     private String typeFile(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             String path = currentDirectory + "/" + arg;
             return FileController.getInstance().typeFile(path);
@@ -136,7 +136,7 @@ public class TerminalService {
     }
 
     private String copyFile(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+\\s+[^\\s]+$"))return "指令格式错误";
         // 分离源文件和目标文件
         String[] parts = arg.split(" ", 2);
         String src = currentDirectory + "/" + parts[0];
@@ -160,7 +160,7 @@ public class TerminalService {
     }
 
     private String makeDirectory(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().createDirectory(path);
@@ -175,7 +175,7 @@ public class TerminalService {
     }
 
     private String removeDirectory(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().deleteEmptyDirectory(path);
@@ -195,7 +195,7 @@ public class TerminalService {
 
 
     private String deleteDirectory(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().deleteFile(path);
@@ -212,7 +212,7 @@ public class TerminalService {
     }
 
     private String moveFile(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+\\s+[^\\s]+$"))return "指令格式错误";
         String[] parts = arg.split(" ", 2);
         String src = currentDirectory + "/" + parts[0];
         String dest = parts[1];
@@ -235,7 +235,7 @@ public class TerminalService {
     }
 
     private String changeFileAttribute(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+\\s+[^\\s]+\\s+[^\\s]+\\s+[^\\s]+\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+\\s+[^\\s]+\\s+[^\\s]+\\s+[^\\s]+\\s+[^\\s]+$"))return "指令格式错误";
         // 改变文件属性
         String[] parts = arg.split(" ", 5);
         String path = currentDirectory + "/" + parts[0];
@@ -264,7 +264,7 @@ public class TerminalService {
     }
 
     private String formatDisk(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         // 磁盘格式化
         String[] parts = arg.split(" ", 2);
         String path = currentDirectory + "/" + parts[0];
@@ -279,17 +279,13 @@ public class TerminalService {
     }
 
     private String partitionDisk(String arg) {
-        if(!arg.matches("^\\s+[^\\s]+\\s+[^\\s]+\\s+\\d+$"))return "指令格式错误";
+        if(!arg.matches("^\\s*[^\\s]+\\s+[^\\s]+\\s+\\d+$"))return "指令格式错误";
         // 磁盘分区
         String[] parts = arg.split(" ", 3);
         String src = parts[0];
         String dec = parts[1];
-        int size;
-        try {
-            size = Integer.parseInt(parts[2]);
-        } catch (NumberFormatException e) {
-            return "指令格式错误";
-        }
+        int size = Integer.parseInt(parts[2]);
+
 
         try{
             FileController.getInstance().partitionDisk(src, dec, size);
