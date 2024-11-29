@@ -324,6 +324,7 @@ public class TerminalService {
             case "change" -> "修改文件属性：change <path> <readOnly:boolean> <systemFile:boolean> <regularFile:boolean> <isDirectory:boolean>";
             case "format" -> "格式化磁盘：format <path>";
             case "fdisk" -> "磁盘分区：fdisk <src> <dec> <size>";
+            case "help" -> "单指令查询：help <operation>";
             default -> "未知命令：" + arg;
         };
     }
