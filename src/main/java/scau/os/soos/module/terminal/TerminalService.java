@@ -297,7 +297,6 @@ public class TerminalService {
     private String help(String arg){
         if(arg.isEmpty()) {
             return("""
-                    命令列表:
                     创建文件：create <path>
                     删除文件：delete <path>
                     显示文件内容：type <path>
