@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scau.os.soos.apps.fileManager.FileManagerApp;
 import scau.os.soos.common.exception.ConcurrentAccessException;
+import scau.os.soos.module.file.Disk;
 import scau.os.soos.ui.components.Tooltip;
 import scau.os.soos.common.exception.IllegalOperationException;
 import scau.os.soos.common.exception.ItemAlreadyExistsException;
@@ -222,13 +223,16 @@ public class ThumbnailBox extends VBox {
             String type = getItemType(item);
             tipBuilder.append("类型\t\t：").append(type).append('\n');
             tipBuilder.append("起始盘块\t：").append(item.getStartBlockNum()).append('\n');
-            tipBuilder.append("占用\t\t：").append(item.getSize()).append(" Bytes").append('\n');
+
 
             if (item instanceof Directory) {
-                double block = ((Directory) item).getTotalPartitionSize();
+                tipBuilder.append("占用\t\t：").append(((Directory) item).getFormatSize()).append(" Bytes").append('\n');
+                double block = item.getSize();
                 if (block > 0) {
                     tipBuilder.append(formatBlockSize(block));
                 }
+            }else{
+                tipBuilder.append("占用\t\t：").append(item.getSize()).append(" Bytes").append('\n');
             }
 
             Tooltip.setTooltip(this, tipBuilder.toString());
@@ -247,6 +251,7 @@ public class ThumbnailBox extends VBox {
     }
 
     private String formatBlockSize(double block) {
+        block*= Disk.BYTES_PER_BLOCK;
         if (block > 1024) {
             return String.format("总大小\t：%.2f KB", block / 1024);
         }

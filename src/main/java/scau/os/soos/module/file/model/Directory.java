@@ -27,10 +27,15 @@ public class Directory extends Item {
         return super.getSize();
     }
 
-    public int getTotalPartitionSize(){
-        if(isRoot)
-            return super.getSize()*Disk.BYTES_PER_BLOCK;
-        return 0;
+    public int getFormatSize(){
+        if(isRoot){
+            int size = 0;
+            for(Item item : children){
+                size += item.getSize();
+            }
+            return size;
+        }
+        return getSize();
     }
 
     public void setRoot(boolean isRoot) {

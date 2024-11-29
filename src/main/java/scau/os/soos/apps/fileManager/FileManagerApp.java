@@ -119,7 +119,7 @@ public class FileManagerApp extends Window  implements Notifier {
 
     @Override
     protected void close() {
-        FileController.getInstance().save();
+
     }
 
 

@@ -16,7 +16,6 @@ import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.memory.MemoryController;
 import scau.os.soos.module.process.ProcessController;
 import scau.os.soos.module.terminal.TerminalController;
-import scau.os.soos.ui.components.Dialog;
 
 
 import java.io.IOException;
@@ -32,6 +31,8 @@ public class MainApplication extends Application {
         stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("F10"));
         stage.show();
         stage.setOnCloseRequest((e) -> {
+            // 保存磁盘数据
+            FileController.getInstance().save();
             OS.state = OS_STATES.STOPPED;
             ThreadsPool.stop();
         });
