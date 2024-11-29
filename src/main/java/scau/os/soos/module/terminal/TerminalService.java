@@ -254,7 +254,16 @@ public class TerminalService {
 
     private String formatDisk(String arg) {
         // 磁盘格式化
-        return "暂不支持该命令";
+        String[] parts = arg.split(" ", 2);
+        String path = currentDirectory + "/" + parts[0];
+        try {
+            FileController.getInstance().formatDisk(path);
+            return "格式化成功";
+        } catch (IllegalOperationException e) {
+            return "非法操作";
+        } catch (ItemNotFoundException e) {
+            return "该文件不存在";
+        }
     }
 
     private String partitionDisk(String arg) {
