@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Random;
 
 public class MainApplication extends Application {
+    Random random = new Random();
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main.fxml"));
@@ -76,7 +77,7 @@ public class MainApplication extends Application {
 
 
                 // 有异常是因为有些组件未初始化完成，可忽略
-                if(new Random().nextInt(10) < 2){
+                if(random.nextInt(7) == random.nextInt(7)){
                     try{
                         OS.simulateSchedule();
                     }catch (Exception ignored){
