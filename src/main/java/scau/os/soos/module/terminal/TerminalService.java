@@ -85,8 +85,8 @@ public class TerminalService {
             if(FileController.getInstance().isExistedDirectory(arg)){
                 currentDirectory = arg;
             }
-        } catch (ItemNotFoundException e) {
-            return "该目录不存在";
+        } catch (Exception e){
+            return e.getMessage();
         }
         return "";
     }
@@ -97,12 +97,8 @@ public class TerminalService {
         try {
             FileController.getInstance().createFile(path);
             return "创建成功";
-        }catch (ItemAlreadyExistsException e){
-            return "该文件已存在";
-        }catch (DiskSpaceInsufficientException e){
-            return "磁盘空间不足";
         }catch (Exception e){
-            return "未知错误";
+            return e.getMessage();
         }
     }
 
@@ -112,14 +108,8 @@ public class TerminalService {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().deleteFile(path);
             return "删除成功";
-        } catch (ItemNotFoundException e) {
-            return "该文件不存在";
-        } catch (IllegalOperationException e) {
-            return "非法路径";           // ?????
-        } catch (SystemFileDeleteException e) {
-            return "系统文件不能删除";
-        } catch (ConcurrentAccessException e) {
-            return "文件正在被使用";
+        } catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -128,10 +118,8 @@ public class TerminalService {
         try {
             String path = currentDirectory + "/" + arg;
             return FileController.getInstance().typeFile(path);
-        } catch (IllegalOperationException e) {
-            return "非法路径";
-        } catch (ItemNotFoundException e) {
-            return "该文件不存在";
+        } catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -144,18 +132,8 @@ public class TerminalService {
         try {
             FileController.getInstance().copyFile(src, dest);
             return "复制成功";
-        }catch (ItemNotFoundException e) {
-            return "源文件不存在";
-        }catch (ItemAlreadyExistsException e){
-            return "目标文件已存在";
-        }catch (DiskSpaceInsufficientException e){
-            return "磁盘空间不足";
-        }catch (IllegalOperationException e){
-            return "非法目标路径";
-        } catch (ReadOnlyFileModifiedException e) {
-            return "只读文件不能修改";
-        } catch (ConcurrentAccessException e) {
-            return "文件正在被使用";
+        }catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -165,12 +143,8 @@ public class TerminalService {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().createDirectory(path);
             return "创建成功";
-        } catch (ItemAlreadyExistsException e) {
-            return "该目录已存在";
-        }catch (DiskSpaceInsufficientException e){
-            return "磁盘空间不足";
-        }catch (Exception e){
-            return "未知错误";
+        } catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -180,16 +154,8 @@ public class TerminalService {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().deleteEmptyDirectory(path);
             return "删除成功";
-        } catch (ItemNotFoundException e) {
-            return "该目录不存在";
-        } catch (DirectoryNoEmptyException e) {
-            return "该目录不为空";
-        } catch (IllegalOperationException e) {
-            return "非法路径";           // ?????
-        } catch (SystemFileDeleteException e) {
-            return "系统文件不能删除";
-        } catch (ConcurrentAccessException e) {
-            return "文件正在被使用";
+        } catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -200,14 +166,8 @@ public class TerminalService {
             String path = currentDirectory + "/" + arg;
             FileController.getInstance().deleteFile(path);
             return "删除成功";
-        } catch (ItemNotFoundException e) {
-            return "该目录不存在";
-        } catch (IllegalOperationException e) {
-            return "非法路径";           // ?????
-        } catch (SystemFileDeleteException e) {
-            return "系统文件不能删除";
-        } catch (ConcurrentAccessException e) {
-            return "文件正在被使用";
+        } catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -219,18 +179,8 @@ public class TerminalService {
         try {
             FileController.getInstance().moveFile(src, dest);
             return "移动成功";
-        }catch (ItemNotFoundException e) {
-            return "源文件不存在";
-        }catch (ItemAlreadyExistsException e){
-            return "目标文件已存在";
-        }catch (DiskSpaceInsufficientException e){
-            return "磁盘空间不足";
-        }catch (IllegalOperationException e){
-            return "非法目标路径";
-        } catch (ReadOnlyFileModifiedException e) {
-            return "只读文件不能修改";
-        } catch (ConcurrentAccessException e) {
-            return "文件正在被使用";
+        }catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -253,12 +203,8 @@ public class TerminalService {
         try {
             FileController.getInstance().reAttribute(path, readOnly, systemFile, regularFile, isDirectory);
             return "修改成功";
-        } catch (IllegalOperationException e) {
-            return "非法操作";
-        } catch (ItemNotFoundException e) {
-            return "该文件不存在";
-        } catch (ConcurrentAccessException e) {
-            return "文件正在被使用";
+        } catch (Exception e){
+            return e.getMessage();
         }
 
     }
@@ -271,10 +217,8 @@ public class TerminalService {
         try {
             FileController.getInstance().formatDisk(path);
             return "格式化成功";
-        } catch (IllegalOperationException e) {
-            return "非法操作";
-        } catch (ItemNotFoundException e) {
-            return "该文件不存在";
+        } catch (Exception e){
+            return e.getMessage();
         }
     }
 
@@ -290,14 +234,8 @@ public class TerminalService {
         try{
             FileController.getInstance().partitionDisk(src, dec, size);
             return "分区成功";
-        }catch (IllegalOperationException e){
-            return "非法操作";
-        }catch (DiskSpaceInsufficientException e){
-            return "磁盘空间不足";
-        }catch (MaxCapacityExceededException e){
-            return "磁盘容量已满";
-        }catch (ItemNotFoundException e){
-            return "源磁盘不存在";
+        }catch (Exception e){
+            return e.getMessage();
         }
 
     }
