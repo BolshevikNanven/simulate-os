@@ -329,7 +329,7 @@ public class FileService {
         delete(find(sourcePath,check(sourcePath)));
     }
 
-    public int getDirectoryTotalDiskBlocks(Directory directory){
+    public static int getDirectoryTotalDiskBlocks(Directory directory){
         int totalDiskBlocks = 0;
         for (Item item : directory.getChildren()) {
             if (item.isDirectory()) {
