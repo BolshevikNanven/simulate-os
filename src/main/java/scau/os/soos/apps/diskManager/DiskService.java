@@ -15,6 +15,8 @@ import javafx.scene.paint.Color;
 
 import scau.os.soos.apps.diskManager.model.DiskBlock;
 import scau.os.soos.module.file.FileController;
+import scau.os.soos.module.file.FileService;
+import scau.os.soos.module.file.model.Directory;
 import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Item;
 
@@ -127,15 +129,20 @@ public class DiskService {
 
         // 初始化数据
         ObservableList<DiskBlock> diskBlocksData = FXCollections.observableArrayList();
+        List<Integer> rootBlockStartNum = new ArrayList<>();
+        for(Item item : rootDir){
+            rootBlockStartNum.add(item.getStartBlockNum());
+        }
         for (int i = 0; i < 256; i++) {
             DiskBlock diskBlock = null;
 
-            if (i < 4) {
+            if (i < 5) {
                 diskBlock = new DiskBlock(i, "系统占用",fatTable.getNextBlockIndex(i));
             } else {
-                for (Item item : rootDir) {
-                    diskBlock = new DiskBlock(i, fatTable.isFreeBlock(i, item.getStartBlockNum()) ? "空闲" : "占用",fatTable.getNextBlockIndex(i));
-                }
+                String statue = null;
+                if(rootBlockStartNum.contains(fatTable.getNextBlockIndex(i))) statue = "空闲";
+                else statue = "占用";
+                diskBlock = new DiskBlock(i, statue,fatTable.getNextBlockIndex(i));
             }
 
             diskBlocksData.add(diskBlock);
@@ -146,22 +153,20 @@ public class DiskService {
     }
 
     public void occupationGraphRender(StackPane occupationGraph) {
-        // 获取空闲和占用的块的数量
-        int totalBlocks = 256; // 假设总共有256个块
-        int freeBlocks = 0;
-        for (int i = 0; i < totalBlocks; i++) {
-            for (Item item : rootDir) {
-                if (fatTable.isFreeBlock(i,item.getStartBlockNum())) {
-                    freeBlocks++;
-                }
+
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        for(Item item : rootDir){
+            if(item.getStartBlockNum()<5) continue;
+            int occupyBlocks = FileService.getDirectoryTotalDiskBlocks((Directory) item);
+            int freeBlocks = item.getSize() - occupyBlocks;
+            // 只添加占用部分和空闲部分都不为零的情况
+            if (occupyBlocks > 0) {
+                pieChartData.add(new PieChart.Data(item.getName() + "占:" + occupyBlocks, occupyBlocks));
+            }
+            if (freeBlocks > 0) {
+                pieChartData.add(new PieChart.Data(item.getName() + "空:" + freeBlocks, freeBlocks));
             }
         }
-        int occupiedBlocks = totalBlocks - freeBlocks;
-
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("空闲:" + freeBlocks, freeBlocks),
-                new PieChart.Data("占用:" + occupiedBlocks, occupiedBlocks)
-        );
 
         // 创建饼图
         PieChart pieChart = new PieChart(pieChartData);
@@ -169,11 +174,7 @@ public class DiskService {
 
         // 启用动画
         pieChart.setAnimated(true);
-
-        // 设置图例
-        pieChart.setLegendVisible(true);
-
-        // 自定义样式
+        pieChart.setLegendVisible(false);
 
         // 清除之前的饼图（如果有）并添加新的饼图到StackPane
         occupationGraph.getChildren().clear();
