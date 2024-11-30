@@ -29,7 +29,7 @@ public class DiskService {
 
     private final List<Item> rootDir;
 
-    private final Map<Item, String> itemColorMap; // 存储每个Item的颜色
+    private Map<Item, String> itemColorMap; // 存储每个Item的颜色
 
     // 定义一个颜色列表，用于为Item分配颜色
     private static final List<String> COLORS = Arrays.asList(
@@ -49,31 +49,24 @@ public class DiskService {
 
         rootDir = new ArrayList<>();
         refreshRootDir();
-
-        itemColorMap = new HashMap<>();
-        assignColorsToItems();
     }
 
     public void refreshRootDir() {
         rootDir.clear();
         rootDir.add(FileController.getInstance().getPartitionDirectory());
         rootDir.addAll(FileController.getInstance().listRoot());
+        assignColorsToItems();
     }
 
     // 为每个Item分配颜色
     private void assignColorsToItems() {
-        Iterator<String> colorIterator = COLORS.iterator();
-        for (Item item : rootDir) {
-            if (colorIterator.hasNext()) {
-                String color = colorIterator.next();
-                itemColorMap.put(item, "-fx-background-color: " + color + ";-fx-border-style: solid; -fx-border-color: #212121; -fx-border-width: 1;");
-            } else {
-                // 如果没有足够的颜色，可以重复使用颜色或添加更多颜色到COLORS列表中
-                // 这里我们简单地重复使用颜色
-                colorIterator = COLORS.iterator(); // 重置迭代器
-                String color = colorIterator.next();
-                itemColorMap.put(item, "-fx-background-color: " + color + ";-fx-border-style: solid; -fx-border-color: #212121; -fx-border-width: 1;");
-            }
+        itemColorMap = new HashMap<>();
+        int colorCount = COLORS.size();
+        for (int i = 0; i < rootDir.size(); i++) {
+            Item item = rootDir.get(i);
+            String color = COLORS.get(i % colorCount);
+            String style = "-fx-background-color: " + color + ";-fx-border-style: solid; -fx-border-color: #212121; -fx-border-width: 1;";
+            itemColorMap.put(item, style);
         }
     }
 
