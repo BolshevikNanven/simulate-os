@@ -18,8 +18,7 @@ import scau.os.soos.module.file.FileController;
 import scau.os.soos.module.file.model.Fat;
 import scau.os.soos.module.file.model.Item;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class DiskService {
@@ -28,11 +27,29 @@ public class DiskService {
 
     private final List<Item> rootDir;
 
+    private final Map<Item, String> itemColorMap; // 存储每个Item的颜色
+
+    // 定义一个颜色列表，用于为Item分配颜色
+    private static final List<String> COLORS = Arrays.asList(
+            "#f0f8ff", // AliceBlue
+            "#ffebcd", // PaleGoldenRod
+            "#afffff", // PaleTurquoise
+            "#98fb98", // PaleGreen
+            "#db7093", // PaleVioletRed
+            "#ffe4e1", // MistyRose
+            "#fadead", // LightSalmon
+            "#add8e6"  // LightBlue
+            // 可以添加更多颜色...
+    );
+
     public DiskService() {
         fatTable = FileController.getInstance().getFat();
 
         rootDir = new ArrayList<>();
         refreshRootDir();
+
+        itemColorMap = new HashMap<>();
+        assignColorsToItems();
     }
 
     public void refreshRootDir() {
@@ -40,6 +57,24 @@ public class DiskService {
         rootDir.add(FileController.getInstance().getPartitionDirectory());
         rootDir.addAll(FileController.getInstance().listRoot());
     }
+
+    // 为每个Item分配颜色
+    private void assignColorsToItems() {
+        Iterator<String> colorIterator = COLORS.iterator();
+        for (Item item : rootDir) {
+            if (colorIterator.hasNext()) {
+                String color = colorIterator.next();
+                itemColorMap.put(item, "-fx-background-color: " + color + ";-fx-border-style: solid; -fx-border-color: #212121; -fx-border-width: 1;");
+            } else {
+                // 如果没有足够的颜色，可以重复使用颜色或添加更多颜色到COLORS列表中
+                // 这里我们简单地重复使用颜色
+                colorIterator = COLORS.iterator(); // 重置迭代器
+                String color = colorIterator.next();
+                itemColorMap.put(item, "-fx-background-color: " + color + ";-fx-border-style: solid; -fx-border-color: #212121; -fx-border-width: 1;");
+            }
+        }
+    }
+
 
     public void diskRender(GridPane diskBlocks) {
         diskBlocks.setHgap(5);
@@ -50,21 +85,16 @@ public class DiskService {
             diskBlock.setPrefWidth(50);
             diskBlock.setPrefHeight(50);
             diskBlock.setAlignment(Pos.CENTER);
-            diskBlock.setTextFill(Color.WHITE);
-            diskBlock.setStyle("-fx-background-color: #008000; " +
-                    "-fx-border-style: solid; " +
-                    "-fx-border-color: #212121; " +
-                    "-fx-border-width: 1;");
+            diskBlock.setTextFill(Color.BLACK);
+            diskBlock.setStyle("-fx-background-color:#008000;-fx-border-style: solid; -fx-border-color: #212121; -fx-border-width: 1;");
 
             for (Item item : rootDir) {
                 if (fatTable.isFreeBlock(i, item.getStartBlockNum())) {
-                    diskBlock.setTextFill(Color.BLACK);
-                    diskBlock.setStyle("-fx-background-color: #f0f8ff; " +
-                            "-fx-border-style: solid; " +
-                            "-fx-border-color: #212121; " +
-                            "-fx-border-width: 1;");
+                    diskBlock.setStyle(itemColorMap.get(item));
+                    break;
                 }
             }
+
             diskBlocks.add(diskBlock, i % 16, i / 16);
         }
     }
