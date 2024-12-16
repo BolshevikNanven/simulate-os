@@ -82,8 +82,6 @@ public class TerminalApp extends Window {
             String feedback = TerminalController.getInstance().executeCommand(currentCommand); // 执行命令并获取反馈
             if(!feedback.isEmpty())
                 textArea.appendText(feedback + "\n");
-            else
-                textArea.appendText("exe:" + currentCommand + '\n'); //  ??
         }
         textArea.appendText(TerminalController.getInstance().getCurrentDirectory() + prompt);
     }

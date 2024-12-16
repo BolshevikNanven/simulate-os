@@ -211,11 +211,8 @@ public class TerminalService {
 
     private String formatDisk(String arg) {
         if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
-        // 磁盘格式化
-        String[] parts = arg.split(" ", 2);
-        String path = currentDirectory + "/" + parts[0];
         try {
-            FileController.getInstance().formatDisk(path);
+            FileController.getInstance().formatDisk(arg);
             return "格式化成功";
         } catch (Exception e){
             return e.getMessage();
@@ -229,8 +226,6 @@ public class TerminalService {
         String src = parts[0];
         String dec = parts[1];
         int size = Integer.parseInt(parts[2]);
-
-
         try{
             FileController.getInstance().partitionDisk(src, dec, size);
             return "分区成功";
