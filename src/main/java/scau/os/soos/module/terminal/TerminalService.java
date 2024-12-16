@@ -17,6 +17,7 @@ public class TerminalService {
 
     public TerminalService() {
         currentDirectory = FileController.getInstance().listRoot().get(0).getPath(); // 初始化操作目录为根目录
+        currentDirectory = currentDirectory.substring(0,currentDirectory.length()-1);
         commandMap = new HashMap<>();
         initCommandMap(); // 初始化指令集
         historyCommand = new ArrayList<>();
@@ -83,7 +84,7 @@ public class TerminalService {
         if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             if(FileController.getInstance().isExistedDirectory(arg)){
-                currentDirectory = arg;
+                currentDirectory = "/" + arg;
             }
         } catch (Exception e){
             return e.getMessage();
