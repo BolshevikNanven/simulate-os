@@ -164,7 +164,7 @@ public class TerminalService {
         if(!arg.matches("^\\s*[^\\s]+$"))return "指令格式错误";
         try {
             String path = currentDirectory + "/" + arg;
-            FileController.getInstance().deleteFile(path);
+            FileController.getInstance().deleteDirectory(path);
             return "删除成功";
         } catch (Exception e){
             return e.getMessage();
