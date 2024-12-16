@@ -32,12 +32,8 @@ public class MainApplication extends Application {
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("F10"));
         stage.show();
-        stage.setOnCloseRequest((e) -> {
-            // 保存磁盘数据
-            FileController.getInstance().save();
-            OS.state = OS_STATES.STOPPED;
-            ThreadsPool.stop();
-        });
+        stage.setOnCloseRequest((e) -> saveModule());
+        Runtime.getRuntime().addShutdownHook(new Thread(this::saveModule));
 
         GlobalUI.scene = scene;
         GlobalUI.stage = stage;
@@ -85,6 +81,13 @@ public class MainApplication extends Application {
                 }
             }
         });
+    }
+
+    public void saveModule(){
+        // 保存磁盘数据
+        FileController.getInstance().save();
+        OS.state = OS_STATES.STOPPED;
+        ThreadsPool.stop();
     }
 
     public static void main(String[] args) {
