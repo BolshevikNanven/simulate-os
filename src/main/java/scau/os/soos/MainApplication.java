@@ -73,7 +73,7 @@ public class MainApplication extends Application {
 
 
                 // 有异常是因为有些组件未初始化完成，可忽略
-                if(random.nextInt(7) == random.nextInt(7)){
+                if(random.nextInt(10) == random.nextInt(10)){
                     try{
                         OS.simulateSchedule();
                     }catch (Exception ignored){

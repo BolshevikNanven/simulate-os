@@ -177,6 +177,6 @@ public class FileController implements Module {
 
     public static void main(String[] args) {
         FileController.getInstance();
-        FileService.getDisk().test();
+//        FileService.getDisk().test();
     }
 }

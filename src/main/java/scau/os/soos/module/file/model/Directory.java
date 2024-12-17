@@ -10,6 +10,7 @@ public class Directory extends Item {
     public static final int BYTES_PER_ITEM = 8;
     private final List<Item> children;
     private boolean isRoot;
+    private boolean isLoad = true;
 
     public Directory(byte[] data) {
         super(data);
@@ -63,6 +64,10 @@ public class Directory extends Item {
     }
 
     public static Item find(Directory currentDir, List<String> pathParts, int index, boolean isDirectory, byte type) {
+        if(!currentDir.isLoad){
+            currentDir.initFromDisk(0);
+        }
+
         // 校验pathParts是否为空或index是否越界
         if (pathParts.isEmpty()) {
             return currentDir;
@@ -147,6 +152,42 @@ public class Directory extends Item {
                 }
             }
         }
+    }
+
+    public void initFromDisk(int level) {
+        Disk disk = FileService.getDisk();
+        byte[][] content = super.readContentFromDisk();
+        if (level > 2)
+            return;
+
+        for (byte[] block : content) {
+            for (int i = 0; i < block.length; i += BYTES_PER_ITEM) {
+                byte[] itemData = new byte[BYTES_PER_ITEM];
+                System.arraycopy(block, i, itemData, 0, BYTES_PER_ITEM);
+                Item item = FileService.getItemFromDisk(itemData);
+                if (item != null) {
+                    children.add(item);
+                    item.setParent(this);
+                    item.setPath();
+                    if (disk.isItemExist(item)) {
+                        if (this == disk.getPartitionDirectory()) {
+                            Directory subDirectory = (Directory) item;
+                            subDirectory.setRoot(true);
+                        }
+                        if (item instanceof Directory) {
+                            ((Directory) item).initFromDisk(level + 1);
+                        } else {
+                            item.initFromDisk();
+                        }
+                    } else {
+                        children.remove(item);
+                        item.setParent(null);
+                    }
+                }
+            }
+        }
+
+        isLoad = true;
     }
 
     public boolean writeContentToDisk() {
