@@ -497,6 +497,8 @@ public class FileService {
 
         updateItemSize(item);
         writeItemAndParentsToDisk(item);
+        // 通知文件系统
+        FileController.getInstance().notify(item);
     }
 
     public void reName(String path, String newName) throws ItemAlreadyExistsException, IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {

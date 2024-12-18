@@ -41,7 +41,6 @@ public class Disk {
     }
 
     public void test(){
-        partitionDirectory.initFromDisk(0);
         for (byte[] bytes : disk) {
             for (byte b : bytes) System.out.print((b & 0xFF) + " ");
             System.out.println();
@@ -171,11 +170,5 @@ public class Disk {
             System.out.println("file2disk fail!");
             throw new RuntimeException(e);
         }
-    }
-
-
-
-    public void test2(){
-        test();
     }
 }

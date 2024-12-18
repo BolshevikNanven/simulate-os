@@ -59,15 +59,21 @@ public class EditorApp extends Window {
     private void save(Item item){
         if (item instanceof Txt) {
             Txt txtItem = (Txt) item;
+            String tempContext = txtItem.getContext();
             txtItem.setContext(display.getText());
             try {
                 FileController.getInstance().writeFile(txtItem);
             } catch (DiskSpaceInsufficientException e) {
+                txtItem.setContext(tempContext);
+                display.setText(tempContext);
                 Dialog.getDialog(this,"保存失败！\n磁盘空间不足",
                         true,false,
                         null,null,
                         null).show();
+
             } catch (ReadOnlyFileModifiedException e) {
+                txtItem.setContext(tempContext);
+                display.setText(tempContext);
                 Dialog.getDialog(FileManagerApp.getInstance(), "不允许修改只读文件",
                         true, false,
                         null, null,
@@ -80,15 +86,20 @@ public class EditorApp extends Window {
             if(!permitSave){
                 return;
             }
+            List<Byte> tempContext = exeItem.getInstructions();
             exeItem.setInstructions(byteList);
             try {
                 FileController.getInstance().writeFile(exeItem);
             } catch (DiskSpaceInsufficientException e) {
+                exeItem.setInstructions(tempContext);
+                display.setText(typeInstructions(tempContext));
                 Dialog.getDialog(this,"保存失败！\n磁盘空间不足",
                         true,false,
                         null,null,
                         null).show();
             } catch (ReadOnlyFileModifiedException e) {
+                exeItem.setInstructions(tempContext);
+                display.setText(typeInstructions(tempContext));
                 Dialog.getDialog(FileManagerApp.getInstance(), "不允许修改只读文件",
                         true, false,
                         null, null,
