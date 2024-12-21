@@ -523,10 +523,21 @@ public class FileService {
         }
 
         item.setName(newName);
-        item.setPath();
+
+        setItemAndChildrenPath(item);
         writeItemAndParentsToDisk(item);
+
         // 通知文件系统
         FileController.getInstance().notify(item);
+    }
+
+    private void setItemAndChildrenPath(Item item){
+        item.setPath();
+        if(item instanceof Directory){
+            for(Item child : ((Directory) item).getChildren()){
+                setItemAndChildrenPath(child);
+            }
+        }
     }
 
     public void reAttribute(String path, boolean readOnly, boolean systemFile, boolean regularFile, boolean isDirectory) throws IllegalOperationException, ItemNotFoundException, ConcurrentAccessException {
