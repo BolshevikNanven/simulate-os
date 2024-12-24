@@ -1,17 +1,17 @@
-package scau.os.soos.module.file;
+    package scau.os.soos.module.file;
 
-import scau.os.soos.apps.editor.EditorApp;
-import scau.os.soos.common.enums.FILE_TYPE;
-import scau.os.soos.common.exception.*;
-import scau.os.soos.module.file.model.*;
+    import scau.os.soos.apps.editor.EditorApp;
+    import scau.os.soos.common.enums.FILE_TYPE;
+    import scau.os.soos.common.exception.*;
+    import scau.os.soos.module.file.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.StringTokenizer;
 
-import static scau.os.soos.common.enums.FILE_TYPE.*;
+    import static scau.os.soos.common.enums.FILE_TYPE.*;
 
-public class FileService {
+    public class FileService {
 
     private static Disk disk;
 
@@ -269,6 +269,7 @@ public class FileService {
         int needDiskNum = 0;
         if(srcItem.isDirectory()){
             needDiskNum = getDirectoryTotalDiskBlocks((Directory) srcItem);
+            System.out.println("++++"+needDiskNum);
         }else{
             needDiskNum = srcItem.calculateTotalBlockNum(fat);
         }
@@ -293,7 +294,7 @@ public class FileService {
         int cur = needDiskBlocks.get(0);
         int pre = cur;
 
-        for (int i = 1; i < needDiskBlocks.size(); i++) {
+        for (int i = 1; i < srcItem.calculateTotalBlockNum(fat); i++) {
             cur = needDiskBlocks.get(i);
             fat.setNextBlockIndex(pre, cur);
             pre = cur;
@@ -326,7 +327,7 @@ public class FileService {
 
     public void move(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, IllegalOperationException, ItemNotFoundException, ReadOnlyFileModifiedException, ConcurrentAccessException {
         copy(sourcePath,targetPath);
-        delete(find(sourcePath,check(sourcePath)));
+        //delete(find(sourcePath,check(sourcePath)));
     }
 
     public static int getDirectoryTotalDiskBlocks(Directory directory){
@@ -649,4 +650,4 @@ public class FileService {
             throw new ItemAlreadyExistsException(item.getFullName() +" 已存在");
         }
     }
-}
+    }
