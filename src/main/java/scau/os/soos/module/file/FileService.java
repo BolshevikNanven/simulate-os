@@ -5,6 +5,7 @@
     import scau.os.soos.common.exception.*;
     import scau.os.soos.module.file.model.*;
 
+    import javax.swing.plaf.IconUIResource;
     import java.util.ArrayList;
     import java.util.List;
     import java.util.StringTokenizer;
@@ -444,12 +445,13 @@
             throw new IllegalOperationException("磁盘命名格式: '/[a-zA-Z]:'");
         }
         // 2.查找目标根目录
-        Directory targetRoot = (Directory) find(targetPath, DIRECTORY);
+        Directory  targetRoot= (Directory) find(targetPath, DIRECTORY);
         if (targetRoot == null) {
             throw new ItemNotFoundException(targetPath.charAt(1) + " 盘不存在");
         }
         // 3.格式化目标根目录
-        for(Item item:targetRoot.getChildren()){
+        List<Item> items = new ArrayList<>(targetRoot.getChildren());
+        for(Item item: items){
             delete(item);
         }
     }
