@@ -234,14 +234,15 @@ public abstract class Item {
             pre = cur;
             cur = fat.getNextBlockIndex(cur);
         }
-        if(cur!=Fat.TERMINATED){
+        int i = 0;
+        while(cur!=Fat.TERMINATED){
             fat.setNextBlockIndex(pre,Fat.TERMINATED);
-            
-            while(cur!=Fat.TERMINATED){
-                pre = cur;
-                cur = fat.getNextBlockIndex(cur);
-                fat.setNextBlockIndex(pre,rootStartBlockNum);
-            }
+            i++;
+            pre = cur;
+            cur = fat.getNextBlockIndex(cur);
+        }
+        if(i>0){
+            fat.setNextBlockIndex(pre,Fat.TERMINATED);
         }
         fat.writeFatToDisk();
         return true;
