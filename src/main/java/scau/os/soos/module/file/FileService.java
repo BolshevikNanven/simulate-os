@@ -328,7 +328,7 @@
 
     public void move(String sourcePath, String targetPath) throws ItemAlreadyExistsException, DiskSpaceInsufficientException, IllegalOperationException, ItemNotFoundException, ReadOnlyFileModifiedException, ConcurrentAccessException {
         copy(sourcePath,targetPath);
-        //delete(find(sourcePath,check(sourcePath)));
+        delete(find(sourcePath,check(sourcePath)));
     }
 
     public static int getDirectoryTotalDiskBlocks(Directory directory){
