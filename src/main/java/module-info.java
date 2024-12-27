@@ -1,7 +1,6 @@
 module scau.os.soos {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.swing;
     requires java.desktop;
 
     opens scau.os.soos to javafx.fxml;
